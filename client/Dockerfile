@@ -1,16 +1,12 @@
-FROM node:lts AS build-stage
+FROM node:lts
 
-WORKDIR /usr/src/app
+WORKDIR /app
 
 COPY . .
 
-RUN npm ci
+RUN npm install
 
-RUN npm run build
+# Expose port 5173 for the frontend
+EXPOSE 5173
 
-# Need to deploy frontend using webserver somehow
-# FROM nginx:1.25-alpine
-
-# # COPY the directory dist from the build-stage to /usr/share/nginx/html
-# # The target location here was found from the Docker hub page
-# COPY --from=build-stage /usr/src/app/dist /usr/share/nginx/html
+CMD ["npm", "run", "dev", "--", "--host"]
