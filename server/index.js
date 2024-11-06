@@ -1,18 +1,26 @@
 import dotenv from "dotenv";
 dotenv.config();
-import { Sequelize } from "sequelize";
 import express from "express";
+import pkg from 'pg';
+const { Client } = pkg;
+import eventRouter from "./controllers/events.js";
+
 const app = express();
 
 const PORT = process.env.PORT || 3001;
 
-const sequelize = new Sequelize(process.env.DATABASE_URL);
+app.use(express.json())
+
+app.use('/api/events', eventRouter);
+
+const client = new Client({
+  connectionString: process.env.DATABASE_URL,
+});
 
 const main = async () => {
   try {
-    await sequelize.authenticate();
+    await client.connect();
     console.log("Connection has been established successfully.");
-    sequelize.close();
 
     app.listen(PORT, () => {
       console.log(`Server running on port ${PORT}`);
@@ -23,3 +31,5 @@ const main = async () => {
 };
 
 main();
+
+export default client;
