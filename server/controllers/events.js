@@ -50,7 +50,7 @@ eventRouter.post("/", async (request, response, next) => {
     !startdate ||
     !starttime
   ) {
-    return res.status(400).json({ error: "Missing required fields" });
+    return response.status(400).json({ error: "Missing required fields" });
   }
 
   try {
