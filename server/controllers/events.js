@@ -2,10 +2,23 @@ import express from "express";
 import client from "../index.js";
 
 const eventRouter = express.Router();
+const eventTypes = new Set(['Sports', 'Music', 'Food', 'Art', 'Hangout', 'Gaming', 'Convention']);
 
 // Get all events
+// Optional parameters: eventtype = <eventtype>
 eventRouter.get("/", async (request, response, next) => {
   try {
+    if (request.query.eventType) {
+        if (eventTypes.has(request.query.eventType)) {
+            // Return events of the specified type
+            const result = await client.query("SELECT * FROM events WHERE eventtype = $1", [request.query.eventType]);
+            response.status(200).json(result.rows);
+            return;
+        } else {
+            response.status(400).json({ error: `Event type ${request.query.eventType} does not exist` });
+            return;
+        }
+    }
     const events = await client.query("SELECT * FROM events");
     response.status(200).json(events.rows);
   } catch (error) {
