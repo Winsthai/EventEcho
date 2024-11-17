@@ -3,10 +3,12 @@ import HomePage from "./Components/HomePage/HomePage";
 import EventPage from "./Components/EventPage/EventPage";
 import CreateEventPage from "./Components/CreateEventPage/CreateEventPage";
 import EditEventPage from "./Components/EditEventPage/EditEventPage";
-import NavBar from "./Components/NavBar";
+import MobileNavBar from "./Components/MobileNavBar";
 import LoginPage from "./Components/LoginPage/LoginPage";
 import SignUpPage from "./Components/SignUpPage/SignUpPage";
 import { useMediaQuery } from "@mui/material";
+import NavBar from "./Components/NavBar";
+import UserPage from "./Components/UserPage/UserPage";
 
 function App() {
   // Use media query to check if screen width is less than 600px (mobile view)
@@ -15,6 +17,7 @@ function App() {
   return (
     <>
       <BrowserRouter>
+        {isMobile ? <></> : <NavBar></NavBar>}
         <Routes>
           <Route path="/" element={<HomePage></HomePage>}></Route>
           <Route path="/event/:id" element={<EventPage></EventPage>}></Route>
@@ -26,11 +29,12 @@ function App() {
             path="/createEvent"
             element={<CreateEventPage></CreateEventPage>}
           ></Route>
+          <Route path="/user/:id" element={<UserPage></UserPage>}></Route>
           <Route path="/login" element={<LoginPage></LoginPage>}></Route>
           <Route path="/signUp" element={<SignUpPage></SignUpPage>}></Route>
           <Route path="*" element={<div>Page not found</div>}></Route>
         </Routes>
-        {isMobile ? <NavBar></NavBar> : <></>}
+        {isMobile ? <MobileNavBar></MobileNavBar> : <></>}
       </BrowserRouter>
     </>
   );
