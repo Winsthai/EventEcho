@@ -1,5 +1,7 @@
 const CreateEventPage = () => {
-  return <div>create new event</div>;
+  return (
+    <div>welcome idiot</div>
+  );
 };
 
 export default CreateEventPage;
