@@ -1,56 +1,111 @@
-import { BottomNavigation } from "@mui/material";
-import { BottomNavigationAction } from "@mui/material";
-import CalendarTodayIcon from "@mui/icons-material/CalendarToday";
-import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
-import AccountCircleIcon from "@mui/icons-material/AccountCircle";
-import { useState } from "react";
+import { Box, TextField, Chip, InputAdornment } from "@mui/material";
+import SearchIcon from "@mui/icons-material/Search";
+import FilterAltIcon from "@mui/icons-material/FilterAlt";
+import AddIcon from "@mui/icons-material/Add";
+import PersonIcon from "@mui/icons-material/Person";
+import { useNavigate } from "react-router-dom"; // Import useNavigate from react-router-dom
+
+const chipStyle = {
+  backgroundColor: "#A50B07",
+  color: "white",
+  "& .MuiChip-icon": {
+    color: "white",
+  },
+  "&:hover": {
+    backgroundColor: "darkred",
+    cursor: "pointer",
+  },
+};
 
 const NavBar = () => {
-  const [value, setValue] = useState(0);
+  const navigate = useNavigate();
+
+  const handleClick = (url) => {
+    navigate(url);
+  };
 
   return (
-    <BottomNavigation
-      showLabels
-      value={value}
-      onChange={(event, newValue) => {
-        setValue(newValue);
-      }}
+    <Box
       sx={{
-        width: "100%",
-        position: "fixed",
-        bottom: 0,
-        left: 0,
-        zIndex: 1000, // Ensure it stays above other content
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "space-between",
+        padding: "8px 16px",
+        backgroundColor: "white",
+        borderBottom: "1px solid #ddd",
+        gap: "16px",
+        overflow: "hidden", // Prevents content from spilling out
       }}
     >
-      <BottomNavigationAction
-        label="Events"
-        icon={<CalendarTodayIcon />}
+      {/* Logo */}
+      <Box
         sx={{
-          "&.Mui-selected": {
-            color: "#F0534F",
+          fontSize: "1.5rem",
+          fontWeight: "bold",
+          whiteSpace: "nowrap",
+          display: "inline-block",
+          cursor: "pointer",
+        }}
+        onClick={() => handleClick("/")} // Handle click event to navigate
+      >
+        EventEcho
+      </Box>
+
+      {/* Search Bar */}
+      <TextField
+        variant="outlined"
+        placeholder="Search for events..."
+        size="small"
+        sx={{
+          flexGrow: 1, // Ensures the search bar takes available space
+          marginLeft: "16px",
+          marginRight: "16px",
+          minWidth: "150px",
+          maxWidth: "600px",
+          "& .MuiOutlinedInput-root": {
+            borderRadius: "24px",
+            "&:hover": {
+              borderColor: "black",
+            },
+            "&.Mui-focused fieldset": {
+              borderColor: "black",
+            },
+          },
+        }}
+        slotProps={{
+          input: {
+            startAdornment: (
+              <InputAdornment position="start">
+                <SearchIcon />
+              </InputAdornment>
+            ),
           },
         }}
       />
-      <BottomNavigationAction
-        label="Create Event"
-        icon={<AddCircleOutlineIcon />}
+
+      {/* Chips */}
+      <Box
         sx={{
-          "&.Mui-selected": {
-            color: "#F0534F",
-          },
+          display: "flex",
+          gap: "8px", // Adds spacing between chips
+          flexShrink: 0, // Prevents chips from resizing or shrinking
         }}
-      />
-      <BottomNavigationAction
-        label="Profile"
-        icon={<AccountCircleIcon />}
-        sx={{
-          "&.Mui-selected": {
-            color: "#F0534F",
-          },
-        }}
-      />
-    </BottomNavigation>
+      >
+        <Chip icon={<FilterAltIcon />} label="Filters" sx={chipStyle} />
+        <Chip
+          icon={<AddIcon />}
+          label="Create event"
+          onClick={() => handleClick("/createEvent")}
+          sx={chipStyle}
+        />
+        <Chip
+          icon={<PersonIcon />}
+          label="Login"
+          onClick={() => handleClick("/login")}
+          sx={chipStyle}
+        />
+      </Box>
+    </Box>
   );
 };
 
