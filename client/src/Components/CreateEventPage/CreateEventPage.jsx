@@ -96,7 +96,21 @@ const CreateEventPage = () => {
           />
 
           {/* Time and Date Grid */}
-
+          <Grid container spacing={2}>
+            <Grid item xs={6}>
+              Start Date
+            </Grid>
+            <Grid item xs={6}>
+              Start Time
+            </Grid>
+            <Grid item xs={6}>
+              End Date
+            </Grid>
+            <Grid item xs={6}>
+              End Time
+            </Grid>
+            
+          </Grid>
 
         </Stack>
       </Box>
