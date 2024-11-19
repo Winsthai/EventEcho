@@ -1,11 +1,19 @@
-import Box from '@mui/material/Box';
-import TextField from '@mui/material/TextField';
-import PasswordBox from '../PasswordBox';
-import Button from '@mui/material/Button';
-import Stack from '@mui/material/Stack';
 import logo from '../../images/logo.png'
 import React, { useState } from 'react';
 import { useNavigate } from "react-router-dom";
+import { Box, TextField, Chip, InputAdornment, Stack, Button } from "@mui/material";
+
+const chipStyle = {
+  backgroundColor: "darkred",
+  color: "white",
+  "& .MuiChip-icon": {
+    color: "white",
+  },
+  "&:hover": {
+    backgroundColor: "darkred",
+    cursor: "pointer",
+  },
+};
 
 const SignUpPage = () => {
 
@@ -70,10 +78,10 @@ const SignUpPage = () => {
             <img src={logo} alt="EventEcho Logo" style={{width:'150px', marginBottom:'-4vh'}}/>
           </div>
 
-            <TextField id="loginUser" label="Username" variant="standard" />
+            <TextField id="loginUser" label="Username" variant="outlined" />
             <TextField
             label="Password"
-            variant="standard"
+            variant="outlined"
             type="password"
             fullWidth
             value={password}
@@ -81,7 +89,7 @@ const SignUpPage = () => {
             />
             <TextField
             label="Confirm Password"
-            variant="standard"
+            variant="outlined"
             type="password"
             fullWidth
             value={confirmPassword}
@@ -96,8 +104,15 @@ const SignUpPage = () => {
               justifyContent: "space-between",
             }}
           >
-            <Button variant="text" onClick={() => handleClick("/login")}>Already have an account? Login</Button>
-            <Button variant="contained">Create Account</Button>
+            <div>
+            <label>Already have an account? </label>
+            <Button variant="text" onClick={() => handleClick("/login")}>Login</Button>
+            </div>
+            
+            <Chip
+          label="Create Account"
+          sx={chipStyle}
+        />
           </Stack>
           
           <Button variant="text">Stay on Guest Mode</Button>
