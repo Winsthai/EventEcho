@@ -1,6 +1,8 @@
 import * as React from 'react';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import PlaceIcon from '@mui/icons-material/Place';
+import PhotoCameraIcon from '@mui/icons-material/PhotoCamera';
+import CollectionsIcon from '@mui/icons-material/Collections';
 import {
   AppBar, Toolbar, IconButton, Typography,
   FormControl, FormGroup, FormControlLabel, InputLabel,
@@ -12,6 +14,7 @@ import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { TimePicker } from '@mui/x-date-pickers/TimePicker';
+
 
 export default function CreateEventPage() {
   // const CreateEventPage = () => {
@@ -32,12 +35,22 @@ export default function CreateEventPage() {
         flexDirection: "column",
         alignItems: "center",
         textAlign: "center",
+        overflowY: "auto"
       }}
     >
       {/* Top App Bar */}
-      <Box component="section" sx={{ width: "100%", height: "20%" }}>
-        <AppBar position="static" sx={{ mb: 2, color: "primary" }}>
-          <Toolbar>
+      <Box component="section"
+        sx={{
+          width: "100%",
+          height: "20%",
+          position: "fixed",
+          top: 0,
+          left: 0,
+          zIndex: 1000
+        }}
+      >
+        <AppBar position="static" sx={{ mb: 2 }}>
+          <Toolbar sx={{ color: "secondary" }}>
             <Box sx={{ flexGrow: 1, display: "flex" }}>
               <IconButton edge="start" color="inherit" aria-label="back" sx={{ mr: 2 }}>
                 <ArrowBackIcon />
@@ -52,7 +65,7 @@ export default function CreateEventPage() {
       </Box>
 
       {/* forms */}
-      <Box component="form" sx={{ width: "85%", height: "100%" }}>
+      <Box component="form" sx={{ width: "85%", height: "100%", pt: 8, pb: 8 }}>
         <Stack
           direction="column"
           spacing={2}
@@ -89,7 +102,7 @@ export default function CreateEventPage() {
             }}
           />
 
-          <Box>
+          <Box sx={{ display: "flex", justifyContent: "left" }}>
             Event Timing
           </Box>
 
@@ -103,7 +116,7 @@ export default function CreateEventPage() {
               </LocalizationProvider>
             </Grid>
 
-            {/* Start Time -> Set as required */}
+            {/* Start Time -> Set as required with form submit error checking */}
             <Grid size={6}>
               <LocalizationProvider dateAdapter={AdapterDayjs}>
                 <TimePicker label="Start Time *" />
@@ -126,15 +139,31 @@ export default function CreateEventPage() {
           </Grid>
 
           {/* Set Event Private */}
-          <Box>
+          <Box sx={{ display: "flex", justifyContent: "left" }}>
             <FormGroup>
               <FormControlLabel control={<Switch />} label="This Event is Private" />
             </FormGroup>
           </Box>
 
+          {/* Upload Image - see how to space out the icons nicely they look like shit */}
+          <Box sx={{ border: '1px solid #aaaaa9', borderRadius: '5px', padding: 1 }}>
+            Select Event Posting Photo
+            <Stack direction="row" spacing={2} sx={{ display: "flex", justifyContent: "center" }}>
+              <IconButton aria-label='open camera' size='large'>
+                <PhotoCameraIcon sx={{ fontSize: '48px' }} />
+              </IconButton>
+              <IconButton aria-label='open gallery' size='large'>
+                <CollectionsIcon sx={{ fontSize: '48px' }} />
+              </IconButton>
+            </Stack>
+          </Box>
+
+          {/* Confirm and Invite Guests Button */}
+          <Button variant='contained' sx={{ borderRadius: '10px' }}>
+            Confirm and Invite Guests
+          </Button>
         </Stack>
       </Box>
-
 
     </Box>
   );
