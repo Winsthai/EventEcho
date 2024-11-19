@@ -6,7 +6,7 @@ import PersonIcon from "@mui/icons-material/Person";
 import { useNavigate } from "react-router-dom"; // Import useNavigate from react-router-dom
 
 const chipStyle = {
-  backgroundColor: "#A50B07",
+  backgroundColor: "primary",
   color: "white",
   "& .MuiChip-icon": {
     color: "white",
