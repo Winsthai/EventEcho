@@ -56,9 +56,7 @@ const LoginPage = () => {
           </Stack>
           
           <Button variant="text">Stay on Guest Mode</Button>
-          
         </Stack>
-      
       </Box>
     </Box>
   );
