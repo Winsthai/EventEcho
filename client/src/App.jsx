@@ -4,6 +4,7 @@ import EventPage from "./Components/EventPage/EventPage";
 import CreateEventPage from "./Components/CreateEventPage/CreateEventPage";
 import DesktopCreateEventPage from "./Components/CreateEventPage/DesktopCreateEventPage";
 import EditEventPage from "./Components/EditEventPage/EditEventPage";
+import DesktopEditEventPage from "./Components/EditEventPage/DesktopEditEventPage";
 import MobileNavBar from "./Components/MobileNavBar";
 import LoginPage from "./Components/LoginPage/LoginPage";
 import SignUpPage from "./Components/SignUpPage/SignUpPage";
@@ -24,7 +25,7 @@ function App() {
           <Route path="/event/:id" element={<EventPage></EventPage>}></Route>
           <Route
             path="/event/:id/edit"
-            element={<EditEventPage></EditEventPage>}
+            element={isMobile ? <EditEventPage></EditEventPage> : <DesktopEditEventPage></DesktopEditEventPage>}
           ></Route>
           <Route
             path="/createEvent"
