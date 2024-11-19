@@ -3,12 +3,20 @@ import TextField from '@mui/material/TextField';
 import PasswordBox from '../PasswordBox';
 import Button from '@mui/material/Button';
 import Stack from '@mui/material/Stack';
+import { useNavigate } from "react-router-dom";
 
 import './LoginPageStyles.css';
 
 import logo from '../../images/logo.png'
 
 const LoginPage = () => {
+
+  const navigate = useNavigate();
+
+  const handleClick = (url) => {
+    navigate(url);
+  };
+
   return (
     <Box 
       component="section"
@@ -51,7 +59,7 @@ const LoginPage = () => {
               justifyContent: "space-between",
             }}
           >
-            <Button variant="text">Create Account</Button>
+            <Button variant="text" onClick={() => handleClick("/signUp")}>Create Account</Button>
             <Button variant="contained">Next</Button>
           </Stack>
           
