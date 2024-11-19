@@ -49,11 +49,13 @@ const LoginPage = () => {
               direction="row"
               id="loginButtonStack"
             >
-              <Button variant="text" onClick={() => handleClick("/signUp")}>Create Account</Button>
+              <Button variant="text" color="tertiary" onClick={() => handleClick("/signUp")}>Create Account</Button>
               <Button variant="contained">Next</Button>
             </Stack>
             
-            <Button variant="text">Stay on Guest Mode</Button>
+            <Box>
+              <Button variant="text" color="tertiary">Stay on Guest Mode</Button>
+            </Box>   
           </Stack>
         </Box>
       </Box>
