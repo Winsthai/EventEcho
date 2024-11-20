@@ -1,5 +1,8 @@
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import { AppBar, Toolbar, IconButton, Typography, Box, Button, useMediaQuery } from '@mui/material';
+import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
+import AccessTimeIcon from '@mui/icons-material/AccessTime';
+import LocationOnIcon from '@mui/icons-material/LocationOn';
 
 import './ReviewEventPageStyles.css';
 
@@ -69,21 +72,21 @@ const ReviewEventPage = () => {
               }}
             >
               {/* Can replace icons with the pictures from images, once this is updated from main */}
-              <Box sx={{ display: "flex", alignItems: "center"}}>
-                <p>Icon</p>
+              <Box color="text.secondary" sx={{ display: "flex", alignItems: "center"}}>
+                <CalendarMonthIcon/>
                 {/* Adjust marginLeft later */}
                 <p id="EventReviewP" style={{ marginLeft: "8px" }}>Friday, 15 Nov 2024</p>
               </Box>
-              <Box sx={{ display: "flex", alignItems: "center"}}>
-                <p>Icon</p>
+              <Box color="text.secondary" sx={{ display: "flex", alignItems: "center"}}>
+                <AccessTimeIcon/>
                 {/* Adjust marginLeft later */}
                 <p id="EventReviewP" style={{ marginLeft: "8px" }}>7:00 PM - 10:00 PM</p>
               </Box>
               <Box sx={{ display: "flex", alignItems: "center"}}>
                 <p id="EventReviewP" style={{color: "blue"}}>+ Add to Calendar</p>
               </Box>
-              <Box sx={{ display: "flex", alignItems: "center"}}>
-                <p>Icon</p>
+              <Box color="text.secondary" sx={{ display: "flex", alignItems: "center"}}>
+                <LocationOnIcon/>
                 {/* Adjust marginLeft later */}
                 <p id="EventReviewP" style={{ marginLeft: "8px" }}>Edmonton, AB</p>
               </Box>
@@ -97,7 +100,7 @@ const ReviewEventPage = () => {
               }}
             >
               {/* Picture goes here */}
-              <p>Picture here</p>
+              <p id="EventReviewPhoto">Picture here</p>
             </Box>
           </Box>
           {/* Details */}

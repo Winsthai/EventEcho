@@ -27,3 +27,11 @@
   color: #039BE5;
   font-size: 16px;
 }
+
+#EventReviewPhoto {
+  background-color: gray;
+  height: 130px;
+  min-width: 100px;
+  margin-left: 10px;
+  border-radius: 15px;
+}
