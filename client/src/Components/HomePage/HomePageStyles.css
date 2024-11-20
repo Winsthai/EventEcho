@@ -15,3 +15,38 @@
 #homeEventsStack {
     padding: 2vw;
 }
+
+#homeFiltersStack {
+    padding: 2vw;
+}
+
+/* Make filters box scrollable */
+#homeFiltersBox {
+    padding: 2vw;
+    padding-bottom: 0.5vw;
+    overflow-x: auto;
+    white-space: nowrap;
+    
+}
+
+/* Height of scrollbar */
+#homeFiltersBox::-webkit-scrollbar {
+    height: 6px; 
+}
+
+/* Make scrollbar transparent when not hovered */
+#homeFiltersBox::-webkit-scrollbar-thumb {
+    background-color: transparent;
+}
+
+/* Make scrollbar visible on hover */
+#homeFiltersBox:hover::-webkit-scrollbar-thumb {
+    padding: 2vw;
+    background-color: #ccc;
+    border-radius: 4px;
+  }
+
+#homeFiltersBox > Button {
+    margin-right: 4vw;
+    height: 90%;
+}
