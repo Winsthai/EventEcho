@@ -3,9 +3,6 @@ import { useEffect } from "react";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Box, Stack, Button, useMediaQuery } from "@mui/material";
-import Calendar from '../../images/Calendar.png';
-import Clock from '../../images/Clock.png';
-import Location from '../../images/Location.png';
 import CalendarDesktop from '../../images/CalendarDesktop.png';
 import ClockDesktop from '../../images/ClockDesktop.png';
 import LocationDesktop from '../../images/LocationDesktop.png';
@@ -116,7 +113,7 @@ const EventPage = () => {
 
                 {/* Event Picture */}
                 {/* TODO: implement this when possible */}
-                <p style={{ textAlign: "center"}}>
+                <p id="EventPagePhotoBackground" style={{ textAlign: "center"}}>
                     Event Picture Placeholder
                 </p>
 
@@ -180,7 +177,7 @@ const EventPage = () => {
                         sx={{
                             backgroundColor: "#F68F8D", 
                             borderRadius: "20px", 
-                            //fontFamily: "Poppins", // this does nothing?
+                            marginBottom: "80px", // so button doesn't overlap with mobile interface at the bottom.
                             "&:hover": {
                                 backgroundColor: "#A50B07",
                             },
@@ -231,7 +228,7 @@ const EventPage = () => {
                                 marginTop: "1.5rem",
                             }}
                         >
-                            <p>
+                            <p id="EventPagePhotoBackgroundDesktop">
                                 Event Picture Placeholder
                             </p>
                         </Box>
@@ -247,7 +244,7 @@ const EventPage = () => {
                             }}
                         >
                             {/* Title */}
-                            <h1 id="EventPageTitleDesktop" style={{ marginBottom: 0, marginTop: 0, }}>{event.title}</h1>
+                            <h1 id="EventPageTitleDesktop">{event.title}</h1>
                             <Stack spacing={1}>
                                 {/* Date */}
                                 <Stack direction="row" alignItems="center" spacing={1}>
@@ -279,7 +276,7 @@ const EventPage = () => {
                     {/* Event Details */}
                     <Box
                         sx={{ 
-                            px: 3 // Padding on left and right for the outer container
+                            px: 6 // Padding on left and right for the outer container
                         }}
                     >
                         {/* Event Description */}
