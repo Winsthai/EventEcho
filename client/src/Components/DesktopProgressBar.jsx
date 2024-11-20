@@ -36,6 +36,7 @@ export default function DesktopProgressBar() {
     const newActiveStep = isLastStep() && !allStepsCompleted() ?
       steps.findIndex((step, i) => !(i in completed)) : activeStep + 1;
     setActiveStep(newActiveStep);
+    navigateToStep(newActiveStep);
   };
 
   const handleBack = () => {
@@ -56,15 +57,29 @@ export default function DesktopProgressBar() {
   };
 
   const navigateToStep = (step) => {
-    switch (step) {
-      case 0:
-        navigate("/createEvent");
-        break;
-      case 1:
-        navigate("/createEvent/addGuests");
-        break;
-      default:
-        navigate("/createEvent");
+    if (location.pathname.includes("create")) {
+      switch (step) {
+        case 0:
+          navigate("/createEvent");
+          break;
+        case 1:
+          navigate("/createEvent/addGuests");
+          break;
+        default:
+          navigate("/createEvent/reviewEvent");
+      }
+    }
+    else {
+      switch (step) {
+        case 0:
+          navigate("/editEvent/:id");
+          break;
+        case 1:
+          navigate("/editEvent/:id/changeGuests");
+          break;
+        default:
+          navigate("/editEvent/:id/reviewEvent");
+      }
     }
   }
 
@@ -90,34 +105,43 @@ export default function DesktopProgressBar() {
             </Step>
           ))}
         </Stepper>
-      </Box>
 
-      {/* Some logic */}
-      <Box>
-        {allStepsCompleted() ? (
-          <React.Fragment>
-            <Typography sx={{ mt: 2, mb: 1 }}>
-              Should add info to the db and redirect back to events page
-            </Typography>
-          </React.Fragment>
-        ) : (
-          <React.Fragment>
-            <Box sx={{ display: 'flex', flexDirection: 'row', pt: 2 }}>
-              {activeStep !== steps.length &&
-                (completed[activeStep] ? (
-                  <Typography variant="caption" sx={{ display: 'inline-block' }}>
-                    Step {activeStep + 1} already completed
-                  </Typography>
-                ) : (
-                  <Button onClick={handleComplete}>
-                    {completedSteps() === totalSteps() - 1
-                      ? 'Finish'
-                      : 'Complete Step'}
-                  </Button>
-                ))}
-            </Box>
-          </React.Fragment>
-        )}
+
+        {/* Some logic */}
+        <Box
+          sx={{
+            display: 'flex',
+            flexDirection: 'column',
+            justifyContent: 'center',
+            alignItems: 'center'
+          }}
+        >
+          {allStepsCompleted() ? (
+            <React.Fragment>
+              <Typography sx={{ mt: 2, mb: 1 }}>
+                Should add info to the db and redirect back to user page
+              </Typography>
+            </React.Fragment>
+          ) : (
+            <React.Fragment>
+              <Box
+                sx={{
+                  display: 'flex',
+                  flexDirection: 'row',
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                  pb: 2,
+                  position: 'fixed',
+                  bottom: 0
+                }}
+              >
+                <Button variant="contained" onClick={handleComplete}>
+                  {completed[activeStep] ? 'Next' : (completedSteps() === totalSteps() - 1 ? 'Finish' : 'Complete Step')}
+                </Button>
+              </Box>
+            </React.Fragment>
+          )}
+        </Box>
       </Box>
     </Box>
   );

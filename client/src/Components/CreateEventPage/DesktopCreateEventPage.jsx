@@ -14,13 +14,17 @@ import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { TimePicker } from '@mui/x-date-pickers/TimePicker';
+import { useNavigate } from "react-router-dom";
 
 const steps = ['Event Details', 'Invite Guests', 'Review and Post'];
 
 export default function DesktopCreateEventPage() {
+  const onEditPage = location.pathname.includes("edit");
+  console.log(onEditPage);
+
   return (
     <Box sx={{ margin: 10, zIndex: 2 }}>
-      <div>hello create event page</div>
+      {onEditPage ? <div>hello edit event page</div> : <div>hello create event page</div>}
     </Box>
 
   );

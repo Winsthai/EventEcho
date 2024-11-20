@@ -11,6 +11,7 @@ import { useMediaQuery } from "@mui/material";
 import NavBar from "./Components/NavBar";
 import UserPage from "./Components/UserPage/UserPage";
 import CreatePagesRoutes from "./CreatePagesRoutes";
+import EditPagesRoutes from "./EditPagesRoutes";
 
 function App() {
   // Use media query to check if screen width is less than 600px (mobile view)
@@ -24,8 +25,8 @@ function App() {
           <Route path="/" element={<HomePage></HomePage>}></Route>
           <Route path="/event/:id" element={<EventPage></EventPage>}></Route>
           <Route
-            path="/event/:id/edit"
-            element={isMobile ? <EditEventPage></EditEventPage> : <></>}
+            path="/editEvent/:id/*"
+            element={isMobile ? <EditEventPage></EditEventPage> : <EditPagesRoutes></EditPagesRoutes>}
           ></Route>
           <Route
             path="/createEvent/*"
