@@ -116,6 +116,7 @@ const EventCard = ({ event }) => {
                 height: "80%",
                 backgroundColor: "#ff7474",
               }}
+              onClick={() => navigate(`/event/${event.id}`)}
             >
               Register
             </Button>

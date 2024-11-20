@@ -1,5 +1,5 @@
 import { useParams } from "react-router-dom";
-import { Box, Typography } from "@mui/material";
+import { Box, Typography, Tabs, Tab } from "@mui/material";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import NoCreatedEvents from "./Components/NoCreatedEvents";
@@ -70,6 +70,7 @@ const testUsers = [
 const UserPage = () => {
   const { id } = useParams();
   const [user, setUser] = useState(null);
+  const [selectedTab, setSelectedTab] = useState(0); // State to manage selected tab
 
   useEffect(() => {
     if (id) {
@@ -82,6 +83,10 @@ const UserPage = () => {
 
   const handleClick = (url) => {
     navigate(url);
+  };
+
+  const handleTabChange = (event, newValue) => {
+    setSelectedTab(newValue); // Update the selected tab
   };
 
   // Temporarily add this so it waits for the user to be found, possibly change when implementing backend
@@ -100,30 +105,51 @@ const UserPage = () => {
       <Typography variant="h4" sx={{ fontWeight: "bold", mb: 2 }}>
         Hello {user.username}!
       </Typography>
-      {/* Your Registered Events Section */}
-      {user.createdEvents.length !== 0 ? (
+      {/* Tabs for Switching between Hosted and Upcoming Events */}
+      <Tabs
+        value={selectedTab}
+        onChange={handleTabChange}
+        aria-label="Event Tabs"
+        sx={{ marginBottom: "2em" }}
+      >
+        <Tab label="Hosted Events" />
+        <Tab label="Upcoming Events" />
+      </Tabs>
+
+      {/* Hosted Events Section */}
+      {selectedTab === 0 && (
         <>
-          <Typography variant="h5" sx={{ fontWeight: "bold", mb: 2 }}>
-            Your Hosted Events
-          </Typography>
-          <EventCard></EventCard>
+          {user.createdEvents.length !== 0 ? (
+            <>
+              <Typography variant="h5" sx={{ fontWeight: "bold", mb: 2 }}>
+                Your Hosted Events
+              </Typography>
+              {user.createdEvents.map((event) => (
+                <EventCard key={event.id} event={event} />
+              ))}
+            </>
+          ) : (
+            <NoCreatedEvents />
+          )}
         </>
-      ) : (
-        <NoCreatedEvents></NoCreatedEvents>
       )}
 
       {/* Upcoming Events Section */}
-      <Typography variant="h5" sx={{ fontWeight: "bold", mb: 2 }}>
-        Your Upcoming Events
-      </Typography>
-      {user.registeredEvents.length !== 0 ? (
+      {selectedTab === 1 && (
         <>
-          {user.registeredEvents.map((event) => (
-            <EventCard key={event.id} event={event}></EventCard>
-          ))}
+          <Typography variant="h5" sx={{ fontWeight: "bold", mb: 2 }}>
+            Your Upcoming Events
+          </Typography>
+          {user.registeredEvents.length !== 0 ? (
+            <>
+              {user.registeredEvents.map((event) => (
+                <EventCard key={event.id} event={event} />
+              ))}
+            </>
+          ) : (
+            <NoUpcomingEvents />
+          )}
         </>
-      ) : (
-        <NoUpcomingEvents></NoUpcomingEvents>
       )}
     </Box>
   );
