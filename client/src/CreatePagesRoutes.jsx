@@ -11,6 +11,7 @@ function CreatePagesRoutes() {
       <Routes>
         <Route path="/" element={<DesktopCreateEventPage></DesktopCreateEventPage>}></Route>
         <Route path="/addGuests" element={<DesktopAddGuestsPage></DesktopAddGuestsPage>}></Route>
+        <Route path="/:id/edit" element={<DesktopEditEventPage></DesktopEditEventPage>}></Route>
       </Routes>
     </>
   );

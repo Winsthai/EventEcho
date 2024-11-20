@@ -25,7 +25,7 @@ function App() {
           <Route path="/event/:id" element={<EventPage></EventPage>}></Route>
           <Route
             path="/event/:id/edit"
-            element={isMobile ? <EditEventPage></EditEventPage> : <DesktopEditEventPage></DesktopEditEventPage>}
+            element={isMobile ? <EditEventPage></EditEventPage> : <></>}
           ></Route>
           <Route
             path="/createEvent/*"
