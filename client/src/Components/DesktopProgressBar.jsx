@@ -9,7 +9,6 @@ import { useNavigate } from "react-router-dom";
 
 const steps = ['Create a New Event', 'Invite Guests', 'Review and Post'];
 
-// const DesktopProgressBar = () => {
 export default function DesktopProgressBar() {
   const navigate = useNavigate();
 
@@ -56,6 +55,22 @@ export default function DesktopProgressBar() {
     handleNext();
   };
 
+  const buttonLabels = (step) => {
+    let label = "";
+    switch (step) {
+      case 0:
+        label = "Confirm and Invite Guests";
+        break;
+      case 1:
+        label = "Review Event Details";
+        break;
+      case 2:
+        label = "Post Event and Send Invites";
+        break;
+    }
+    return label;
+  }
+
   const navigateToStep = (step) => {
     if (location.pathname.includes("create")) {
       switch (step) {
@@ -65,8 +80,11 @@ export default function DesktopProgressBar() {
         case 1:
           navigate("/createEvent/addGuests");
           break;
-        default:
+        case 2:
           navigate("/createEvent/reviewEvent");
+          break;
+        default:
+          navigate("/createEvent");
       }
     }
     else {
@@ -77,8 +95,11 @@ export default function DesktopProgressBar() {
         case 1:
           navigate("/editEvent/:id/changeGuests");
           break;
-        default:
+        case 2:
           navigate("/editEvent/:id/reviewEvent");
+          break;
+        default:
+          navigate("/editEvent/:id");
       }
     }
   }
@@ -136,7 +157,7 @@ export default function DesktopProgressBar() {
                 }}
               >
                 <Button variant="contained" onClick={handleComplete}>
-                  {completed[activeStep] ? 'Next' : (completedSteps() === totalSteps() - 1 ? 'Finish' : 'Complete Step')}
+                  {completed[activeStep] ? 'Next' : (completedSteps() === totalSteps() - 1 ? 'Finish' : buttonLabels(activeStep))}
                 </Button>
               </Box>
             </React.Fragment>
