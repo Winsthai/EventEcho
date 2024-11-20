@@ -3,9 +3,6 @@ import { useEffect } from "react";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Box, Stack, Button, useMediaQuery } from "@mui/material";
-import CalendarDesktop from '../../images/CalendarDesktop.png';
-import ClockDesktop from '../../images/ClockDesktop.png';
-import LocationDesktop from '../../images/LocationDesktop.png';
 import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
 import AccessTimeIcon from '@mui/icons-material/AccessTime';
 import LocationOnIcon from '@mui/icons-material/LocationOn';
@@ -247,8 +244,8 @@ const EventPage = () => {
                             <h1 id="EventPageTitleDesktop">{event.title}</h1>
                             <Stack spacing={1}>
                                 {/* Date */}
-                                <Stack direction="row" alignItems="center" spacing={1}>
-                                    <img src={CalendarDesktop} alt="Calendar Icon"/>
+                                <Stack direction="row" alignItems="center" spacing={1} color="text.secondary">
+                                    <CalendarMonthIcon/>
                                     <p id="EventPagePDesktop">
                                         {new Date(event.startdate).toLocaleDateString("en-US", {
                                             weekday: "long",
@@ -258,16 +255,16 @@ const EventPage = () => {
                                     </p>
                                 </Stack>
                                 {/* Time */}
-                                <Stack direction="row" alignItems="center" spacing={1.2}>
-                                    <img src={ClockDesktop} alt="Clock Icon"/>
+                                <Stack direction="row" alignItems="center" spacing={1.2} color="text.secondary">
+                                    <AccessTimeIcon/>
                                     <p id="EventPagePDesktop">
                                         {startDateTime.toLocaleTimeString("en-US", { hour: "numeric", minute: "numeric", hour12: true })} - {/* This comment apparently helps for whitespace. dont delete LOL. not a joke */}
                                         {endDateTime.toLocaleTimeString("en-US", { hour: "numeric", minute: "numeric", hour12: true })}
                                     </p>
                                 </Stack>
                                 {/* Address */}
-                                <Stack direction="row" alignItems="center" spacing={1.6}>
-                                    <img src={LocationDesktop} alt="Location Icon" style={{ marginLeft: "2px" }}/>
+                                <Stack direction="row" alignItems="center" spacing={1.6} color="text.secondary">
+                                    <LocationOnIcon/>
                                     <p id="EventPagePDesktop">{event.address}</p>
                                 </Stack>
                             </Stack>
