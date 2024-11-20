@@ -1,10 +1,7 @@
-import Box from '@mui/material/Box';
-import TextField from '@mui/material/TextField';
+import {Box, TextField, Button, Stack, useMediaQuery} from "@mui/material";
 import PasswordBox from '../PasswordBox';
-import Button from '@mui/material/Button';
-import Stack from '@mui/material/Stack';
 import { useNavigate } from "react-router-dom";
-import { useMediaQuery } from "@mui/material";
+
 
 import './LoginPageStyles.css';
 
@@ -50,7 +47,7 @@ const LoginPage = () => {
               id="loginButtonStack"
             >
               <Button variant="text" color="tertiary" onClick={() => handleClick("/signUp")}>Create Account</Button>
-              <Button variant="contained">Next</Button>
+              <Button variant="contained" sx={{borderRadius:"15px", padding:"2vw 5vw 2vw 5vw",}}>Next</Button>
             </Stack>
             
             <Box>
