@@ -2,6 +2,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import HomePage from "./Components/HomePage/HomePage";
 import EventPage from "./Components/EventPage/EventPage";
 import CreateEventPage from "./Components/CreateEventPage/CreateEventPage";
+import CreateEventPageInvite from "./Components/CreateEventPage/CreateEventPageInvite";
 import EditEventPage from "./Components/EditEventPage/EditEventPage";
 import MobileNavBar from "./Components/MobileNavBar";
 import LoginPage from "./Components/LoginPage/LoginPage";
@@ -28,6 +29,10 @@ function App() {
           <Route
             path="/createEvent"
             element={<CreateEventPage></CreateEventPage>}
+          ></Route>
+          <Route
+            path="/createEventInvite"
+            element={<CreateEventPageInvite></CreateEventPageInvite>}
           ></Route>
           <Route path="/user/:id" element={<UserPage></UserPage>}></Route>
           <Route path="/login" element={<LoginPage></LoginPage>}></Route>
