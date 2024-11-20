@@ -1,0 +1,56 @@
+#EventPageP {
+    color: #333333;
+    font-size: 14px;
+}
+
+#EventPageED {
+    color: #1D1D1D;
+    font-size: 18px;
+    margin-bottom: 0px;
+}
+
+#EventPageTitle {
+    color: #1D1D1D;
+    font-size: 24px;
+}
+
+#EventPageHeader {
+    color: #1D1D1D;
+    font-size: 24px;
+}
+
+#EventPagePDesktop {
+    color: #333333;
+    font-size: 24px;
+}
+
+#EventPageEDDesktop {
+    color: #1D1D1D;
+    font-size: 28px;
+}
+
+#EventPageTitleDesktop {
+    color: #1D1D1D;
+    font-size: 28px;
+}
+
+#EventPageHeaderDesktop {
+    color: #1D1D1D;
+    font-size: 28px;
+}
+
+#EventPagePhotoBackground {
+    background-color: gray;
+    height: 300px;
+    margin-left: 24px; /* Matches px3, where px1 = 8 px or something */
+    margin-right: 24px;
+    border-radius: 15px;
+}
+
+#EventPagePhotoBackgroundDesktop {
+    background-color: gray;
+    height: 300px;
+    margin-left: 24px; /* Matches px3, where px1 = 8 px or something */
+    margin-right: 24px;
+    border-radius: 15px;
+}

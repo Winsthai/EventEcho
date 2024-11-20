@@ -1,9 +1,7 @@
-import Box from '@mui/material/Box';
-import TextField from '@mui/material/TextField';
+import {Box, TextField, Button, Stack, useMediaQuery} from "@mui/material";
 import PasswordBox from '../PasswordBox';
-import Button from '@mui/material/Button';
-import Stack from '@mui/material/Stack';
 import { useNavigate } from "react-router-dom";
+
 
 import './LoginPageStyles.css';
 
@@ -17,59 +15,88 @@ const LoginPage = () => {
     navigate(url);
   };
 
-  return (
-    <Box 
-      component="section"
-      sx={{
-        width:"100%",
-        height: "100%",
-        display: "flex",
-        justifyContent:"center",
-        alignItems: "center", 
-        textAlign:"center",
-      }}
-    >
-      <Box
-        component="form"
-        sx={{
-          width: "85%",
-          height: "100%"
-        }}
+  const isMobile = useMediaQuery("(max-width:600px)");
+
+  if (isMobile) {
+    // Mobile component
+    return (
+      <Box 
+        component="section"
+        id="loginBox"
       >
-        <Stack
-          direction="column"
-          spacing={5.5}
-          sx={{
-            height:"100%",
-            marginTop: "10vh",
-          }}
+        <Box
+          component="form"
+          id="loginFormBox"
         >
-          <h1 id='loginHeader'>EventEcho</h1>
-
-          <div>
-            <img src={logo} alt="EventEcho Logo" style={{width:'150px', marginBottom:'-4vh'}}/>
-          </div>
-
-          <TextField id="loginUser" label="Username" variant="standard" />
-          <PasswordBox></PasswordBox>
-
-          <Stack 
-            direction="row"
-            sx={{
-              justifyContent: "space-between",
-            }}
+          <Stack
+            direction="column"
+            spacing={6.5}
+            id="loginFormStack"
           >
-            <Button variant="text" onClick={() => handleClick("/signUp")}>Create Account</Button>
-            <Button variant="contained">Next</Button>
+            <h1 id='loginHeader'>EventEcho</h1>
+  
+            <Box>
+              <img src={logo} alt="EventEcho Logo" style={{width:'150px', margin:'-3vh'}}/>
+            </Box>
+  
+            <TextField id="loginUser" label="Username" variant="standard" />
+            <PasswordBox></PasswordBox>
+  
+            <Stack 
+              direction="row"
+              id="loginButtonStack"
+            >
+              <Button variant="text" color="tertiary" onClick={() => handleClick("/signUp")}>Create Account</Button>
+              <Button variant="contained" sx={{borderRadius:"15px", padding:"2vw 5vw 2vw 5vw",}}>Next</Button>
+            </Stack>
+            
+            <Box>
+              <Button variant="text" color="tertiary">Stay on Guest Mode</Button>
+            </Box>   
           </Stack>
-          
-          <Button variant="text">Stay on Guest Mode</Button>
-          
-        </Stack>
-      
+        </Box>
       </Box>
-    </Box>
-  );
+    );
+  } else {
+    // Desktop Component
+    return (
+      <Box 
+        component="section"
+        id="loginBox"
+      >
+        <Box
+          component="form"
+          id="loginFormBox"
+        >
+          <Stack
+            direction="column"
+            spacing={10}
+            id="loginFormStack"
+          >
+            <Stack direction="row" id="loginHeaderStack">
+                <img src={logo} alt="EventEcho Logo" id="loginLogoDesktop"/>
+                <h1 id='loginHeader'>EventEcho</h1>
+            </Stack>
+  
+            <TextField id="loginUser" label="Username" variant="standard" />
+            <PasswordBox></PasswordBox>
+  
+            <Stack 
+              direction="row"
+              id="loginButtonStack"
+            >
+              <Button variant="text" color="tertiary">Stay on Guest Mode</Button>
+              <Box>
+                <Button variant="text" color="tertiary" onClick={() => handleClick("/signUp")}>Create Account</Button>
+                <Button variant="contained" sx={{marginLeft:"1.5vw"}}>Next</Button>
+              </Box>
+            </Stack>
+          </Stack>
+        </Box>
+      </Box>
+    );
+  }
+  
 };
 
 
