@@ -2,10 +2,14 @@ import { useParams } from "react-router-dom";
 import { useEffect } from "react";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Box, Stack, Button } from "@mui/material";
+import { Box, Stack, Button, useMediaQuery } from "@mui/material";
 import Calendar from '../../images/Calendar.png';
 import Clock from '../../images/Clock.png';
 import Location from '../../images/Location.png';
+import CalendarDesktop from '../../images/CalendarDesktop.png';
+import ClockDesktop from '../../images/ClockDesktop.png';
+import LocationDesktop from '../../images/LocationDesktop.png';
+
 
 import './EventPage.css';
 
@@ -53,6 +57,9 @@ const EventPage = () => {
         navigate(url);
     };
 
+    // Determine whether to display mobile or desktop version of website
+    const isMobile = useMediaQuery("(max-width:600px)");
+
     // check which id is in test data. useEffect. Tell it to get event based on ID. useEffect runs when the page is loaded
     useEffect(() => {
         const result = events.find((element) => element.id === id);
@@ -69,116 +76,240 @@ const EventPage = () => {
     const startDateTime = new Date(`${event.startdate.slice(0, 10)}T${event.starttime.slice(0, 8)}+00:00`);
     const endDateTime = new Date(`${event.enddate.slice(0, 10)}T${event.endtime.slice(0, 8)}+00:00`);
 
-    return (
-        <Box>
-            {/* Header Box */}
-            <Box
-                borderBottom="1px solid #ddd"
-                bgcolor="white"
-                sx={{
-                    width:"100%",
-                    height: "100%",
-                    display: "flex",
-                    justifyContent:"center",
-                    alignItems: "center", 
-                    textAlign:"center",
-                  }}
-            >
-                {/* Event Details text, that is centered */}
-                <h1 id="EventPageHeader">Event Details</h1>
-                
-                {/* X button, which is aligned with the right side of the screen */}
-                <Button 
-                    // Arrow function to navigate back to the root page
-                    onClick={() => navigate("/")}
-                    sx={{ 
-                        fontSize: "2.5rem", 
-                        color: "black",
-                        position: "absolute",
-                        right: "0.5rem",
+    if (isMobile) {
+        // Mobile component
+        return (
+            <Box>
+                {/* Header Box */}
+                <Box
+                    borderBottom="1px solid #ddd"
+                    bgcolor="white"
+                    sx={{
+                        width:"100%",
+                        height: "100%",
+                        display: "flex",
+                        justifyContent:"center",
+                        alignItems: "center", 
+                        textAlign:"center",
                     }}
                 >
-                    &times; {/* x symbol */}
-                </Button>
-            </Box>
-
-            {/* Event Picture */}
-            {/* TODO: implement this when possible */}
-            <p style={{ textAlign: "center"}}>
-                Event Picture Placeholder
-            </p>
-
-            {/* Event Details */}
-            <Box
-                sx={{ 
-                    px: 3 // Padding on left and right for the outer container
-                }}
-            >
-                {/* Event Title */}
-                <Box>
-                    <h1 id="EventPageTitle">{event.title}</h1>
+                    {/* Event Details text, that is centered */}
+                    <h1 id="EventPageHeader">Event Details</h1>
+                    
+                    {/* X button, which is aligned with the right side of the screen */}
+                    <Button 
+                        // Arrow function to navigate back to the root page
+                        onClick={() => navigate("/")}
+                        sx={{ 
+                            fontSize: "2.5rem", 
+                            color: "black",
+                            position: "absolute",
+                            right: "0.5rem",
+                        }}
+                    >
+                        &times; {/* x symbol */}
+                    </Button>
                 </Box>
-                {/* Date, time, and address */}
-                <Stack spacing={1}>
-                    {/* Date */}
-                    <Stack direction="row" alignItems="center" spacing={1}>
-                        <img src={Calendar} alt="Calendar Icon"/>
-                        <p id="EventPageP">
-                            {new Date(event.startdate).toLocaleDateString("en-US", {
-                                weekday: "long",
-                                month: "long",
-                                day: "numeric",
-                            })}
-                        </p>
-                    </Stack>
-                    {/* Time */}
-                    <Stack direction="row" alignItems="center" spacing={1}>
-                    <img src={Clock} alt="Clock Icon"/>
-                        <p id="EventPageP">
-                            {startDateTime.toLocaleTimeString("en-US", { hour: "numeric", minute: "numeric", hour12: true })} - {/* This comment apparently helps for whitespace. dont delete LOL. not a joke */}
-                            {endDateTime.toLocaleTimeString("en-US", { hour: "numeric", minute: "numeric", hour12: true })}
-                        </p>
-                    </Stack>
-                    {/* Address */}
-                    <Stack direction="row" alignItems="flex-start" spacing={1}>
-                        <img src={Location} alt="Location Icon"/>
-                        <p id="EventPageP">{event.address}</p>
-                    </Stack>
-                </Stack>
-                {/* Event Description */}
+
+                {/* Event Picture */}
+                {/* TODO: implement this when possible */}
+                <p style={{ textAlign: "center"}}>
+                    Event Picture Placeholder
+                </p>
+
+                {/* Event Details */}
                 <Box
                     sx={{ 
-                        "& h1": { mb: 1 }, //
-                        "& p": { mt: 0 } 
+                        px: 3 // Padding on left and right for the outer container
                     }}
                 >
-                    <h1 id="EventPageED">Event Description</h1>
-                    <p id="EventPageP">{event.description}</p>
+                    {/* Event Title */}
+                    <Box>
+                        <h1 id="EventPageTitle">{event.title}</h1>
+                    </Box>
+                    {/* Date, time, and address */}
+                    <Stack spacing={1}>
+                        {/* Date */}
+                        <Stack direction="row" alignItems="center" spacing={1}>
+                            <img src={Calendar} alt="Calendar Icon"/>
+                            <p id="EventPageP">
+                                {new Date(event.startdate).toLocaleDateString("en-US", {
+                                    weekday: "long",
+                                    month: "long",
+                                    day: "numeric",
+                                })}
+                            </p>
+                        </Stack>
+                        {/* Time */}
+                        <Stack direction="row" alignItems="center" spacing={1}>
+                        <img src={Clock} alt="Clock Icon"/>
+                            <p id="EventPageP">
+                                {startDateTime.toLocaleTimeString("en-US", { hour: "numeric", minute: "numeric", hour12: true })} - {/* This comment apparently helps for whitespace. dont delete LOL. not a joke */}
+                                {endDateTime.toLocaleTimeString("en-US", { hour: "numeric", minute: "numeric", hour12: true })}
+                            </p>
+                        </Stack>
+                        {/* Address */}
+                        <Stack direction="row" alignItems="flex-start" spacing={1}>
+                            <img src={Location} alt="Location Icon"/>
+                            <p id="EventPageP">{event.address}</p>
+                        </Stack>
+                    </Stack>
+                    {/* Event Description */}
+                    <Box
+                        sx={{ 
+                            "& h1": { mb: 1 }, //
+                            "& p": { mt: 0 } 
+                        }}
+                    >
+                        <h1 id="EventPageED">Event Description</h1>
+                        <p id="EventPageP">{event.description}</p>
+                    </Box>
+                </Box>
+                {/* Register button */}
+                <Box
+                    sx={{
+                        display: "flex",
+                        justifyContent:"center",
+                    }}
+                >
+                    <Button 
+                        variant="contained"
+                        sx={{
+                            backgroundColor: "#F68F8D", 
+                            borderRadius: "20px", 
+                            //fontFamily: "Poppins", // this does nothing?
+                            "&:hover": {
+                                backgroundColor: "#A50B07",
+                            },
+                        }}
+                    >
+                        Register
+                    </Button>
                 </Box>
             </Box>
-            {/* Register button */}
-            <Box
-                sx={{
-                    display: "flex",
-                    justifyContent:"center",
-                  }}
-            >
-                <Button 
-                    variant="contained"
+        );
+    } else {
+        // Desktop component
+        return (
+            <Box>
+                {/* Header Box */}
+                <Box
                     sx={{
-                        backgroundColor: "#F68F8D", 
-                        borderRadius: "20px", 
-                        //fontFamily: "Poppins", // this does nothing?
-                        "&:hover": {
-                            backgroundColor: "#A50B07",
-                        },
+                        width:"100%",
+                        height: "100%",
+                        display: "flex",
+                        mx: "2.5rem", // Margin left and right
                     }}
                 >
-                    Register
-                </Button>
+                    {/* Event Details text, that is centered */}
+                    <h1 id="EventPageHeaderDesktop">Event Details</h1>
+                </Box>
+                {/* Box here that makes the background of all the content white */}
+                <Box
+                    borderBottom="1px solid #ddd"
+                    bgcolor="white"
+                    mx="2.5rem"
+                >
+                    {/* Put picture on the left, and Event Details to its right */}
+                    <Box 
+                        sx={{ 
+                            display: "flex", 
+                            gap: "1rem",
+                            alignItems: "center",    // Center vertically
+                            textAlign: "center",     // Ensures the text inside is centered
+                        }}
+                    >
+                        {/* Event Picture */}
+                        {/* TODO: implement this when possible */}
+                        <Box
+                            sx={{ 
+                                marginLeft: "1.5rem",
+                                marginRight: "1.5rem",
+                                marginTop: "1.5rem",
+                            }}
+                        >
+                            <p>
+                                Event Picture Placeholder
+                            </p>
+                        </Box>
+                        {/* Event Title */}
+                        {/* Date, time, and address */}
+                        <Box
+                            sx={{ 
+                                marginTop: "1.5rem",
+                                marginRight: "1.5rem",
+                                display: "flex",
+                                flexDirection: "column", // Ensures title and details stack vertically
+                                alignItems: "flex-start", // Align all children to the left
+                            }}
+                        >
+                            {/* Title */}
+                            <h1 id="EventPageTitleDesktop" style={{ marginBottom: 0, marginTop: 0, }}>{event.title}</h1>
+                            <Stack spacing={1}>
+                                {/* Date */}
+                                <Stack direction="row" alignItems="center" spacing={1}>
+                                    <img src={CalendarDesktop} alt="Calendar Icon"/>
+                                    <p id="EventPagePDesktop">
+                                        {new Date(event.startdate).toLocaleDateString("en-US", {
+                                            weekday: "long",
+                                            month: "long",
+                                            day: "numeric",
+                                        })}
+                                    </p>
+                                </Stack>
+                                {/* Time */}
+                                <Stack direction="row" alignItems="center" spacing={1.2}>
+                                    <img src={ClockDesktop} alt="Clock Icon"/>
+                                    <p id="EventPagePDesktop">
+                                        {startDateTime.toLocaleTimeString("en-US", { hour: "numeric", minute: "numeric", hour12: true })} - {/* This comment apparently helps for whitespace. dont delete LOL. not a joke */}
+                                        {endDateTime.toLocaleTimeString("en-US", { hour: "numeric", minute: "numeric", hour12: true })}
+                                    </p>
+                                </Stack>
+                                {/* Address */}
+                                <Stack direction="row" alignItems="center" spacing={1.6}>
+                                    <img src={LocationDesktop} alt="Location Icon" style={{ marginLeft: "2px" }}/>
+                                    <p id="EventPagePDesktop">{event.address}</p>
+                                </Stack>
+                            </Stack>
+                        </Box>
+                    </Box>
+                    {/* Event Details */}
+                    <Box
+                        sx={{ 
+                            px: 3 // Padding on left and right for the outer container
+                        }}
+                    >
+                        {/* Event Description */}
+                        <Box
+                            sx={{ 
+                                "& h1": { mb: 1 }, // margin bottom of 8px
+                                "& p": { mt: 0 } // margin top of 0px
+                            }}
+                        >
+                            <h1 id="EventPageEDDesktop">Event Description</h1>
+                            <p id="EventPagePDesktop">{event.description}</p>
+                            {/* Register button */}
+                            <Button 
+                                variant="contained"
+                                sx={{
+                                    marginBottom: "1.5rem",
+                                    backgroundColor: "#F68F8D", 
+                                    borderRadius: "30px", // This is different compared to the 20px in mobile version
+                                    fontSize: "20px",
+                                    //fontFamily: "Poppins", // this does nothing?
+                                    "&:hover": {
+                                        backgroundColor: "#A50B07",
+                                    },
+                                }}
+                            >
+                            Register
+                            </Button>
+                        </Box>
+                    </Box>
+                </Box>
             </Box>
-        </Box>
-    );
+        );
+    }
 };
 
 export default EventPage;
