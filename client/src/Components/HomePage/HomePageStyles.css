@@ -136,7 +136,10 @@
     font-size: 1.2vw;
 }
 
-.homeEventIcons {
+.homeEventIconsMobile {
+    margin-right: 2px;
+}
+.homeEventIconsDesktop {
     margin-right: 4px;
 }
 
