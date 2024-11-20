@@ -73,7 +73,7 @@
 .homeUpcomingEventPhoto {
     background-color: gray;
     height: 130px;
-    width: 100px;
+    min-width: 100px;
     margin-left: 10px;
     border-radius: 15px;
 }
@@ -108,5 +108,49 @@
 .homeEventIcon {
     height: 1em;
     width: auto;
-    margin-right: 4px;
+    margin-right: 6px;
+}
+
+#homeDesktopStack {
+    padding: 3vw;
+}
+
+.homeUpcomingEventBoxDesktop {
+    margin: 0;
+    background-color: white;
+    border-radius: 15px;
+    text-align: center;
+    height: 150px;
+    display: flex;
+    align-items: center;
+    justify-content: left;
+}
+
+.homeEventNameDesktop {
+    font-size: 1.5vw;
+    font-weight: bold;
+}
+
+.homeEventDateDesktop {
+    font-size: 1.2vw;
+}
+
+.homeEventTimeDesktop {
+    font-size: 1.2vw;
+}
+
+.homeEventLocationDesktop {
+    font-size: 1.2vw;
+}
+
+.homeUpcomingEventDetailsDesktop {
+    width: 100%;
+    padding: 2vw;
+    justify-content: space-between;
+}
+
+.homeUpcomingEventDetailsDesktop > div {
+    margin-bottom: 0px;
+    display: flex;
+    align-items: center;
 }
