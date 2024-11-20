@@ -9,7 +9,46 @@ import ColorLensIcon from '@mui/icons-material/ColorLens';
 import GroupsIcon from '@mui/icons-material/Groups';
 import SportsEsportsIcon from '@mui/icons-material/SportsEsports';
 
+import ClockDesktop from '../../images/ClockDesktop.png';
+import LocationDesktop from '../../images/LocationDesktop.png';
+
 import './HomePageStyles.css';
+
+const events = [
+  {
+      "id": "1",
+      "title": "Football Game",
+      "eventtype": "Sports",
+      "description": "A friendly neighborhood football game.",
+      "address": "123 Stadium Rd, City",
+      "coordinates": {
+          "x": 40.7128,
+          "y": -74.006
+      },
+      "startdate": "2024-11-15T00:00:00.000Z",
+      "starttime": "15:00:00+00",
+      "enddate": "2024-11-15T00:00:00.000Z",
+      "endtime": "17:00:00+00",
+      "visibility": true
+  },
+  {
+      "id": "2",
+      "title": "Jazz Concert",
+      "eventtype": "Music",
+      "description": "Live jazz performance.",
+      "address": "456 Music Hall Ave, City",
+      "coordinates": {
+          "x": 40.7306,
+          "y": -73.9352
+      },
+      "startdate": "2024-12-01T00:00:00.000Z",
+      "starttime": "19:00:00+00",
+      "enddate": "2024-12-01T00:00:00.000Z",
+      "endtime": "21:00:00+00",
+      "visibility": true
+  }
+];
+
 const HomePage = () => {
   const isMobile = useMediaQuery("(max-width:600px)");
 
@@ -25,7 +64,7 @@ const HomePage = () => {
         >
           <h1>Events</h1>
           <Box>
-            <Button variant="contained" sx={{borderRadius:"20px",}} startIcon={<AccountCircleIcon/>}>
+            <Button variant="contained" sx={{borderRadius:"20px"}} startIcon={<AccountCircleIcon/>}>
               <Box id="homeLoginButton"> Login </Box>   
             </Button>
           </Box>
@@ -92,10 +131,17 @@ const HomePage = () => {
             </Box>           
           </Stack>
 
-          <Box>
-            <h1> Upcoming Events</h1>
+          <Box id="homeUpcomingHeader"> Upcoming Events </Box>
+
+          <Box class="homeUpcomingEventBox"> 
+            <Box class="homeUpcomingEventPhoto">temp</Box>
+             <Stack class="homeUpcomingEventDetails">
+              <Box class="homeEventDate"> Thursday, November 14 </Box>
+              <Box class="homeEventName"> Football Game </Box>
+              <Box class="homeEventTime"> <img src={ClockDesktop} alt="Clock Icon" class="homeEventIcon"/>8:00 AM </Box>
+              <Box class="homeEventLocation">  <img src={LocationDesktop} alt="Location Icon" class="homeEventIcon"/>123 Stadium Rd, City </Box>
+             </Stack>
           </Box>
-        
           
         </Stack>
         

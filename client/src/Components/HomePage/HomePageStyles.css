@@ -50,3 +50,63 @@
     margin-right: 4vw;
     height: 90%;
 }
+
+#homeUpcomingHeader {
+    padding: 5vw;
+    padding-bottom: 0;
+    margin: 0;
+    font-size: 2.5vh;
+    font-weight: bold;
+}
+
+.homeUpcomingEventBox {
+    margin: 5vw;
+    background-color: white;
+    border-radius: 15px;
+    text-align: center;
+    height: 150px;
+    display: flex;
+    align-items: center;
+    justify-content: left;
+}
+
+.homeUpcomingEventPhoto {
+    background-color: gray;
+    height: 130px;
+    width: 100px;
+    margin-left: 10px;
+    border-radius: 15px;
+}
+
+.homeUpcomingEventDetails {
+    height: 130px;
+    margin-left: 20px;
+    text-align: left;
+}
+
+.homeUpcomingEventDetails > div {
+    margin-bottom: 4px;
+}
+
+.homeEventDate {
+    font-size: 14px;
+}
+
+.homeEventName {
+    font-size: 16px;
+    font-weight: bold;
+}
+
+.homeEventTime {
+    font-size: 12px;
+}
+
+.homeEventLocation {
+    font-size: 12px;
+}
+
+.homeEventIcon {
+    height: 1em;
+    width: auto;
+    margin-right: 4px;
+}
