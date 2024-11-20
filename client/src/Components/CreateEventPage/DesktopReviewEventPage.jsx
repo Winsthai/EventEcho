@@ -7,6 +7,10 @@ export default function DesktopReviewEventPage() {
 
   return (
     <Box sx={{ margin: 10, zIndex: 2 }}>
+      {/* add code here */}
+
+
+      {/* can ignore this below for now I think */}
       {onEditPage ? <div>hello review event page (edit)</div> : <div>hello review event page (create)</div>}
     </Box>
 
