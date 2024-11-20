@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import NoCreatedEvents from "./Components/NoCreatedEvents";
 import NoUpcomingEvents from "./Components/NoUpcomingEvents";
+import EventCard from "../EventCard/EventCard";
 
 // Test data for now, getting users not implemented in backend yet so params could change
 const testUsers = [
@@ -101,7 +102,12 @@ const UserPage = () => {
       </Typography>
       {/* Your Registered Events Section */}
       {user.createdEvents.length !== 0 ? (
-        <></>
+        <>
+          <Typography variant="h5" sx={{ fontWeight: "bold", mb: 2 }}>
+            Your Hosted Events
+          </Typography>
+          <EventCard></EventCard>
+        </>
       ) : (
         <NoCreatedEvents></NoCreatedEvents>
       )}
@@ -111,7 +117,11 @@ const UserPage = () => {
         Your Upcoming Events
       </Typography>
       {user.registeredEvents.length !== 0 ? (
-        <></>
+        <>
+          {user.registeredEvents.map((event) => (
+            <EventCard key={event.id} event={event}></EventCard>
+          ))}
+        </>
       ) : (
         <NoUpcomingEvents></NoUpcomingEvents>
       )}

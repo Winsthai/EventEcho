@@ -1,5 +1,5 @@
 .homeUpcomingEventBox {
-    margin: 5vw;
+    margin-bottom: 2vh;
     background-color: white;
     border-radius: 15px;
     text-align: center;
@@ -45,7 +45,7 @@
 }
 
 .homeUpcomingEventBoxDesktop {
-    margin: 0;
+    margin: 4vh;
     background-color: white;
     border-radius: 15px;
     text-align: center;
