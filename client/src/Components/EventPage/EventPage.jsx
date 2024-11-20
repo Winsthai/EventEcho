@@ -9,6 +9,9 @@ import Location from '../../images/Location.png';
 import CalendarDesktop from '../../images/CalendarDesktop.png';
 import ClockDesktop from '../../images/ClockDesktop.png';
 import LocationDesktop from '../../images/LocationDesktop.png';
+import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
+import AccessTimeIcon from '@mui/icons-material/AccessTime';
+import LocationOnIcon from '@mui/icons-material/LocationOn';
 
 
 import './EventPage.css';
@@ -131,7 +134,7 @@ const EventPage = () => {
                     <Stack spacing={1}>
                         {/* Date */}
                         <Stack direction="row" alignItems="center" spacing={1}>
-                            <img src={Calendar} alt="Calendar Icon"/>
+                            <CalendarMonthIcon/>
                             <p id="EventPageP">
                                 {new Date(event.startdate).toLocaleDateString("en-US", {
                                     weekday: "long",
@@ -142,7 +145,7 @@ const EventPage = () => {
                         </Stack>
                         {/* Time */}
                         <Stack direction="row" alignItems="center" spacing={1}>
-                        <img src={Clock} alt="Clock Icon"/>
+                            <AccessTimeIcon/>
                             <p id="EventPageP">
                                 {startDateTime.toLocaleTimeString("en-US", { hour: "numeric", minute: "numeric", hour12: true })} - {/* This comment apparently helps for whitespace. dont delete LOL. not a joke */}
                                 {endDateTime.toLocaleTimeString("en-US", { hour: "numeric", minute: "numeric", hour12: true })}
@@ -150,7 +153,7 @@ const EventPage = () => {
                         </Stack>
                         {/* Address */}
                         <Stack direction="row" alignItems="flex-start" spacing={1}>
-                            <img src={Location} alt="Location Icon"/>
+                            <LocationOnIcon/>
                             <p id="EventPageP">{event.address}</p>
                         </Stack>
                     </Stack>
