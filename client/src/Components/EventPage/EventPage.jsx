@@ -133,7 +133,7 @@ const EventPage = () => {
                     {/* Date, time, and address */}
                     <Stack spacing={1}>
                         {/* Date */}
-                        <Stack direction="row" alignItems="center" spacing={1}>
+                        <Stack direction="row" alignItems="center" spacing={1} color="text.secondary">
                             <CalendarMonthIcon/>
                             <p id="EventPageP">
                                 {new Date(event.startdate).toLocaleDateString("en-US", {
@@ -144,7 +144,7 @@ const EventPage = () => {
                             </p>
                         </Stack>
                         {/* Time */}
-                        <Stack direction="row" alignItems="center" spacing={1}>
+                        <Stack direction="row" alignItems="center" spacing={1} color="text.secondary">
                             <AccessTimeIcon/>
                             <p id="EventPageP">
                                 {startDateTime.toLocaleTimeString("en-US", { hour: "numeric", minute: "numeric", hour12: true })} - {/* This comment apparently helps for whitespace. dont delete LOL. not a joke */}
@@ -152,7 +152,7 @@ const EventPage = () => {
                             </p>
                         </Stack>
                         {/* Address */}
-                        <Stack direction="row" alignItems="flex-start" spacing={1}>
+                        <Stack direction="row" alignItems="flex-start" spacing={1} color="text.secondary">
                             <LocationOnIcon/>
                             <p id="EventPageP">{event.address}</p>
                         </Stack>
