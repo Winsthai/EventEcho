@@ -25,8 +25,8 @@ export default function CreateEventPage() {
   };
 
   return (
-    <Box
-      component="section"
+    // Page Container
+    <Box component="section"
       sx={{
         width: "100%",
         height: "100%",
@@ -91,14 +91,16 @@ export default function CreateEventPage() {
 
           {/* Location */}
           <TextField required id="event-location" label="Location" variant="outlined"
-            InputProps={{
-              startAdornment: (
-                <InputAdornment position="start">
-                  <IconButton edge="start">
-                    <PlaceIcon />
-                  </IconButton>
-                </InputAdornment>
-              )
+            slotProps={{
+              input: {
+                startAdornment: (
+                  <InputAdornment position="start">
+                    <IconButton edge="start">
+                      <PlaceIcon />
+                    </IconButton>
+                  </InputAdornment>
+                )
+              }
             }}
           />
 
