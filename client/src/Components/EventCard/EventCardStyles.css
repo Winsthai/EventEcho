@@ -1,0 +1,94 @@
+.homeUpcomingEventBox {
+    margin: 5vw;
+    background-color: white;
+    border-radius: 15px;
+    text-align: center;
+    height: 150px;
+    display: flex;
+    align-items: center;
+    justify-content: left;
+}
+
+.homeUpcomingEventPhoto {
+    background-color: gray;
+    height: 130px;
+    min-width: 100px;
+    margin-left: 10px;
+    border-radius: 15px;
+}
+
+.homeUpcomingEventDetails {
+    height: 130px;
+    margin-left: 15px;
+    text-align: left;
+}
+
+.homeUpcomingEventDetails > div {
+    margin-bottom: 4px;
+}
+
+.homeEventDate {
+    font-size: 14px;
+}
+
+.homeEventName {
+    font-size: 16px;
+    font-weight: bold;
+}
+
+.homeEventTime {
+    font-size: 12px;
+}
+
+.homeEventLocation {
+    font-size: 12px;
+}
+
+.homeUpcomingEventBoxDesktop {
+    margin: 0;
+    background-color: white;
+    border-radius: 15px;
+    text-align: center;
+    height: 150px;
+    display: flex;
+    align-items: center;
+    justify-content: left;
+}
+
+.homeEventNameDesktop {
+    font-size: 1.5vw;
+    font-weight: bold;
+}
+
+.homeEventDateDesktop {
+    display: flex;
+    align-items: center;
+    font-size: 1.2vw;
+}
+
+.homeEventIconsMobile {
+    margin-right: 2px;
+}
+.homeEventIconsDesktop {
+    margin-right: 4px;
+}
+
+.homeEventTimeDesktop {
+    font-size: 1.2vw;
+}
+
+.homeEventLocationDesktop {
+    font-size: 1.2vw;
+}
+
+.homeUpcomingEventDetailsDesktop {
+    width: 100%;
+    padding: 2vw;
+    justify-content: space-between;
+}
+
+.homeUpcomingEventDetailsDesktop > div {
+    margin-bottom: 0px;
+    display: flex;
+    align-items: center;
+}
