@@ -80,7 +80,7 @@
 
 .homeUpcomingEventDetails {
     height: 130px;
-    margin-left: 20px;
+    margin-left: 15px;
     text-align: left;
 }
 
@@ -106,9 +106,8 @@
 }
 
 .homeEventIcon {
-    height: 1em;
-    width: auto;
-    margin-right: 6px;
+    font-size: 16px;
+    margin-right: 2px;
 }
 
 #homeDesktopStack {
@@ -132,7 +131,13 @@
 }
 
 .homeEventDateDesktop {
+    display: flex;
+    align-items: center;
     font-size: 1.2vw;
+}
+
+.homeEventIcons {
+    margin-right: 4px;
 }
 
 .homeEventTimeDesktop {

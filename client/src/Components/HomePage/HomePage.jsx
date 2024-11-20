@@ -8,10 +8,13 @@ import LocalDiningIcon from '@mui/icons-material/LocalDining';
 import ColorLensIcon from '@mui/icons-material/ColorLens';
 import GroupsIcon from '@mui/icons-material/Groups';
 import SportsEsportsIcon from '@mui/icons-material/SportsEsports';
+import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
+import AccessTimeIcon from '@mui/icons-material/AccessTime';
+import LocationOnIcon from '@mui/icons-material/LocationOn';
 
-import CalendarDesktop from '../../images/CalendarDesktop.png';
-import ClockDesktop from '../../images/ClockDesktop.png';
-import LocationDesktop from '../../images/LocationDesktop.png';
+// import CalendarDesktop from '../../images/CalendarDesktop.png';
+// import ClockDesktop from '../../images/ClockDesktop.png';
+// import LocationDesktop from '../../images/LocationDesktop.png';
 
 import './HomePageStyles.css';
 
@@ -136,12 +139,13 @@ const HomePage = () => {
 
           <Box className="homeUpcomingEventBox"> 
             <Box className="homeUpcomingEventPhoto">temp</Box>
-             <Stack className="homeUpcomingEventDetails">
+
+            <Stack className="homeUpcomingEventDetails">
               <Box className="homeEventDate" color="text.secondary"> Thursday, November 14 </Box>
               <Box className="homeEventName"> Football Game </Box>
-              <Box className="homeEventTime" color="text.secondary"> <img src={ClockDesktop} alt="Clock Icon" className="homeEventIcon"/>8:00 AM </Box>
-              <Box className="homeEventLocation" color="text.secondary">  <img src={LocationDesktop} alt="Location Icon" className="homeEventIcon"/>123 Stadium Rd, City </Box>
-             </Stack>
+              <Stack direction="row" alignItems="center" className="homeEventTime" color="text.secondary"> <AccessTimeIcon sx={{fontSize:"1rem", marginRight:"2px"}}/> 8:00 AM </Stack>
+              <Stack direction="row" alignItems="center" className="homeEventLocation" color="text.secondary"> <LocationOnIcon sx={{fontSize:"1rem", marginRight:"2px"}}/>123 Stadium Rd, City </Stack>
+            </Stack>
           </Box>
           
         </Stack>
@@ -157,9 +161,9 @@ const HomePage = () => {
             <Box className="homeUpcomingEventPhoto">temp</Box>
              <Stack className="homeUpcomingEventDetailsDesktop" direction="row">
               <Box className="homeEventNameDesktop"> Football Game </Box>
-              <Box className="homeEventDateDesktop" color="text.secondary"> <img src={CalendarDesktop} alt="Calendar Icon"/> Thursday, November 14 </Box>
-              <Box className="homeEventTimeDesktop" color="text.secondary"> <img src={ClockDesktop} alt="Clock Icon" className="homeEventIcon"/> 8:00 AM </Box>
-              <Box className="homeEventLocationDesktop" color="text.secondary">  <img src={LocationDesktop} alt="Location Icon" className="homeEventIcon"/> 123 Stadium Rd, City </Box>
+              <Box className="homeEventDateDesktop" color="text.secondary"> <CalendarMonthIcon className="homeEventIcons" sx={{fontSize:"1em"}}/> Thursday, November 14 </Box>
+              <Box className="homeEventTimeDesktop" color="text.secondary"> <AccessTimeIcon className="homeEventIcons" sx={{fontSize:"1em"}}/> 8:00 AM </Box>
+              <Box className="homeEventLocationDesktop" color="text.secondary">  <LocationOnIcon className="homeEventIcons" sx={{fontSize:"1em"}}/> 123 Stadium Rd, City </Box>
               <Box>
                 <Button 
                   variant="contained" 
