@@ -1,0 +1,78 @@
+.mobile-container {
+    padding: 16px;
+    font-family: "Arial", sans-serif;
+  }
+  
+  .mobile-header {
+    font-size: 20px;
+    margin-bottom: 16px;
+    display: flex;
+    justify-content: space-between;
+  }
+  
+  .mobile-searchInput {
+    width: 100%;
+    padding: 8px;
+    margin-bottom: 16px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+  }
+  
+  .mobile-contactList {
+    list-style-type: none;
+    padding: 0;
+  }
+  
+  .mobile-contactItem {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 0;
+    border-bottom: 1px solid #ddd;
+  }
+  
+  .mobile-contactInfo {
+    display: flex;
+    align-items: center;
+  }
+  
+  .mobile-avatar {
+    width: 40px;
+    height: 40px;
+    background-color: #f2f2f2;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    margin-right: 8px;
+  }
+  
+  .mobile-name {
+    font-size: 16px;
+    margin: 0;
+  }
+  
+  .mobile-phone {
+    font-size: 12px;
+    color: #888;
+    margin: 0;
+  }
+  
+  .mobile-checkbox {
+    width: 20px;
+    height: 20px;
+  }
+  
+  .mobile-reviewButton {
+    width: 100%;
+    padding: 12px;
+    margin-top: 16px;
+    background-color: #ff5c5c;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    font-size: 16px;
+    cursor: pointer;
+  }
+  

@@ -1,4 +1,8 @@
 import React, { useState } from "react";
+import { useMediaQuery } from "@mui/material";
+import "./MobileInviteGuests.css";
+import "./DesktopInviteGuests.css";
+import arrowIcon from '../../images/arrow button.png';
 
 const contacts = [
   { id: 1, name: "Steven Nguyen", phone: "(403)-000-0000" },
@@ -10,6 +14,7 @@ const contacts = [
 
 function CreateEventPageInvite() {
   const [selectedContacts, setSelectedContacts] = useState([]);
+  const isMobile = useMediaQuery("(max-width:600px)");
 
   const handleSelect = (id) => {
     setSelectedContacts((prev) =>
@@ -23,106 +28,85 @@ function CreateEventPageInvite() {
     alert(`Selected contacts: ${selectedContacts.join(", ")}`);
   };
 
-  return (
-    <div style={styles.container}>
-      <h2 style={styles.header}>Invite Guests</h2>
+  // Mobile Layout
+  const MobileLayout = () => (
+    <div className="mobile-container">
+        <div className="mobile-header">
+            <button className="header-button">
+                <img src={arrowIcon} alt="Arrow"/>
+            </button>
+            <h2>Invite Guests</h2>
+        </div>
       <input
         type="text"
         placeholder="Search contacts"
-        style={styles.searchInput}
+        className="mobile-searchInput"
       />
-      <ul style={styles.contactList}>
+      <ul className="mobile-contactList">
         {contacts.map((contact) => (
-          <li key={contact.id} style={styles.contactItem}>
-            <div style={styles.contactInfo}>
-              <div style={styles.avatar}>{contact.name[0]}</div>
+          <li key={contact.id} className="mobile-contactItem">
+            <div className="mobile-contactInfo">
+              <div className="mobile-avatar">{contact.name[0]}</div>
               <div>
-                <p style={styles.name}>{contact.name}</p>
-                <p style={styles.phone}>{contact.phone}</p>
+                <p className="mobile-name">{contact.name}</p>
+                <p className="mobile-phone">{contact.phone}</p>
               </div>
             </div>
             <input
               type="checkbox"
               checked={selectedContacts.includes(contact.id)}
               onChange={() => handleSelect(contact.id)}
-              style={styles.checkbox}
+              className="mobile-checkbox"
             />
           </li>
         ))}
       </ul>
-      <button style={styles.reviewButton}>
+      <button onClick={handleReview} className="mobile-reviewButton">
         Review Event Details
       </button>
     </div>
   );
-}
 
-const styles = {
-  container: {
-    padding: "16px",
-    fontFamily: "'Arial', sans-serif",
-  },
-  header: {
-    fontSize: "24px",
-    marginBottom: "16px",
-  },
-  searchInput: {
-    width: "100%",
-    padding: "8px",
-    marginBottom: "16px",
-    border: "1px solid #ddd",
-    borderRadius: "4px",
-  },
-  contactList: {
-    listStyleType: "none",
-    padding: 0,
-  },
-  contactItem: {
-    display: "flex",
-    justifyContent: "space-between",
-    alignItems: "center",
-    padding: "8px 0",
-    borderBottom: "1px solid #ddd",
-  },
-  contactInfo: {
-    display: "flex",
-    alignItems: "center",
-  },
-  avatar: {
-    width: "40px",
-    height: "40px",
-    backgroundColor: "#f2f2f2",
-    borderRadius: "50%",
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
-    fontWeight: "bold",
-    marginRight: "8px",
-  },
-  name: {
-    fontSize: "16px",
-    margin: 0,
-  },
-  phone: {
-    fontSize: "12px",
-    color: "#888",
-    margin: 0,
-  },
-  checkbox: {
-    width: "20px",
-    height: "20px",
-  },
-  reviewButton: {
-    width: "100%",
-    padding: "12px",
-    marginTop: "16px",
-    backgroundColor: "#ff5c5c",
-    color: "#fff",
-    border: "none",
-    borderRadius: "4px",
-    fontSize: "16px",
-    cursor: "pointer",
-  },
-};
+  // Desktop Layout
+  const DesktopLayout = () => (
+    <div className="desktop-container">
+      <div className="desktop-content">
+        <h2>Create a New Event</h2>
+        <div className="desktop-progress">
+          <span>Event Details</span>
+          <span className="desktop-activeStep">Invite Guests</span>
+          <span>Review and Post</span>
+        </div>
+        <input
+          type="text"
+          placeholder="Search Contacts"
+          className="desktop-searchInput"
+        />
+        <div className="desktop-contactGrid">
+          {contacts.map((contact) => (
+            <div key={contact.id} className="desktop-contactCard">
+                <input
+                type="checkbox"
+                checked={selectedContacts.includes(contact.id)}
+                onChange={() => handleSelect(contact.id)}
+                className="desktop-checkbox"
+              />
+              <div className="desktop-avatar">{contact.name[0]}</div>
+              <div>
+                <p className="desktop-name">{contact.name}</p>
+                <p className="desktop-phone">{contact.phone}</p>
+              </div>
+            </div>
+          ))}
+        </div>
+        <button onClick={handleReview} className="desktop-reviewButton">
+          Review Event Details
+        </button>
+      </div>
+    </div>
+  );
+
+  return isMobile ? <MobileLayout /> : <DesktopLayout />;
+}
 
 export default CreateEventPageInvite;
