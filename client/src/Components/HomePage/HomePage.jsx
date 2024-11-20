@@ -158,8 +158,8 @@ const HomePage = () => {
       <Stack direction="column" id="homeDesktopStack">
         <h1 style={{marginTop:"0"}}>Upcoming Events</h1>
         <Box className="homeUpcomingEventBoxDesktop"> 
-            <Box className="homeUpcomingEventPhoto">temp</Box>
-             <Stack className="homeUpcomingEventDetailsDesktop" direction="row">
+          <Box className="homeUpcomingEventPhoto">temp</Box>
+            <Stack className="homeUpcomingEventDetailsDesktop" direction="row">
               <Box className="homeEventNameDesktop"> Football Game </Box>
               <Box className="homeEventDateDesktop" color="text.secondary"> <CalendarMonthIcon className="homeEventIconsDesktop" sx={{fontSize:"1em"}}/> Thursday, November 14 </Box>
               <Box className="homeEventTimeDesktop" color="text.secondary"> <AccessTimeIcon className="homeEventIconsDesktop" sx={{fontSize:"1em"}}/> 8:00 AM </Box>
@@ -172,9 +172,8 @@ const HomePage = () => {
                   Register 
                 </Button>
               </Box>
-              
-             </Stack>
-          </Box>
+            </Stack>
+        </Box>
       </Stack>
 
     );
