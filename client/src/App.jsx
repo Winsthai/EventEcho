@@ -3,12 +3,17 @@ import HomePage from "./Components/HomePage/HomePage";
 import EventPage from "./Components/EventPage/EventPage";
 import CreateEventPage from "./Components/CreateEventPage/CreateEventPage";
 import EditEventPage from "./Components/EditEventPage/EditEventPage";
+import DesktopEditEventPage from "./Components/EditEventPage/DesktopEditEventPage";
 import MobileNavBar from "./Components/MobileNavBar";
 import LoginPage from "./Components/LoginPage/LoginPage";
 import SignUpPage from "./Components/SignUpPage/SignUpPage";
 import { useMediaQuery } from "@mui/material";
 import NavBar from "./Components/NavBar";
 import UserPage from "./Components/UserPage/UserPage";
+import CreatePagesRoutes from "./CreatePagesRoutes";
+import EditPagesRoutes from "./EditPagesRoutes";
+import ReviewEventPage from "./Components/ReviewEventPage/ReviewEventPage";
+
 
 function App() {
   // Use media query to check if screen width is less than 600px (mobile view)
@@ -22,13 +27,15 @@ function App() {
           <Route path="/" element={<HomePage></HomePage>}></Route>
           <Route path="/event/:id" element={<EventPage></EventPage>}></Route>
           <Route
-            path="/event/:id/edit"
-            element={<EditEventPage></EditEventPage>}
+            path="/editEvent/:id/*"
+            element={isMobile ? <EditEventPage></EditEventPage> : <EditPagesRoutes></EditPagesRoutes>}
           ></Route>
           <Route
-            path="/createEvent"
-            element={<CreateEventPage></CreateEventPage>}
+            path="/createEvent/*"
+            element={isMobile ? <CreateEventPage></CreateEventPage> : <CreatePagesRoutes></CreatePagesRoutes>}
           ></Route>
+
+          <Route path="/createEvent/reviewEvent" element={<ReviewEventPage></ReviewEventPage>}></Route>
           <Route path="/user/:id" element={<UserPage></UserPage>}></Route>
           <Route path="/login" element={<LoginPage></LoginPage>}></Route>
           <Route path="/signUp" element={<SignUpPage></SignUpPage>}></Route>

@@ -6,13 +6,13 @@ import PersonIcon from "@mui/icons-material/Person";
 import { useNavigate } from "react-router-dom"; // Import useNavigate from react-router-dom
 
 const chipStyle = {
-  backgroundColor: "primary",
+  backgroundColor: "primary.main",
   color: "white",
   "& .MuiChip-icon": {
     color: "white",
   },
   "&:hover": {
-    backgroundColor: "darkred",
+    backgroundColor: "primary.dark",
     cursor: "pointer",
   },
 };
@@ -35,6 +35,7 @@ const NavBar = () => {
         borderBottom: "1px solid #ddd",
         gap: "16px",
         overflow: "hidden", // Prevents content from spilling out
+        zIndex: 1000
       }}
     >
       {/* Logo */}
