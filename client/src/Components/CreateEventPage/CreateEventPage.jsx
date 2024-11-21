@@ -14,161 +14,175 @@ import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { TimePicker } from '@mui/x-date-pickers/TimePicker';
+import { useMediaQuery } from "@mui/material";
 
 
 export default function CreateEventPage() {
-  // const CreateEventPage = () => {
+  const isMobile = useMediaQuery("(max-width:600px)");
+  const onEditPage = location.pathname.includes("edit");
   const [eventType, setEventType] = React.useState('');
 
   const handleChange = (event) => {
     setEventType(event.target.value);
   };
 
-  return (
-    // Page Container
-    <Box component="section"
-      sx={{
-        width: "100%",
-        height: "100%",
-        display: "flex",
-        justifyContent: "center",
-        flexDirection: "column",
-        alignItems: "center",
-        textAlign: "center",
-        overflowY: "auto"
-      }}
-    >
-      {/* Top App Bar */}
+  // mobile component
+  if (isMobile) {
+    return (
+      // Page Container
       <Box component="section"
         sx={{
           width: "100%",
-          height: "20%",
-          position: "fixed",
-          top: 0,
-          left: 0,
-          zIndex: 1000
+          height: "100%",
+          display: "flex",
+          justifyContent: "center",
+          flexDirection: "column",
+          alignItems: "center",
+          textAlign: "center",
+          overflowY: "auto"
         }}
       >
-        <AppBar position="static" sx={{ mb: 2 }}>
-          <Toolbar sx={{ color: "secondary" }}>
-            <Box sx={{ flexGrow: 1, display: "flex" }}>
-              <IconButton edge="start" color="inherit" aria-label="back" sx={{ mr: 2 }}>
-                <ArrowBackIcon />
-              </IconButton>
-            </Box>
-            <Typography variant="h6" component="div" sx={{ flexGrow: 0 }}>
-              Create a New Event
-            </Typography>
-            <Box sx={{ flexGrow: 2 }} />
-          </Toolbar>
-        </AppBar>
-      </Box>
-
-      {/* forms */}
-      <Box component="form" sx={{ width: "85%", height: "100%", pt: 8, pb: 8 }}>
-        <Stack
-          direction="column"
-          spacing={2}
-          sx={{ height: "100%", padding: 2 }}
+        {/* Top App Bar */}
+        <Box component="section"
+          sx={{
+            width: "100%",
+            height: "20%",
+            position: "fixed",
+            top: 0,
+            left: 0,
+            zIndex: 1000
+          }}
         >
-          {/* Event title */}
-          <TextField required id="event-title" label="Event Title" variant="outlined" sx={{ pb: 2 }} />
+          <AppBar position="static" sx={{ mb: 2 }}>
+            <Toolbar sx={{ color: "secondary" }}>
+              <Box sx={{ flexGrow: 1, display: "flex" }}>
+                <IconButton edge="start" color="inherit" aria-label="back" sx={{ mr: 2 }}>
+                  <ArrowBackIcon />
+                </IconButton>
+              </Box>
+              <Typography variant="h6" component="div" sx={{ flexGrow: 0 }}>
+                Create a New Event
+              </Typography>
+              <Box sx={{ flexGrow: 2 }} />
+            </Toolbar>
+          </AppBar>
+        </Box>
 
-          {/* Event Type */}
-          <FormControl fullWidth sx={{ pb: 2 }}>
-            <InputLabel id="event-type">Event Type *</InputLabel>
-            <Select labelId="select-event-type" value={eventType} label="Event Types" onChange={handleChange}>
-              <MenuItem value="Sports">Sports</MenuItem>
-              <MenuItem value="Music">Music</MenuItem>
-              <MenuItem value="Food">Food</MenuItem>
-              <MenuItem value="Art">Art</MenuItem>
-              <MenuItem value="Gaming">Gaming</MenuItem>
-            </Select>
-          </FormControl>
+        {/* forms */}
+        <Box component="form" sx={{ width: "85%", height: "100%", pt: 8, pb: 8 }}>
+          <Stack
+            direction="column"
+            spacing={2}
+            sx={{ height: "100%", padding: 2 }}
+          >
+            {/* Event title */}
+            <TextField required id="event-title" label="Event Title" variant="outlined" sx={{ pb: 2 }} />
 
-          {/* Event Description */}
-          <TextField required id="event-description" label="Event Description" variant="outlined" multiline={true} minRows={3} sx={{ pb: 2 }} />
+            {/* Event Type */}
+            <FormControl fullWidth sx={{ pb: 2 }}>
+              <InputLabel id="event-type">Event Type *</InputLabel>
+              <Select labelId="select-event-type" value={eventType} label="Event Types" onChange={handleChange}>
+                <MenuItem value="Sports">Sports</MenuItem>
+                <MenuItem value="Music">Music</MenuItem>
+                <MenuItem value="Food">Food</MenuItem>
+                <MenuItem value="Art">Art</MenuItem>
+                <MenuItem value="Gaming">Gaming</MenuItem>
+              </Select>
+            </FormControl>
 
-          {/* Location */}
-          <TextField required id="event-location" label="Location" variant="outlined"
-            slotProps={{
-              input: {
-                startAdornment: (
-                  <InputAdornment position="start">
-                    <IconButton edge="start">
-                      <PlaceIcon />
-                    </IconButton>
-                  </InputAdornment>
-                )
-              }
-            }}
-          />
+            {/* Event Description */}
+            <TextField required id="event-description" label="Event Description" variant="outlined" multiline={true} minRows={3} sx={{ pb: 2 }} />
 
-          <Box sx={{ display: "flex", justifyContent: "left" }}>
-            Event Timing
-          </Box>
+            {/* Location */}
+            <TextField required id="event-location" label="Location" variant="outlined"
+              slotProps={{
+                input: {
+                  startAdornment: (
+                    <InputAdornment position="start">
+                      <IconButton edge="start">
+                        <PlaceIcon />
+                      </IconButton>
+                    </InputAdornment>
+                  )
+                }
+              }}
+            />
 
-          {/* Time and Date Grid */}
-          <Grid container spacing={2}>
+            <Box sx={{ display: "flex", justifyContent: "left" }}>
+              Event Timing
+            </Box>
 
-            {/* Start Date -> Set as required with form submit error checking */}
-            <Grid size={6}>
-              <LocalizationProvider dateAdapter={AdapterDayjs}>
-                <DatePicker label="Start Date *" />
-              </LocalizationProvider>
+            {/* Time and Date Grid */}
+            <Grid container spacing={2}>
+
+              {/* Start Date -> Set as required with form submit error checking */}
+              <Grid size={6}>
+                <LocalizationProvider dateAdapter={AdapterDayjs}>
+                  <DatePicker label="Start Date *" />
+                </LocalizationProvider>
+              </Grid>
+
+              {/* Start Time -> Set as required with form submit error checking */}
+              <Grid size={6}>
+                <LocalizationProvider dateAdapter={AdapterDayjs}>
+                  <TimePicker label="Start Time *" />
+                </LocalizationProvider>
+              </Grid>
+
+              {/* End Date */}
+              <Grid size={6}>
+                <LocalizationProvider dateAdapter={AdapterDayjs}>
+                  <DatePicker label="End Date" />
+                </LocalizationProvider>
+              </Grid>
+
+              {/* End Time */}
+              <Grid size={6}>
+                <LocalizationProvider dateAdapter={AdapterDayjs}>
+                  <TimePicker label="End Time" />
+                </LocalizationProvider>
+              </Grid>
             </Grid>
 
-            {/* Start Time -> Set as required with form submit error checking */}
-            <Grid size={6}>
-              <LocalizationProvider dateAdapter={AdapterDayjs}>
-                <TimePicker label="Start Time *" />
-              </LocalizationProvider>
-            </Grid>
+            {/* Set Event Private */}
+            <Box sx={{ display: "flex", justifyContent: "left" }}>
+              <FormGroup>
+                <FormControlLabel control={<Switch />} label="This Event is Private" />
+              </FormGroup>
+            </Box>
 
-            {/* End Date */}
-            <Grid size={6}>
-              <LocalizationProvider dateAdapter={AdapterDayjs}>
-                <DatePicker label="End Date" />
-              </LocalizationProvider>
-            </Grid>
+            {/* Upload Image - see how to space out the icons nicely they look like shit */}
+            <Box sx={{ border: '1px solid #aaaaa9', borderRadius: '5px', padding: 1 }}>
+              Select Event Posting Photo
+              <Stack direction="row" spacing={2} sx={{ display: "flex", justifyContent: "center" }}>
+                <IconButton aria-label='open camera' size='large'>
+                  <PhotoCameraIcon sx={{ fontSize: '48px' }} />
+                </IconButton>
+                <IconButton aria-label='open gallery' size='large'>
+                  <CollectionsIcon sx={{ fontSize: '48px' }} />
+                </IconButton>
+              </Stack>
+            </Box>
 
-            {/* End Time */}
-            <Grid size={6}>
-              <LocalizationProvider dateAdapter={AdapterDayjs}>
-                <TimePicker label="End Time" />
-              </LocalizationProvider>
-            </Grid>
-          </Grid>
-
-          {/* Set Event Private */}
-          <Box sx={{ display: "flex", justifyContent: "left" }}>
-            <FormGroup>
-              <FormControlLabel control={<Switch />} label="This Event is Private" />
-            </FormGroup>
-          </Box>
-
-          {/* Upload Image - see how to space out the icons nicely they look like shit */}
-          <Box sx={{ border: '1px solid #aaaaa9', borderRadius: '5px', padding: 1 }}>
-            Select Event Posting Photo
-            <Stack direction="row" spacing={2} sx={{ display: "flex", justifyContent: "center" }}>
-              <IconButton aria-label='open camera' size='large'>
-                <PhotoCameraIcon sx={{ fontSize: '48px' }} />
-              </IconButton>
-              <IconButton aria-label='open gallery' size='large'>
-                <CollectionsIcon sx={{ fontSize: '48px' }} />
-              </IconButton>
-            </Stack>
-          </Box>
-
-          {/* Confirm and Invite Guests Button */}
-          <Button variant='contained' sx={{ borderRadius: '10px' }}>
-            Confirm and Invite Guests
-          </Button>
-        </Stack>
+            {/* Confirm and Invite Guests Button */}
+            <Button variant='contained' sx={{ borderRadius: '10px' }}>
+              Confirm and Invite Guests
+            </Button>
+          </Stack>
+        </Box>
+        {onEditPage ? <div>hello edit event page</div> : <div>hello create event page</div>}
       </Box>
+    );
+  }
+  // desktop version
+  else {
+    return (
+      <div>desktop version
+        {onEditPage ? <div>hello edit event page</div> : <div>hello create event page</div>}
+      </div>
 
-    </Box>
-  );
+    );
+  }
 };
 
 // export default CreateEventPage;

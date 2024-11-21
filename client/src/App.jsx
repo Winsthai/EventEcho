@@ -28,14 +28,14 @@ function App() {
           <Route path="/event/:id" element={<EventPage></EventPage>}></Route>
           <Route
             path="/editEvent/:id/*"
-            element={isMobile ? <EditEventPage></EditEventPage> : <EditPagesRoutes></EditPagesRoutes>}
+            element={<EditPagesRoutes></EditPagesRoutes>}
           ></Route>
           <Route
             path="/createEvent/*"
-            element={isMobile ? <CreateEventPage></CreateEventPage> : <CreatePagesRoutes></CreatePagesRoutes>}
+            element={<CreatePagesRoutes></CreatePagesRoutes>}
           ></Route>
 
-          <Route path="/createEvent/reviewEvent" element={<ReviewEventPage></ReviewEventPage>}></Route>
+          {/* <Route path="/createEvent/reviewEvent" element={<ReviewEventPage></ReviewEventPage>}></Route> */}
           <Route path="/user/:id" element={<UserPage></UserPage>}></Route>
           <Route path="/login" element={<LoginPage></LoginPage>}></Route>
           <Route path="/signUp" element={<SignUpPage></SignUpPage>}></Route>

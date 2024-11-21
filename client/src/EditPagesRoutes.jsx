@@ -5,14 +5,17 @@ import DesktopCreateEventPage from "./Components/CreateEventPage/DesktopCreateEv
 import DesktopAddGuestsPage from "./Components/CreateEventPage/DesktopAddGuestsPage";
 import DesktopReviewEventPage from "./Components/CreateEventPage/DesktopReviewEventPage";
 
+import CreateEventPage from "./Components/CreateEventPage/CreateEventPage";
+import ReviewEventPage from "./Components/ReviewEventPage/ReviewEventPage";
+
 function EditPagesRoutes() {
   return (
     <>
       <DesktopProgressBar />
       <Routes>
-        <Route path="/" element={<DesktopCreateEventPage></DesktopCreateEventPage>}></Route>
+        <Route path="/" element={<CreateEventPage></CreateEventPage>}></Route>
         <Route path="/changeGuests" element={<DesktopAddGuestsPage></DesktopAddGuestsPage>}></Route>
-        <Route path="/reviewEvent" element={<DesktopReviewEventPage></DesktopReviewEventPage>}></Route>
+        <Route path="/reviewEvent" element={<ReviewEventPage></ReviewEventPage>}></Route>
       </Routes>
     </>
   );
