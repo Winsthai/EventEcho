@@ -7,6 +7,7 @@ import DesktopReviewEventPage from "./Components/CreateEventPage/DesktopReviewEv
 import CreateEventPage from "./Components/CreateEventPage/CreateEventPage";
 import ReviewEventPage from "./Components/ReviewEventPage/ReviewEventPage";
 import { useMediaQuery } from "@mui/material";
+import AddGuestsNewPage from "./Components/CreateEventPage/AddNewGuestPage";
 
 function CreatePagesRoutes() {
   const isMobile = useMediaQuery("(max-width:600px)");
@@ -17,6 +18,7 @@ function CreatePagesRoutes() {
       <Routes>
         <Route path="/" element={<CreateEventPage></CreateEventPage>}></Route>
         <Route path="/addGuests" element={<DesktopAddGuestsPage></DesktopAddGuestsPage>}></Route>
+        <Route path="/newGuests" element={<AddGuestsNewPage></AddGuestsNewPage>}></Route>
         <Route path="/reviewEvent" element={<ReviewEventPage></ReviewEventPage>}></Route>
       </Routes>
     </>
