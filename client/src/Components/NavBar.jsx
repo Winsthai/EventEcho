@@ -35,6 +35,7 @@ const NavBar = () => {
         borderBottom: "1px solid #ddd",
         gap: "16px",
         overflow: "hidden", // Prevents content from spilling out
+        zIndex: 1000
       }}
     >
       {/* Logo */}

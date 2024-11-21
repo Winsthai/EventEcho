@@ -13,8 +13,7 @@
   .desktop-search-and-add {
     display: flex;
     align-items: center; 
-    gap: 8px; 
-    width: 60%; 
+    width: 50%; 
     margin: 0 auto;
   }
   
@@ -24,8 +23,9 @@
     padding: 8px; 
     font-size: 16px; 
     border: 1px solid #ccc; 
-    border-radius: 4px; 
+    border-radius: 10px; 
     box-sizing: border-box; 
+    height: 50px;
   }
   
   .desktop-search-and-add .add-icon {
@@ -150,4 +150,3 @@
     cursor: pointer;
     width: 100%;
   }
-  

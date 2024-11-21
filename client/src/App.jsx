@@ -2,7 +2,6 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import HomePage from "./Components/HomePage/HomePage";
 import EventPage from "./Components/EventPage/EventPage";
 import CreateEventPage from "./Components/CreateEventPage/CreateEventPage";
-import CreateEventPageInvite from "./Components/CreateEventPage/CreateEventPageInvite";
 import EditEventPage from "./Components/EditEventPage/EditEventPage";
 import DesktopEditEventPage from "./Components/EditEventPage/DesktopEditEventPage";
 import MobileNavBar from "./Components/MobileNavBar";
@@ -14,7 +13,6 @@ import UserPage from "./Components/UserPage/UserPage";
 import CreatePagesRoutes from "./CreatePagesRoutes";
 import EditPagesRoutes from "./EditPagesRoutes";
 import ReviewEventPage from "./Components/ReviewEventPage/ReviewEventPage";
-import DesktopAddGuestsPage from "./Components/CreateEventPage/DesktopAddGuestsPage";
 
 
 function App() {
@@ -30,18 +28,14 @@ function App() {
           <Route path="/event/:id" element={<EventPage></EventPage>}></Route>
           <Route
             path="/editEvent/:id/*"
-            element={isMobile ? <EditEventPage></EditEventPage> : <EditPagesRoutes></EditPagesRoutes>}
+            element={<EditPagesRoutes></EditPagesRoutes>}
           ></Route>
           <Route
             path="/createEvent/*"
-            element={isMobile ? <CreateEventPage></CreateEventPage> : <CreatePagesRoutes></CreatePagesRoutes>}
+            element={<CreatePagesRoutes></CreatePagesRoutes>}
           ></Route>
-          {/* <Route
-            path="/createEvent/addGuests"
-            element={<DesktopAddGuestsPage></DesktopAddGuestsPage>}
-          ></Route> */}
 
-          <Route path="/createEvent/reviewEvent" element={<ReviewEventPage></ReviewEventPage>}></Route>
+          {/* <Route path="/createEvent/reviewEvent" element={<ReviewEventPage></ReviewEventPage>}></Route> */}
           <Route path="/user/:id" element={<UserPage></UserPage>}></Route>
           <Route path="/login" element={<LoginPage></LoginPage>}></Route>
           <Route path="/signUp" element={<SignUpPage></SignUpPage>}></Route>
