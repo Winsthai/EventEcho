@@ -1,7 +1,6 @@
 import { useParams } from "react-router-dom";
 import { Box, Typography, Tabs, Tab } from "@mui/material";
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
 import NoCreatedEvents from "./Components/NoCreatedEvents";
 import NoUpcomingEvents from "./Components/NoUpcomingEvents";
 import EventCard from "../EventCard/EventCard";
@@ -80,12 +79,6 @@ const UserPage = () => {
     }
   }, [id]);
 
-  const navigate = useNavigate();
-
-  const handleClick = (url) => {
-    navigate(url);
-  };
-
   const handleTabChange = (event, newValue) => {
     setSelectedTab(newValue); // Update the selected tab
   };
@@ -117,7 +110,7 @@ const UserPage = () => {
         <></>
       )}
 
-      {/* Tabs for Switching between Hosted and Upcoming Events */}
+      {/* Tabs for switching between Hosted and Upcoming Events */}
       <Tabs
         value={selectedTab}
         onChange={handleTabChange}
