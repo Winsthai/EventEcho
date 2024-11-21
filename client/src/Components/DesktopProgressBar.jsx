@@ -7,7 +7,7 @@ import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 import { useNavigate } from "react-router-dom";
 
-const steps = ['Create a New Event', 'Invite Guests', 'Review and Post'];
+const steps = ['Event Details', 'Invite Guests', 'Review and Post'];
 
 export default function DesktopProgressBar() {
   const navigate = useNavigate();
@@ -129,6 +129,17 @@ export default function DesktopProgressBar() {
         alignItems: 'center'
       }}
     >
+      <Typography variant='h5'
+        sx={{
+          pb: 2,
+          mr: 'auto',
+          ml: 8
+        }}
+      >
+        Create a New Event
+      </Typography>
+
+      {/* The actual progress bar */}
       <Box sx={{ width: '80%' }}>
         <Stepper nonLinear activeStep={activeStep} alternativeLabel>
           {steps.map((label, index) => (
@@ -139,7 +150,6 @@ export default function DesktopProgressBar() {
             </Step>
           ))}
         </Stepper>
-
 
         {/* Some logic */}
         <Box

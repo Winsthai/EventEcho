@@ -175,15 +175,7 @@ const ReviewEventPage = () => {
     );
   } else {
     return (
-      <Box
-        sx={{
-          display: "flex",
-          flexDirection: "column",
-          justifyContent: "center",
-          alignItems: "center",
-          alignSelf: "center"
-        }}
-      >
+      <Box>
         {/* Header Box */}
         <Box
           sx={{
