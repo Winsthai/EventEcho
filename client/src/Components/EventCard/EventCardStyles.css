@@ -6,7 +6,7 @@
     height: 150px;
     display: flex;
     align-items: center;
-    justify-content: left;
+    justify-content: space-between; /* This ensures the space is split between the photo/details and the button */
 }
 
 .homeUpcomingEventPhoto {
@@ -21,6 +21,7 @@
     height: 130px;
     margin-left: 15px;
     text-align: left;
+    flex-grow: 1; /* This makes the details section take up available space */
 }
 
 .homeUpcomingEventDetails > div {
@@ -44,6 +45,14 @@
     font-size: 12px;
 }
 
+.registerButtonContainer {
+    display: flex;
+    justify-content: flex-end; /* Aligns the button to the right */
+    align-items: center;
+    height: 100%; /* Ensures button container is vertically aligned */
+    margin-right: 10px; /* Optional, for some spacing from the edge */
+}
+
 .homeUpcomingEventBoxDesktop {
     margin: 4vh;
     background-color: white;
@@ -52,7 +61,7 @@
     height: 150px;
     display: flex;
     align-items: center;
-    justify-content: left;
+    justify-content: space-between;
 }
 
 .homeEventNameDesktop {

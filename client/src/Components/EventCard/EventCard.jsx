@@ -6,7 +6,7 @@ import CalendarMonthIcon from "@mui/icons-material/CalendarMonth";
 import "./EventCardStyles.css";
 import { useNavigate } from "react-router-dom";
 
-const EventCard = ({ event }) => {
+const EventCard = ({ event, variant = "" }) => {
   // Use media query to check if screen width is less than 600px (mobile view)
   const isMobile = useMediaQuery("(max-width:600px)");
 
@@ -27,8 +27,9 @@ const EventCard = ({ event }) => {
         onClick={() => navigate(`/event/${event.id}`)}
       >
         <Box className="homeUpcomingEventPhoto">temp</Box>
-        {/* Date */}
+
         <Stack className="homeUpcomingEventDetails">
+          {/* Date */}
           <Box className="homeEventDate" color="text.secondary">
             {startDateTime.toLocaleDateString("en-US", {
               weekday: "long",
@@ -37,6 +38,7 @@ const EventCard = ({ event }) => {
             })}
           </Box>
           <Box className="homeEventName"> {event.title} </Box>
+
           {/* Time */}
           <Stack
             direction="row"
@@ -54,6 +56,7 @@ const EventCard = ({ event }) => {
               hour12: true,
             })}
           </Stack>
+
           {/* Address */}
           <Stack
             direction="row"
@@ -68,6 +71,41 @@ const EventCard = ({ event }) => {
             {event.address}
           </Stack>
         </Stack>
+        {variant === "upcoming" ? (
+          <Box>
+            <Button
+              variant="contained"
+              sx={{
+                borderRadius: "20px",
+                height: "80%",
+                backgroundColor: "#ff7474",
+                marginRight: "3vw",
+                textTransform: "none",
+              }}
+              onClick={() => navigate(`/event/${event.id}`)} // Probably change this later
+            >
+              Unregister
+            </Button>
+          </Box>
+        ) : variant === "hosted" ? (
+          <Box>
+            <Button
+              variant="contained"
+              sx={{
+                borderRadius: "20px",
+                height: "80%",
+                backgroundColor: "#ff7474",
+                marginRight: "3vw",
+                textTransform: "none",
+              }}
+              onClick={() => navigate(`/event/${event.id}`)} // Probably change this later
+            >
+              Edit
+            </Button>
+          </Box>
+        ) : (
+          <></>
+        )}
       </Box>
     );
   } else {
@@ -76,6 +114,7 @@ const EventCard = ({ event }) => {
         <Box className="homeUpcomingEventPhoto">temp</Box>
         <Stack className="homeUpcomingEventDetailsDesktop" direction="row">
           <Box className="homeEventNameDesktop"> {event.title} </Box>
+
           {/* Date */}
           <Box className="homeEventDateDesktop" color="text.secondary">
             <CalendarMonthIcon
@@ -88,6 +127,7 @@ const EventCard = ({ event }) => {
               day: "numeric",
             })}
           </Box>
+
           {/* Time */}
           <Box className="homeEventTimeDesktop" color="text.secondary">
             <AccessTimeIcon
@@ -100,6 +140,7 @@ const EventCard = ({ event }) => {
               hour12: true,
             })}
           </Box>
+
           {/* Address */}
           <Box className="homeEventLocationDesktop" color="text.secondary">
             <LocationOnIcon
@@ -108,19 +149,35 @@ const EventCard = ({ event }) => {
             />
             {event.address}
           </Box>
-          <Box>
-            <Button
-              variant="contained"
-              sx={{
-                borderRadius: "20px",
-                height: "80%",
-                backgroundColor: "#ff7474",
-              }}
-              onClick={() => navigate(`/event/${event.id}`)}
-            >
-              Register
-            </Button>
-          </Box>
+          {variant === "upcoming" ? (
+            <Box>
+              <Button
+                variant="contained"
+                sx={{
+                  borderRadius: "20px",
+                  height: "80%",
+                  backgroundColor: "#ff7474",
+                }}
+                onClick={() => navigate(`/event/${event.id}`)}
+              >
+                Unregister
+              </Button>
+            </Box>
+          ) : (
+            <Box>
+              <Button
+                variant="contained"
+                sx={{
+                  borderRadius: "20px",
+                  height: "80%",
+                  backgroundColor: "#ff7474",
+                }}
+                onClick={() => navigate(`/event/${event.id}`)}
+              >
+                Register
+              </Button>
+            </Box>
+          )}
         </Stack>
       </Box>
     );

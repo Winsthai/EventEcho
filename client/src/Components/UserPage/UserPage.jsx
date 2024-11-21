@@ -5,6 +5,7 @@ import { useNavigate } from "react-router-dom";
 import NoCreatedEvents from "./Components/NoCreatedEvents";
 import NoUpcomingEvents from "./Components/NoUpcomingEvents";
 import EventCard from "../EventCard/EventCard";
+import SearchBar from "../SearchBar";
 
 // Test data for now, getting users not implemented in backend yet so params could change
 const testUsers = [
@@ -105,6 +106,17 @@ const UserPage = () => {
       <Typography variant="h4" sx={{ fontWeight: "bold", mb: 2 }}>
         Hello {user.username}!
       </Typography>
+
+      {/* Search bar */}
+      {(user.createdEvents.length !== 0 && selectedTab == 0) ||
+      (user.registeredEvents.length !== 0 && selectedTab == 1) ? (
+        <Box sx={{ display: "flex", paddingBottom: "2vh" }}>
+          <SearchBar noMargin={true} />
+        </Box>
+      ) : (
+        <></>
+      )}
+
       {/* Tabs for Switching between Hosted and Upcoming Events */}
       <Tabs
         value={selectedTab}
@@ -125,7 +137,7 @@ const UserPage = () => {
                 Your Hosted Events
               </Typography>
               {user.createdEvents.map((event) => (
-                <EventCard key={event.id} event={event} />
+                <EventCard key={event.id} event={event} variant="hosted" />
               ))}
             </>
           ) : (
@@ -143,7 +155,7 @@ const UserPage = () => {
           {user.registeredEvents.length !== 0 ? (
             <>
               {user.registeredEvents.map((event) => (
-                <EventCard key={event.id} event={event} />
+                <EventCard key={event.id} event={event} variant="upcoming" />
               ))}
             </>
           ) : (
