@@ -6,11 +6,13 @@ import StepButton from '@mui/material/StepButton';
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 import { useNavigate } from "react-router-dom";
+import { useParams } from 'react-router-dom';
 
 const steps = ['Event Details', 'Invite Guests', 'Review and Post'];
 
 export default function DesktopProgressBar() {
   const navigate = useNavigate();
+  const { id } = useParams();
 
   const [activeStep, setActiveStep] = React.useState(0);
   const [completed, setCompleted] = React.useState({});
@@ -103,16 +105,16 @@ export default function DesktopProgressBar() {
     else {
       switch (step) {
         case 0:
-          navigate("/editEvent/:id");
+          navigate(`/editEvent/${id}`);
           break;
         case 1:
-          navigate("/editEvent/:id/changeGuests");
+          navigate(`/editEvent/${id}/changeGuests`);
           break;
         case 2:
-          navigate("/editEvent/:id/reviewEvent");
+          navigate(`/editEvent/${id}/reviewEvent`);
           break;
         default:
-          navigate("/editEvent/:id");
+          navigate(`/editEvent/${id}`);
       }
     }
   }

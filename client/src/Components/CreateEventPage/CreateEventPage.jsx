@@ -4,6 +4,7 @@ import PlaceIcon from '@mui/icons-material/Place';
 import PhotoCameraIcon from '@mui/icons-material/PhotoCamera';
 import CollectionsIcon from '@mui/icons-material/Collections';
 import UploadIcon from '@mui/icons-material/Upload';
+import DeleteIcon from '@mui/icons-material/Delete';
 import {
   AppBar, Toolbar, IconButton, Typography,
   FormControl, FormGroup, FormControlLabel, InputLabel,
@@ -12,19 +13,71 @@ import {
 } from '@mui/material';
 import Grid from '@mui/material/Grid2';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+import dayjs from 'dayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { TimePicker } from '@mui/x-date-pickers/TimePicker';
 import { useMediaQuery } from "@mui/material";
+import { useParams } from 'react-router-dom';
 
+const events = [
+  {
+    "id": "1",
+    "title": "Football Game",
+    "eventtype": "Sports",
+    "description": "A friendly neighborhood football game.",
+    "address": "123 Stadium Rd, City",
+    "coordinates": {
+      "x": 40.7128,
+      "y": -74.006
+    },
+    "startdate": "2024-11-15",
+    "starttime": "15:00:00+00",
+    "enddate": "2024-11-15",
+    "endtime": "17:00:00+00",
+    "visibility": true
+  },
+  {
+    "id": "2",
+    "title": "Jazz Concert",
+    "eventtype": "Music",
+    "description": "Live jazz performance.",
+    "address": "456 Music Hall Ave, City",
+    "coordinates": {
+      "x": 40.7306,
+      "y": -73.9352
+    },
+    "startdate": "2024-12-01",
+    "starttime": "19:00:00+00",
+    "enddate": "2024-12-01",
+    "endtime": "21:00:00+00",
+    "visibility": false
+  }
+];
 
 export default function CreateEventPage() {
+  const { id } = useParams();
+
   const isMobile = useMediaQuery("(max-width:600px)");
   const onEditPage = location.pathname.includes("edit");
+
   const [eventType, setEventType] = React.useState('');
   const [eventPhotoName, setEventPhotoName] = React.useState('');
 
-  const handleChange = (event) => {
+  let vis, startTimeTrimmed, endTimeTrimmed; // in db, public=true and private=false, however switch logic wise, private=true and public=false
+
+  if (onEditPage) {
+    vis = events[id - 1].visibility;
+    startTimeTrimmed = events[id - 1].starttime.slice(0, -3);
+    endTimeTrimmed = events[id - 1].endtime.slice(0, -3);
+  }
+  else {
+    vis = false;
+  }
+
+  const [eventPublic, setEventPublic] = React.useState(vis);
+
+  const handleEventTypeChange = (event) => {
     setEventType(event.target.value);
   };
 
@@ -34,7 +87,16 @@ export default function CreateEventPage() {
     }
   }
 
-  // mobile component
+  const handleVisibilityChange = (event) => {
+    setEventPublic(event.target.checked);
+  }
+
+  // just clears the text field for now, will have to actually delete uploaded file later
+  const handleDeleteFile = (event) => {
+    setEventPhotoName('');
+  }
+
+  // MOBILE VERSION
   if (isMobile) {
     return (
       // Page Container
@@ -84,12 +146,22 @@ export default function CreateEventPage() {
             sx={{ height: "100%", padding: 2 }}
           >
             {/* Event title */}
-            <TextField required id="event-title" label="Event Title" variant="outlined" sx={{ pb: 2 }} />
+            <TextField required
+              id="event-title"
+              label="Event Title"
+              variant="outlined"
+              sx={{ pb: 2 }}
+              defaultValue={onEditPage ? events[id - 1].title : ""}
+            />
 
             {/* Event Type */}
             <FormControl fullWidth sx={{ pb: 2 }}>
               <InputLabel id="event-type">Event Type *</InputLabel>
-              <Select labelId="select-event-type" value={eventType} label="Event Types" onChange={handleChange}>
+              <Select labelId="select-event-type"
+                defaultValue={onEditPage ? events[id - 1].eventtype : eventType}
+                label="Event Types"
+                onChange={handleEventTypeChange}
+              >
                 <MenuItem value="Sports">Sports</MenuItem>
                 <MenuItem value="Music">Music</MenuItem>
                 <MenuItem value="Food">Food</MenuItem>
@@ -106,6 +178,7 @@ export default function CreateEventPage() {
               multiline={true}
               minRows={3}
               sx={{ pb: 2 }}
+              defaultValue={onEditPage ? events[id - 1].description : ""}
             />
 
             {/* Location */}
@@ -121,6 +194,7 @@ export default function CreateEventPage() {
                   )
                 }
               }}
+              defaultValue={onEditPage ? events[id - 1].address : ""}
             />
 
             <Box sx={{ display: "flex", justifyContent: "left" }}>
@@ -133,40 +207,56 @@ export default function CreateEventPage() {
               {/* Start Date -> Set as required with form submit error checking */}
               <Grid size={6}>
                 <LocalizationProvider dateAdapter={AdapterDayjs}>
-                  <DatePicker label="Start Date *" />
+                  <DatePicker label="Start Date *"
+                    defaultValue={onEditPage ? dayjs(events[id - 1].startdate) : null}
+                  />
                 </LocalizationProvider>
               </Grid>
 
               {/* Start Time -> Set as required with form submit error checking */}
               <Grid size={6}>
                 <LocalizationProvider dateAdapter={AdapterDayjs}>
-                  <TimePicker label="Start Time *" />
+                  <TimePicker label="Start Time *"
+                    defaultValue={onEditPage ? dayjs(events[id - 1].startdate.concat("T", startTimeTrimmed)) : null}
+                  />
                 </LocalizationProvider>
               </Grid>
 
               {/* End Date */}
               <Grid size={6}>
                 <LocalizationProvider dateAdapter={AdapterDayjs}>
-                  <DatePicker label="End Date" />
+                  <DatePicker label="End Date"
+                    defaultValue={onEditPage ? dayjs(events[id - 1].enddate) : null}
+                  />
                 </LocalizationProvider>
               </Grid>
 
               {/* End Time */}
               <Grid size={6}>
                 <LocalizationProvider dateAdapter={AdapterDayjs}>
-                  <TimePicker label="End Time" />
+                  <TimePicker label="End Time"
+                    defaultValue={onEditPage ? dayjs(events[id - 1].enddate.concat("T", endTimeTrimmed)) : null}
+                  />
                 </LocalizationProvider>
               </Grid>
             </Grid>
 
-            {/* Set Event Private */}
+            {/* Set Event Public */}
             <Box sx={{ display: "flex", justifyContent: "left" }}>
               <FormGroup>
-                <FormControlLabel control={<Switch />} label="This Event is Private" />
+                <FormControlLabel
+                  control={
+                    <Switch
+                      checked={eventPublic}
+                      onChange={handleVisibilityChange}
+                      inputProps={{ 'aria-label': 'controlled' }}
+                    />
+                  }
+                  label="This Event is Public" />
               </FormGroup>
             </Box>
 
-            {/* Upload Image - see how to space out the icons nicely they look like shit */}
+            {/* Upload Image */}
             <Box sx={{ border: '1px solid #aaaaa9', borderRadius: '5px', padding: 1 }}>
               Select Event Posting Photo
               <Stack direction="row" spacing={2} sx={{ display: "flex", justifyContent: "center" }}>
@@ -179,25 +269,53 @@ export default function CreateEventPage() {
               </Stack>
             </Box>
 
-            {/* Confirm and Invite Guests Button */}
-            <Button variant='contained'
-              sx={{
-                borderRadius: '10px',
-                backgroundColor: "#F68F8D",
-                "&:hover": {
-                  backgroundColor: "#A50B07",
-                }
-              }}
-            >
-              Confirm and Invite Guests
-            </Button>
+            {/* Confirm and Invite Guests Button if create, Confirm Changes+Edit Guests if edit */}
+            {onEditPage ?
+              <Stack direction="row" spacing={2} sx={{ display: "flex", justifyContent: "center" }}>
+                <Button variant='contained'
+                  sx={{
+                    borderRadius: '10px',
+                    backgroundColor: "#F68F8D",
+                    "&:hover": {
+                      backgroundColor: "#A50B07",
+                    }
+                  }}
+                >
+                  Confirm Changes
+                </Button>
+                <Button variant='contained'
+                  sx={{
+                    borderRadius: '10px',
+                    backgroundColor: "#F68F8D",
+                    "&:hover": {
+                      backgroundColor: "#A50B07",
+                    }
+                  }}
+                >
+                  Edit Guests
+                </Button>
+              </Stack> :
+              <Button variant='contained'
+                sx={{
+                  borderRadius: '10px',
+                  backgroundColor: "#F68F8D",
+                  "&:hover": {
+                    backgroundColor: "#A50B07",
+                  }
+                }}
+              >
+                Confirm and Invite Guests
+              </Button>
+
+            }
+
           </Stack>
         </Box>
-        {/* {onEditPage ? <div>hello edit event page</div> : <div>hello create event page</div>} */}
       </Box>
     );
   }
-  // desktop version
+
+  // DESKTOP VERSION
   else {
     return (
       <Box component="section"
@@ -231,12 +349,21 @@ export default function CreateEventPage() {
           <Stack direction="row" spacing={6} sx={{ width: "80%" }}>
 
             {/* Event title */}
-            <TextField fullWidth required id="event-title" label="Event Title" variant="outlined" sx={{ width: "100%" }} />
+            <TextField fullWidth required
+              id="event-title"
+              label="Event Title"
+              variant="outlined"
+              sx={{ width: "100%" }}
+              defaultValue={onEditPage ? events[id - 1].title : ""}
+            />
 
             {/* Event Type */}
             <FormControl fullWidth sx={{ width: "80%" }}>
               <InputLabel id="event-type">Event Type *</InputLabel>
-              <Select labelId="select-event-type" value={eventType} label="Event Types" onChange={handleChange}>
+              <Select labelId="select-event-type"
+                defaultValue={onEditPage ? events[id - 1].eventtype : eventType}
+                label="Event Types"
+                onChange={handleEventTypeChange}>
                 <MenuItem value="Sports">Sports</MenuItem>
                 <MenuItem value="Music">Music</MenuItem>
                 <MenuItem value="Food">Food</MenuItem>
@@ -254,6 +381,7 @@ export default function CreateEventPage() {
             multiline={true}
             minRows={3}
             sx={{ pb: 2, width: "80%" }}
+            defaultValue={onEditPage ? events[id - 1].description : ""}
           />
 
           {/* Location and Private Toggle Horizontal Stack */}
@@ -273,12 +401,21 @@ export default function CreateEventPage() {
                 }
               }}
               sx={{ width: "50%" }}
+              defaultValue={onEditPage ? events[id - 1].address : ""}
             />
 
-            {/* Set Event Private */}
+            {/* Set Event Public */}
             <Box sx={{ alignSelf: "center", pl: 10 }}>
               <FormGroup>
-                <FormControlLabel control={<Switch />} label="This Event is Private" />
+                <FormControlLabel
+                  control={
+                    <Switch
+                      checked={eventPublic}
+                      onChange={handleVisibilityChange}
+                      inputProps={{ 'aria-label': 'controlled' }}
+                    />
+                  }
+                  label="This Event is Public" />
               </FormGroup>
             </Box>
           </Stack>
@@ -295,24 +432,32 @@ export default function CreateEventPage() {
           <Stack direction="row" spacing={4} sx={{ width: "80%", display: "flex", justifyContent: "left" }}>
             {/* Start Date -> Set as required with form submit error checking */}
             <LocalizationProvider dateAdapter={AdapterDayjs}>
-              <DatePicker label="Start Date *" />
+              <DatePicker label="Start Date *"
+                defaultValue={onEditPage ? dayjs(events[id - 1].startdate) : null}
+              />
             </LocalizationProvider>
 
             {/* Start Time -> Set as required with form submit error checking */}
             <LocalizationProvider dateAdapter={AdapterDayjs}>
-              <TimePicker label="Start Time *" />
+              <TimePicker label="Start Time *"
+                defaultValue={onEditPage ? dayjs(events[id - 1].startdate.concat("T", startTimeTrimmed)) : null}
+              />
             </LocalizationProvider>
           </Stack>
 
           <Stack direction="row" spacing={4} sx={{ width: "80%", display: "flex", justifyContent: "left" }}>
             {/* End Date */}
             <LocalizationProvider dateAdapter={AdapterDayjs}>
-              <DatePicker label="End Date" />
+              <DatePicker label="End Date"
+                defaultValue={onEditPage ? dayjs(events[id - 1].enddate) : null}
+              />
             </LocalizationProvider>
 
             {/* End Time */}
             <LocalizationProvider dateAdapter={AdapterDayjs}>
-              <TimePicker label="End Time" />
+              <TimePicker label="End Time"
+                defaultValue={onEditPage ? dayjs(events[id - 1].enddate.concat("T", endTimeTrimmed)) : null}
+              />
             </LocalizationProvider>
           </Stack>
 
@@ -326,7 +471,8 @@ export default function CreateEventPage() {
 
           {/* Upload Photo */}
           <Stack direction="row" spacing={6} sx={{ width: "80%", display: "flex", justifyContent: "left", mb: 4 }}>
-            <TextField fullWidth label="Upload File" variant='outlined' value={eventPhotoName}
+            <TextField fullWidth label="Upload File" variant='outlined'
+              value={eventPhotoName}
               slotProps={{
                 input: {
                   startAdornment: (
@@ -334,6 +480,13 @@ export default function CreateEventPage() {
                       <IconButton component="label">
                         <UploadIcon />
                         <input type="file" hidden onChange={handleFileChange} />
+                      </IconButton>
+                    </InputAdornment>
+                  ),
+                  endAdornment: (
+                    <InputAdornment position='end'>
+                      <IconButton onClick={handleDeleteFile}>
+                        <DeleteIcon />
                       </IconButton>
                     </InputAdornment>
                   )
@@ -359,17 +512,13 @@ export default function CreateEventPage() {
                 }
               }}
             >
-              Confirm and Invite Guests
+              {onEditPage ? "Confirm Changes" : "Confirm and Invite Guests"}
             </Button>
           </Box>
         </Stack>
       </Box>
-      // <div>desktop version
-      //   {onEditPage ? <div>hello edit event page</div> : <div>hello create event page</div>}
-      // </div>
 
     );
   }
 };
 
-// export default CreateEventPage;
