@@ -1,8 +1,10 @@
 import React, { useState } from "react";
 import { useMediaQuery } from "@mui/material";
+import { BottomNavigationAction } from "@mui/material";
 import "./MobileInviteGuests.css";
 import "./DesktopInviteGuests.css";
 import arrowIcon from '../../images/arrow button.png';
+import PersonAddIcon from '@mui/icons-material/PersonAdd';
 
 const contacts = [
   { id: 1, name: "Steven Nguyen", phone: "(403)-000-0000" },
@@ -77,11 +79,19 @@ function CreateEventPageInvite() {
           <span className="desktop-activeStep">Invite Guests</span>
           <span>Review and Post</span>
         </div>
-        <input
-          type="text"
-          placeholder="Search Contacts"
-          className="desktop-searchInput"
-        />
+        <div className="desktop-search-and-add">
+            <input
+                type="text"
+                placeholder="Search Contacts"
+                className="search-input"
+            />
+            <BottomNavigationAction
+                icon={<PersonAddIcon />}
+                className="add-icon"
+            />
+        </div>
+
+        
         <div className="desktop-contactGrid">
           {contacts.map((contact) => (
             <div key={contact.id} className="desktop-contactCard">
