@@ -15,6 +15,19 @@ export default function DesktopProgressBar() {
   const [activeStep, setActiveStep] = React.useState(0);
   const [completed, setCompleted] = React.useState({});
 
+  React.useEffect(() => {
+    const path = location.pathname;
+    if (path.includes("Guests")) {
+      setActiveStep(1);
+    }
+    else if (path.includes("review")) {
+      setActiveStep(2);
+    }
+    else {
+      setActiveStep(0);
+    }
+  });
+
   const totalSteps = () => {
     return steps.length;
   };
@@ -156,7 +169,21 @@ export default function DesktopProgressBar() {
                   bottom: 0
                 }}
               >
-                <Button variant="contained" onClick={handleComplete}>
+                <Button variant="contained" onClick={handleComplete}
+                  sx={{
+                    display: "none", // hide button for now
+                    borderRadius: '10px',
+                    width: "100%", // button width
+                    mb: 4,
+                    mt: 4,
+                    alignSelf: "center", // centers button
+                    padding: "1rem", // button height
+                    backgroundColor: "#F68F8D",
+                    "&:hover": {
+                      backgroundColor: "#A50B07",
+                    },
+                  }}
+                >
                   {completed[activeStep] ? 'Next' : (completedSteps() === totalSteps() - 1 ? 'Finish' : buttonLabels(activeStep))}
                 </Button>
               </Box>
