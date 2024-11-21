@@ -98,6 +98,8 @@ const UserPage = () => {
     <Box
       sx={{
         padding: 4,
+        paddingLeft: "5vw",
+        paddingRight: "5vw",
         textAlign: "left",
       }}
     >

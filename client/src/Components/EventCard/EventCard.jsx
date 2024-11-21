@@ -78,42 +78,42 @@ const EventCard = ({ event, variant = "" }) => {
             />
             {event.address}
           </Stack>
+          {variant === "upcoming" ? (
+            <Box>
+              <Button
+                variant="contained"
+                sx={{
+                  borderRadius: "20px",
+                  height: "80%",
+                  backgroundColor: "#ff7474",
+                  marginRight: "3vw",
+                  textTransform: "none",
+                }}
+                onClick={() => navigate(`/event/${event.id}`)} // Probably change this later
+              >
+                Unregister
+              </Button>
+            </Box>
+          ) : variant === "hosted" ? (
+            <Box>
+              <Button
+                variant="contained"
+                sx={{
+                  borderRadius: "20px",
+                  height: "80%",
+                  backgroundColor: "#ff7474",
+                  marginRight: "3vw",
+                  textTransform: "none",
+                }}
+                onClick={() => navigate(`/event/${event.id}`)} // Probably change this later
+              >
+                Edit
+              </Button>
+            </Box>
+          ) : (
+            <></>
+          )}
         </Stack>
-        {variant === "upcoming" ? (
-          <Box>
-            <Button
-              variant="contained"
-              sx={{
-                borderRadius: "20px",
-                height: "80%",
-                backgroundColor: "#ff7474",
-                marginRight: "3vw",
-                textTransform: "none",
-              }}
-              onClick={() => navigate(`/event/${event.id}`)} // Probably change this later
-            >
-              Unregister
-            </Button>
-          </Box>
-        ) : variant === "hosted" ? (
-          <Box>
-            <Button
-              variant="contained"
-              sx={{
-                borderRadius: "20px",
-                height: "80%",
-                backgroundColor: "#ff7474",
-                marginRight: "3vw",
-                textTransform: "none",
-              }}
-              onClick={() => navigate(`/event/${event.id}`)} // Probably change this later
-            >
-              Edit
-            </Button>
-          </Box>
-        ) : (
-          <></>
-        )}
       </Box>
     );
   } else {
@@ -173,10 +173,26 @@ const EventCard = ({ event, variant = "" }) => {
                   borderRadius: "20px",
                   height: "80%",
                   backgroundColor: "#ff7474",
+                  textTransform: "none",
                 }}
                 onClick={() => navigate(`/event/${event.id}`)}
               >
                 Unregister
+              </Button>
+            </Box>
+          ) : variant === "hosted" ? (
+            <Box>
+              <Button
+                variant="contained"
+                sx={{
+                  borderRadius: "20px",
+                  height: "80%",
+                  backgroundColor: "#ff7474",
+                  textTransform: "none",
+                }}
+                onClick={() => navigate(`/event/${event.id}`)}
+              >
+                Edit
               </Button>
             </Box>
           ) : (
