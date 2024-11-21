@@ -20,6 +20,7 @@
   font-size: 16px;
   margin-bottom: 4px;
   margin-top: 4px;
+  font-weight: 500;
 }
 
 #EventReviewRVSP {
@@ -34,4 +35,57 @@
   min-width: 100px;
   margin-left: 10px;
   border-radius: 15px;
+}
+
+#EventReviewPDesktop {
+  color: #333333;
+  font-size: 16px;
+}
+
+#EventReviewTitleDesktop {
+  color: #1D1D1D;
+  font-size: 32px;
+}
+
+#EventReviewHeaderDesktop {
+  color: #1D1D1D;
+  font-size: 28px;
+}
+
+#EventReviewNamesDesktop {
+  color: #1D1D1D;
+  font-size: 20px;
+  margin-bottom: 4px;
+  margin-top: 4px;
+  font-weight: 500;
+}
+
+#EventReviewRVSPDesktop {
+  margin: 0;
+  color: #039BE5;
+  font-size: 16px;
+}
+
+#EventReviewPhotoDesktop {
+  background-color: gray;
+  height: 130px;
+  min-width: 100px;
+  margin-left: 10px;
+  border-radius: 15px;
+}
+
+#EventReviewDateAndTimeLocationHeadersDesktop {
+  color: #2D2C3C;
+  font-size: 22px;
+  font-weight: 500;
+}
+
+#EventReviewDateTimeLocationDesktop {
+  color: #2D2C3C;
+  font-size: 20px;
+}
+
+#EventReviewAddToCalendarDesktop {
+  color: #4539B4;
+  font-size: 22px;
 }
