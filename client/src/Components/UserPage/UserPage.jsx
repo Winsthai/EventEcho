@@ -27,6 +27,8 @@ const testUsers = [
         enddate: "2024-11-15T00:00:00.000Z",
         endtime: "17:00:00+00",
         visibility: true,
+        image:
+          "https://m.media-amazon.com/images/M/MV5BOWZiNzZkZGEtMWEwOS00NjZkLWFmYTctZmQyMDY3NGU0OWZjXkEyXkFqcGc@._V1_.jpg", // temporary
       },
       {
         id: "2",
@@ -43,6 +45,8 @@ const testUsers = [
         enddate: "2024-12-01T00:00:00.000Z",
         endtime: "21:00:00+00",
         visibility: true,
+        image:
+          "https://www.horizonsmusic.co.uk/cdn/shop/articles/image1_1600x1600.jpg?v=1621417277", // temporary
       },
     ],
     createdEvents: [
@@ -61,6 +65,8 @@ const testUsers = [
         enddate: "2024-11-20T00:00:00.000Z",
         endtime: "16:00:00+00",
         visibility: false,
+        image:
+          "https://i.ytimg.com/vi/BLsQyx604Yc/hq720.jpg?sqp=-oaymwEhCK4FEIIDSFryq4qpAxMIARUAAAAAGAElAADIQj0AgKJD&rs=AOn4CLAYWKCLjjwlIHVaM6MGC9bvpVLe_A", // temporary
       },
     ],
   },

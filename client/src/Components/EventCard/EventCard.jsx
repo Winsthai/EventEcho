@@ -26,7 +26,15 @@ const EventCard = ({ event, variant = "" }) => {
         className="homeUpcomingEventBox"
         onClick={() => navigate(`/event/${event.id}`)}
       >
-        <Box className="homeUpcomingEventPhoto">temp</Box>
+        {event.image ? (
+          <Box
+            component="img"
+            className="homeUpcomingEventPhoto"
+            src={event.image}
+          ></Box>
+        ) : (
+          <Box className="homeUpcomingEventPhoto">temp</Box>
+        )}
 
         <Stack className="homeUpcomingEventDetails">
           {/* Date */}
@@ -111,7 +119,15 @@ const EventCard = ({ event, variant = "" }) => {
   } else {
     return (
       <Box className="homeUpcomingEventBoxDesktop">
-        <Box className="homeUpcomingEventPhoto">temp</Box>
+        {event.image ? (
+          <Box
+            component="img"
+            className="homeUpcomingEventPhoto"
+            src={event.image}
+          ></Box>
+        ) : (
+          <Box className="homeUpcomingEventPhoto">temp</Box>
+        )}
         <Stack className="homeUpcomingEventDetailsDesktop" direction="row">
           <Box className="homeEventNameDesktop"> {event.title} </Box>
 
