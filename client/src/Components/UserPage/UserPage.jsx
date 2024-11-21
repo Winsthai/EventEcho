@@ -1,5 +1,5 @@
 import { useParams } from "react-router-dom";
-import { Box, Typography, Tabs, Tab } from "@mui/material";
+import { Box, Typography, Tabs, Tab, useMediaQuery } from "@mui/material";
 import { useEffect, useState } from "react";
 import NoCreatedEvents from "./Components/NoCreatedEvents";
 import NoUpcomingEvents from "./Components/NoUpcomingEvents";
@@ -78,6 +78,8 @@ const UserPage = () => {
   const [user, setUser] = useState(null);
   const [selectedTab, setSelectedTab] = useState(0); // State to manage selected tab
 
+  const isMobile = useMediaQuery("(max-width:600px)");
+
   useEffect(() => {
     if (id) {
       const currUser = testUsers.find((elem) => elem.id == id);
@@ -109,7 +111,7 @@ const UserPage = () => {
       </Typography>
 
       {/* Search bar */}
-      {(user.createdEvents.length !== 0 && selectedTab == 0) ||
+      {(isMobile && user.createdEvents.length !== 0 && selectedTab == 0) ||
       (user.registeredEvents.length !== 0 && selectedTab == 1) ? (
         <Box sx={{ display: "flex", paddingBottom: "2vh" }}>
           <SearchBar noMargin={true} />
