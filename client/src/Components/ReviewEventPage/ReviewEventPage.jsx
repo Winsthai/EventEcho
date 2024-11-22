@@ -99,6 +99,17 @@ const ReviewEventPage = () => {
         >
           <AppBar position="static" sx={{ mb: 2 }}>
             <Toolbar sx={{ color: "secondary" }}>
+              <Typography variant="h6" component="div"
+                sx={{
+                  flexGrow: 1,
+                  textAlign: 'center',
+                  position: 'absolute',
+                  left: 0,
+                  right: 0,
+                  margin: 'auto'
+                }}>
+                Review Details
+              </Typography>
               <Box sx={{ flexGrow: 1, display: "flex" }}>
                 <IconButton
                   onClick={
@@ -114,10 +125,8 @@ const ReviewEventPage = () => {
                   <ArrowBackIcon />
                 </IconButton>
               </Box>
-              <Typography variant="h6" component="div" sx={{ flexGrow: 0 }}>
-                Review Details
-              </Typography>
-              <Box sx={{ flexGrow: 2 }} />
+
+              <Box sx={{ flexGrow: 1 }} />
             </Toolbar>
           </AppBar>
         </Box>
