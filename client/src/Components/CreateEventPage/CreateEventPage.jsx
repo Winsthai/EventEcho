@@ -185,6 +185,7 @@ export default function CreateEventPage() {
                 defaultValue={onEditPage ? events[id - 1].eventtype : eventType}
                 label="Event Types"
                 onChange={handleEventTypeChange}
+                sx={{ textAlign: 'left' }}
               >
                 <MenuItem value="Sports">Sports</MenuItem>
                 <MenuItem value="Music">Music</MenuItem>
@@ -296,7 +297,16 @@ export default function CreateEventPage() {
 
             {/* Confirm and Invite Guests Button if create, Confirm Changes+Edit Guests if edit */}
             {onEditPage ?
-              <Stack direction="row" spacing={2} sx={{ display: "flex", justifyContent: "center" }}>
+              <Stack direction="row" spacing={2}
+                sx={{
+                  display: "flex",
+                  justifyContent: "center",
+                  width: '100%',
+                  '& > *': {
+                    flex: 1
+                  }
+
+                }}>
                 <Button variant='contained'
                   onClick={() => navigate(`/editEvent/${id}/reviewEvent`)}
                   sx={{
@@ -391,7 +401,9 @@ export default function CreateEventPage() {
               <Select labelId="select-event-type"
                 defaultValue={onEditPage ? events[id - 1].eventtype : eventType}
                 label="Event Types"
-                onChange={handleEventTypeChange}>
+                onChange={handleEventTypeChange}
+                sx={{ textAlign: 'left' }}
+              >
                 <MenuItem value="Sports">Sports</MenuItem>
                 <MenuItem value="Music">Music</MenuItem>
                 <MenuItem value="Food">Food</MenuItem>
