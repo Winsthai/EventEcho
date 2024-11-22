@@ -111,7 +111,7 @@ const UserPage = () => {
       </Typography>
 
       {/* Search bar */}
-      {(isMobile && user.createdEvents.length !== 0 && selectedTab == 0) ||
+      {(user.createdEvents.length !== 0 && selectedTab == 0) ||
       (user.registeredEvents.length !== 0 && selectedTab == 1) ? (
         <Box sx={{ display: "flex", paddingBottom: "2vh" }}>
           <SearchBar noMargin={true} />
