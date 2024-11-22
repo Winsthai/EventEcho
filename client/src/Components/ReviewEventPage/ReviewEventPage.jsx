@@ -53,6 +53,24 @@ const events = [
     image:
       "https://www.horizonsmusic.co.uk/cdn/shop/articles/image1_1600x1600.jpg?v=1621417277", // temporary
   },
+  {
+    id: "3",
+    title: "Food Festival",
+    eventtype: "Food",
+    description: "A festival with foods from around the world.",
+    address: "789 Gourmet St, City",
+    coordinates: {
+      x: 40.7612,
+      y: -73.9822,
+    },
+    startdate: "2024-11-20T00:00:00.000Z",
+    starttime: "11:00:00+00",
+    enddate: "2024-11-20T00:00:00.000Z",
+    endtime: "16:00:00+00",
+    visibility: false,
+    image:
+      "https://i.ytimg.com/vi/BLsQyx604Yc/hq720.jpg?sqp=-oaymwEhCK4FEIIDSFryq4qpAxMIARUAAAAAGAElAADIQj0AgKJD&rs=AOn4CLAYWKCLjjwlIHVaM6MGC9bvpVLe_A", // temporary
+  },
 ];
 
 const ReviewEventPage = () => {
