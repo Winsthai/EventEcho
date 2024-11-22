@@ -6,7 +6,6 @@ import {
   Stack,
   Button,
   useMediaQuery,
-  FormControl,
   Menu,
   MenuItem,
 } from "@mui/material";
