@@ -74,6 +74,7 @@ const HomePage = () => {
     )
   );
 
+  // Handle filter button clicks
   const handleFilterClick = (clickedFilter) => {
     setActiveFilters((prevFilters) =>
       prevFilters.includes(clickedFilter)
@@ -84,8 +85,11 @@ const HomePage = () => {
 
   // Checks if searchedEvents and filteredEvents have events in common
   const getCommonEvents = () => {
+    // If no filters active, return searched events
     if (activeFilters.length === 0) {
       return searchedEvents;
+
+      // Find common events between searched events and filtered events
     } else {
       return searchedEvents.filter((searchedEvent) =>
         filteredEvents.some(
