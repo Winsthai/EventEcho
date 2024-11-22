@@ -99,15 +99,18 @@ const ReviewEventPage = () => {
         >
           <AppBar position="static" sx={{ mb: 2 }}>
             <Toolbar sx={{ color: "secondary" }}>
-              <Typography variant="h6" component="div"
+              <Typography
+                variant="h6"
+                component="div"
                 sx={{
                   flexGrow: 1,
-                  textAlign: 'center',
-                  position: 'absolute',
+                  textAlign: "center",
+                  position: "absolute",
                   left: 0,
                   right: 0,
-                  margin: 'auto'
-                }}>
+                  margin: "auto",
+                }}
+              >
                 Review Details
               </Typography>
               <Box sx={{ flexGrow: 1, display: "flex" }}>
@@ -153,7 +156,7 @@ const ReviewEventPage = () => {
               },
             }}
           >
-            {/* Left Group: Date, Time, Add to Calendar, Location */}
+            {/* Left Group: Date, Time, Location */}
             <Box
               sx={{
                 flex: 2.5,
@@ -177,11 +180,6 @@ const ReviewEventPage = () => {
                 {/* Adjust marginLeft later */}
                 <p id="EventReviewP" style={{ marginLeft: "8px" }}>
                   {onEditPage ? reviewTime : "19:00 - 22:00"}
-                </p>
-              </Box>
-              <Box sx={{ display: "flex", alignItems: "center" }}>
-                <p id="EventReviewP" style={{ color: "blue" }}>
-                  + Add to Calendar
                 </p>
               </Box>
               <Box
@@ -229,7 +227,13 @@ const ReviewEventPage = () => {
             <h1 id="EventReviewHeader">Event Description</h1>
             {/* Change the line below eventually */}
             <p id="EventReviewP">
-              {onEditPage ? events[id - 1].description : "show up please"}
+              {onEditPage
+                ? events[id - 1].description
+                : `Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean mollis dapibus purus, ut condimentum enim egestas ut. 
+                    Maecenas commodo fringilla risus, at faucibus leo lacinia ut. Nullam a justo egestas, lacinia erat et, dignissim lectus. 
+                    Nulla vel feugiat massa. Proin in orci eget ligula pharetra dictum. Nunc vehicula malesuada rhoncus. 
+                    Morbi a turpis id metus egestas luctus sed vel purus. 
+                    Sed vel auctor lorem, vel tincidunt est. Nunc sit amet fringilla eros, a facilisis risus.`}
             </p>
           </Box>
 
@@ -241,20 +245,10 @@ const ReviewEventPage = () => {
           <Box
             sx={{ display: "flex", alignItems: "center", marginBottom: "16px" }}
           >
-            <img
-              src="pfp.png"
-              alt="Steven Nguyen"
-              style={{
-                width: "50px",
-                height: "50px",
-                borderRadius: "50%",
-                marginRight: "16px",
-              }}
-            />
+            <div className="ReviewEventPage-desktop-avatar">SN</div>
             {/* Have the persons name on top, and waiting for rsvp on the bottom, in blue */}
             <Box sx={{ display: "flex", flexDirection: "column" }}>
               <h1 id="EventReviewNames">Steven Nguyen</h1>
-              <p id="EventReviewRVSP">Waiting for RSVP</p>
             </Box>
           </Box>
           {/* Winston */}
@@ -262,20 +256,10 @@ const ReviewEventPage = () => {
           <Box
             sx={{ display: "flex", alignItems: "center", marginBottom: "16px" }}
           >
-            <img
-              src="pfp.png"
-              alt="Winston Thai"
-              style={{
-                width: "50px",
-                height: "50px",
-                borderRadius: "50%",
-                marginRight: "16px",
-              }}
-            />
+            <div className="ReviewEventPage-desktop-avatar">WT</div>
             {/* Have the persons name on top, and waiting for rsvp on the bottom, in blue */}
             <Box sx={{ display: "flex", flexDirection: "column" }}>
               <h1 id="EventReviewNames">Winston Thai</h1>
-              <p id="EventReviewRVSP">Waiting for RSVP</p>
             </Box>
           </Box>
           {/* Shaun */}
@@ -283,20 +267,10 @@ const ReviewEventPage = () => {
           <Box
             sx={{ display: "flex", alignItems: "center", marginBottom: "16px" }}
           >
-            <img
-              src="pfp.png"
-              alt="Shaun Tapiau"
-              style={{
-                width: "50px",
-                height: "50px",
-                borderRadius: "50%",
-                marginRight: "16px",
-              }}
-            />
+            <div className="ReviewEventPage-desktop-avatar">ST</div>
             {/* Have the persons name on top, and waiting for rsvp on the bottom, in blue */}
             <Box sx={{ display: "flex", flexDirection: "column" }}>
               <h1 id="EventReviewNames">Shaun Tapiau</h1>
-              <p id="EventReviewRVSP">Waiting for RSVP</p>
             </Box>
           </Box>
         </Box>
@@ -408,14 +382,6 @@ const ReviewEventPage = () => {
                         {onEditPage ? reviewTime : "19:00 - 22:00"}
                       </p>
                     </Box>
-                    <Box sx={{ display: "flex", alignItems: "center" }}>
-                      <p
-                        id="EventReviewAddToCalendarDesktop"
-                        style={{ color: "blue" }}
-                      >
-                        + Add to Calendar
-                      </p>
-                    </Box>
                   </Box>
                   <Box>
                     <p id="EventReviewDateAndTimeLocationHeadersDesktop">
@@ -499,20 +465,10 @@ const ReviewEventPage = () => {
                     marginBottom: "16px",
                   }}
                 >
-                  <img
-                    src="pfp.png"
-                    alt="Steven Nguyen"
-                    style={{
-                      width: "50px",
-                      height: "50px",
-                      borderRadius: "50%",
-                      marginRight: "16px",
-                    }}
-                  />
+                  <div className="ReviewEventPage-desktop-avatar">SN</div>
                   {/* Have the persons name on top, and waiting for rsvp on the bottom, in blue */}
                   <Box sx={{ display: "flex", flexDirection: "column" }}>
                     <h1 id="EventReviewNamesDesktop">Steven Nguyen</h1>
-                    <p id="EventReviewRVSPDesktop">Waiting for RSVP</p>
                   </Box>
                 </Box>
                 {/* Winston */}
@@ -524,20 +480,10 @@ const ReviewEventPage = () => {
                     marginBottom: "16px",
                   }}
                 >
-                  <img
-                    src="pfp.png"
-                    alt="Winston Thai"
-                    style={{
-                      width: "50px",
-                      height: "50px",
-                      borderRadius: "50%",
-                      marginRight: "16px",
-                    }}
-                  />
+                  <div className="ReviewEventPage-desktop-avatar">WT</div>
                   {/* Have the persons name on top, and waiting for rsvp on the bottom, in blue */}
                   <Box sx={{ display: "flex", flexDirection: "column" }}>
                     <h1 id="EventReviewNamesDesktop">Winston Thai</h1>
-                    <p id="EventReviewRVSPDesktop">Waiting for RSVP</p>
                   </Box>
                 </Box>
                 {/* Shaun */}
@@ -549,20 +495,10 @@ const ReviewEventPage = () => {
                     marginBottom: "16px",
                   }}
                 >
-                  <img
-                    src="pfp.png"
-                    alt="Shaun Tapiau"
-                    style={{
-                      width: "50px",
-                      height: "50px",
-                      borderRadius: "50%",
-                      marginRight: "16px",
-                    }}
-                  />
+                  <div className="ReviewEventPage-desktop-avatar">ST</div>
                   {/* Have the persons name on top, and waiting for rsvp on the bottom, in blue */}
                   <Box sx={{ display: "flex", flexDirection: "column" }}>
                     <h1 id="EventReviewNamesDesktop">Shaun Tapiau</h1>
-                    <p id="EventReviewRVSPDesktop">Waiting for RSVP</p>
                   </Box>
                 </Box>
               </Box>
