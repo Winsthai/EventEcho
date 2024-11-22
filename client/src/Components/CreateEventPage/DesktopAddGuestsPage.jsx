@@ -131,12 +131,10 @@ export default function DesktopAddGuestsPage() {
           sx={{ height: "100%", padding: 2 }}
         >
           <div className="mobile-container">
-            {/* PROBABLY REPLACE THIS WITH SEARCH BAR COMPONENT EVENTUALLY */}
             <TextField
               variant="outlined"
               placeholder="Search contacts..."
               size="small"
-              //onChange={(event) => onSearchChange(event.target.value)}
               sx={{
                 flexGrow: 1, // Ensures the search bar takes available space
                 marginLeft: 0,
@@ -220,7 +218,6 @@ export default function DesktopAddGuestsPage() {
     <div className="desktop-container">
       <div className="desktop-content">
         <div className="desktop-search-and-add">
-          {/* PROBABLY REPLACE THIS WITH SEARCH BAR COMPONENT EVENTUALLY */}
           <TextField
             variant="outlined"
             placeholder="Search contacts..."
