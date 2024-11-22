@@ -261,6 +261,7 @@ const HomePage = () => {
       </Box>
     );
   } else {
+    // Desktop component
     return (
       <Stack direction="column" id="homeDesktopStack">
         <Stack direction="row" sx={{ alignItems: "center" }}>
@@ -383,7 +384,7 @@ const HomePage = () => {
           </Menu>
         </Stack>
 
-        <h1 style={{ marginTop: "0" }}>Upcoming Events</h1>
+        <h1>Upcoming Events</h1>
 
         {commonEvents.length !== 0 ? (
           <>
