@@ -297,7 +297,7 @@ const ReviewEventPage = () => {
           sx={{
             borderRadius: "10px",
             // width: "25%", // button width
-            mb: 4,
+            mb: 10,
             mt: 4,
             alignSelf: "center", // centers button
             padding: "1rem", // button height
