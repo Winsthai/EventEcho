@@ -63,9 +63,9 @@ const events = [
       x: 40.7612,
       y: -73.9822,
     },
-    startdate: "2024-11-20T00:00:00.000Z",
+    startdate: "2024-11-20",
     starttime: "11:00:00+00",
-    enddate: "2024-11-20T00:00:00.000Z",
+    enddate: "2024-11-20",
     endtime: "16:00:00+00",
     visibility: false,
     image:
