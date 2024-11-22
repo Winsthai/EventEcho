@@ -11,6 +11,7 @@ import LocalDiningIcon from "@mui/icons-material/LocalDining";
 import ColorLensIcon from "@mui/icons-material/ColorLens";
 import GroupsIcon from "@mui/icons-material/Groups";
 import SportsEsportsIcon from "@mui/icons-material/SportsEsports";
+import { useParams, useNavigate } from 'react-router-dom';
 
 import "./HomePageStyles.css";
 
@@ -29,7 +30,9 @@ const events = [
     "starttime": "15:00:00+00",
     "enddate": "2024-11-15T00:00:00.000Z",
     "endtime": "17:00:00+00",
-    "visibility": true
+    "visibility": true,
+    image:
+      "https://m.media-amazon.com/images/M/MV5BOWZiNzZkZGEtMWEwOS00NjZkLWFmYTctZmQyMDY3NGU0OWZjXkEyXkFqcGc@._V1_.jpg", // temporary
   },
   {
     "id": "2",
@@ -45,7 +48,9 @@ const events = [
     "starttime": "19:00:00+00",
     "enddate": "2024-12-01T00:00:00.000Z",
     "endtime": "21:00:00+00",
-    "visibility": true
+    "visibility": true,
+    image:
+      "https://www.horizonsmusic.co.uk/cdn/shop/articles/image1_1600x1600.jpg?v=1621417277", // temporary
   }
 ];
 
