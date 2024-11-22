@@ -1,61 +1,61 @@
 import SearchBar from "../SearchBar";
-import EventCard from "../EventCard/EventCard"
-import NoUpcomingEvents from "./Components/NoUpcomingEvents"
-import { Box, Stack, Button, useMediaQuery} from "@mui/material";
+import EventCard from "../EventCard/EventCard";
+import NoUpcomingEvents from "./Components/NoUpcomingEvents";
+import { Box, Stack, Button, useMediaQuery } from "@mui/material";
 import { useState } from "react";
 
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
-import SportsBasketballIcon from '@mui/icons-material/SportsBasketball';
-import MusicNoteIcon from '@mui/icons-material/MusicNote';
-import LocalDiningIcon from '@mui/icons-material/LocalDining';
-import ColorLensIcon from '@mui/icons-material/ColorLens';
-import GroupsIcon from '@mui/icons-material/Groups';
-import SportsEsportsIcon from '@mui/icons-material/SportsEsports';
+import SportsBasketballIcon from "@mui/icons-material/SportsBasketball";
+import MusicNoteIcon from "@mui/icons-material/MusicNote";
+import LocalDiningIcon from "@mui/icons-material/LocalDining";
+import ColorLensIcon from "@mui/icons-material/ColorLens";
+import GroupsIcon from "@mui/icons-material/Groups";
+import SportsEsportsIcon from "@mui/icons-material/SportsEsports";
 
-import './HomePageStyles.css';
+import "./HomePageStyles.css";
 
 const events = [
   {
-      "id": "1",
-      "title": "Football Game",
-      "eventtype": "Sports",
-      "description": "A friendly neighborhood football game.",
-      "address": "123 Stadium Rd, City",
-      "coordinates": {
-          "x": 40.7128,
-          "y": -74.006
-      },
-      "startdate": "2024-11-15T00:00:00.000Z",
-      "starttime": "15:00:00+00",
-      "enddate": "2024-11-15T00:00:00.000Z",
-      "endtime": "17:00:00+00",
-      "visibility": true,
-      "image":
-          "https://m.media-amazon.com/images/M/MV5BOWZiNzZkZGEtMWEwOS00NjZkLWFmYTctZmQyMDY3NGU0OWZjXkEyXkFqcGc@._V1_.jpg", // temporary
+    id: "1",
+    title: "Football Game",
+    eventtype: "Sports",
+    description: "A friendly neighborhood football game.",
+    address: "123 Stadium Rd, City",
+    coordinates: {
+      x: 40.7128,
+      y: -74.006,
+    },
+    startdate: "2024-11-15T00:00:00.000Z",
+    starttime: "15:00:00+00",
+    enddate: "2024-11-15T00:00:00.000Z",
+    endtime: "17:00:00+00",
+    visibility: true,
+    image:
+      "https://m.media-amazon.com/images/M/MV5BOWZiNzZkZGEtMWEwOS00NjZkLWFmYTctZmQyMDY3NGU0OWZjXkEyXkFqcGc@._V1_.jpg", // temporary
   },
   {
-      "id": "2",
-      "title": "Jazz Concert",
-      "eventtype": "Music",
-      "description": "Live jazz performance.",
-      "address": "456 Music Hall Ave, City",
-      "coordinates": {
-          "x": 40.7306,
-          "y": -73.9352
-      },
-      "startdate": "2024-12-01T00:00:00.000Z",
-      "starttime": "19:00:00+00",
-      "enddate": "2024-12-01T00:00:00.000Z",
-      "endtime": "21:00:00+00",
-      "visibility": true,
-      "image":
-          "https://www.horizonsmusic.co.uk/cdn/shop/articles/image1_1600x1600.jpg?v=1621417277", // temporary
-  }
+    id: "2",
+    title: "Jazz Concert",
+    eventtype: "Music",
+    description: "Live jazz performance.",
+    address: "456 Music Hall Ave, City",
+    coordinates: {
+      x: 40.7306,
+      y: -73.9352,
+    },
+    startdate: "2024-12-01T00:00:00.000Z",
+    starttime: "19:00:00+00",
+    enddate: "2024-12-01T00:00:00.000Z",
+    endtime: "21:00:00+00",
+    visibility: true,
+    image:
+      "https://www.horizonsmusic.co.uk/cdn/shop/articles/image1_1600x1600.jpg?v=1621417277", // temporary
+  },
 ];
 
 const HomePage = () => {
   const [searchQuery, setSearchQuery] = useState(""); // State to manage search queries
-  const [activeFilter, setActiveFilter] = useState("");
+  const [activeFilters, setActiveFilters] = useState([]); // State to track active filters
 
   const isMobile = useMediaQuery("(max-width:600px)");
 
@@ -67,35 +67,42 @@ const HomePage = () => {
     event.title.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
-  const handleFilterChange = (filter) => {
-    setActiveFilter(filter);
-  }
-
+  // Finds all events with currently active filters
   const filteredEvents = events.filter((event) =>
-    event.eventtype.toLowerCase().includes(activeFilter.toLowerCase())
+    activeFilters.some((filter) =>
+      event.eventtype.toLowerCase().includes(filter.toLowerCase())
+    )
   );
 
-  const handleFilterClick = (event) => {
-    handleFilterChange(event.target.value);
-    console.log(event.target.value);
-  }
+  const handleFilterClick = (clickedFilter) => {
+    setActiveFilters((prevFilters) =>
+      prevFilters.includes(clickedFilter)
+        ? prevFilters.filter((filters) => filters !== clickedFilter)
+        : [...prevFilters, clickedFilter]
+    );
+  };
 
   // Checks if searchedEvents and filteredEvents have events in common
-  const commonEvents = searchedEvents.filter((searchedEvent) => 
-    filteredEvents.some((filteredEvent) => filteredEvent.id === searchedEvent.id)
-  );
+  const getCommonEvents = () => {
+    if (activeFilters.length === 0) {
+      return searchedEvents;
+    } else {
+      return searchedEvents.filter((searchedEvent) =>
+        filteredEvents.some(
+          (filteredEvent) => filteredEvent.id === searchedEvent.id
+        )
+      );
+    }
+  };
+
+  const commonEvents = getCommonEvents();
 
   if (isMobile) {
     // Mobile Component
     return (
-      <Box
-        id="homeBox"
-      >
+      <Box id="homeBox">
         {/* Top mobile component */}
-        <Stack
-          direction="row"
-          id="homeHeaderStack"
-        >
+        <Stack direction="row" id="homeHeaderStack">
           {/* Header */}
           <h1>Events</h1>
 
@@ -110,74 +117,102 @@ const HomePage = () => {
             </Button>
           </Box>
         </Stack>
-  
+
         {/* Main body for events */}
-        <Stack
-          id="homeEventsStack"
-        >
+        <Stack id="homeEventsStack">
           {/* Search bar */}
           <SearchBar onSearchChange={handleSearchChange} />
 
           {/* Filter buttons */}
-          <Stack
-            direction="row"
-            id="homeFiltersStack"
-          >
+          <Stack direction="row" id="homeFiltersStack">
             <Box id="homeFiltersBox">
               {/* Sports */}
-              <Button 
-                variant="contained" 
-                sx={{borderRadius:"20px", backgroundColor:"#ff7474"}} 
-                startIcon={<SportsBasketballIcon/>}
-                value="Sports"
-                onClick={handleFilterClick}
+              <Button
+                variant="contained"
+                sx={{
+                  borderRadius: "20px",
+                  backgroundColor: activeFilters.includes("Sports")
+                    ? "#A50B07"
+                    : "#ff7474",
+                }}
+                startIcon={<SportsBasketballIcon />}
+                onClick={() => handleFilterClick("Sports")}
               >
                 Sports
               </Button>
 
               {/* Music */}
-              <Button 
-                variant="contained" 
-                sx={{borderRadius:"20px", 
-                backgroundColor:"#ff7474"}} 
-                startIcon={<MusicNoteIcon/>}
-              > 
-                Music 
+              <Button
+                variant="contained"
+                sx={{
+                  borderRadius: "20px",
+                  backgroundColor: activeFilters.includes("Music")
+                    ? "#A50B07"
+                    : "#ff7474",
+                }}
+                startIcon={<MusicNoteIcon />}
+                onClick={() => handleFilterClick("Music")}
+              >
+                Music
               </Button>
 
               {/* Food */}
-              <Button 
-                variant="contained" 
-                sx={{borderRadius:"20px", backgroundColor:"#ff7474"}} 
-                startIcon={<LocalDiningIcon/>}
-              > 
-                Food 
+              <Button
+                variant="contained"
+                sx={{
+                  borderRadius: "20px",
+                  backgroundColor: activeFilters.includes("Food")
+                    ? "#A50B07"
+                    : "#ff7474",
+                }}
+                startIcon={<LocalDiningIcon />}
+                onClick={() => handleFilterClick("Food")}
+              >
+                Food
               </Button>
-              
+
               {/* Art */}
-              <Button 
-                variant="contained" 
-                sx={{borderRadius:"20px", backgroundColor:"#ff7474"}} 
-                startIcon={<ColorLensIcon/>}
-              > 
+              <Button
+                variant="contained"
+                sx={{
+                  borderRadius: "20px",
+                  backgroundColor: activeFilters.includes("Art")
+                    ? "#A50B07"
+                    : "#ff7474",
+                }}
+                startIcon={<ColorLensIcon />}
+                onClick={() => handleFilterClick("Art")}
+              >
                 Art
               </Button>
-              
+
               {/* Hangout */}
-              <Button 
-                variant="contained" 
-                sx={{borderRadius:"20px", backgroundColor:"#ff7474"}}
-                startIcon={<GroupsIcon/>}
-              > 
+              <Button
+                variant="contained"
+                sx={{
+                  borderRadius: "20px",
+                  backgroundColor: activeFilters.includes("Hangout")
+                    ? "#A50B07"
+                    : "#ff7474",
+                }}
+                startIcon={<GroupsIcon />}
+                onClick={() => handleFilterClick("Hangout")}
+              >
                 Hangout
               </Button>
 
               {/* Gaming */}
-              <Button 
-                variant="contained" 
-                sx={{borderRadius:"20px", backgroundColor:"#ff7474"}} 
-                startIcon={<SportsEsportsIcon/>}
-              > 
+              <Button
+                variant="contained"
+                sx={{
+                  borderRadius: "20px",
+                  backgroundColor: activeFilters.includes("Gaming")
+                    ? "#A50B07"
+                    : "#ff7474",
+                }}
+                startIcon={<SportsEsportsIcon />}
+                onClick={() => handleFilterClick("Gaming")}
+              >
                 Gaming
               </Button>
             </Box>
@@ -188,28 +223,28 @@ const HomePage = () => {
           {commonEvents.length !== 0 ? (
             <>
               {commonEvents.map((event) => (
-                <EventCard key={event.id} event={event} variant=""/>
+                <EventCard key={event.id} event={event} variant="" />
               ))}
             </>
           ) : (
             <NoUpcomingEvents />
-          )}       
+          )}
         </Stack>
       </Box>
     );
   } else {
     return (
       <Stack direction="column" id="homeDesktopStack">
-        <h1 style={{marginTop:"0"}}>Upcoming Events</h1>
+        <h1 style={{ marginTop: "0" }}>Upcoming Events</h1>
         {events.length !== 0 ? (
-            <>
-              {events.map((event) => (
-                <EventCard key={event.id} event={event} variant=""/>
-              ))}
-            </>
-          ) : (
-            <NoUpcomingEvents />
-          )}
+          <>
+            {events.map((event) => (
+              <EventCard key={event.id} event={event} variant="" />
+            ))}
+          </>
+        ) : (
+          <NoUpcomingEvents />
+        )}
       </Stack>
     );
   }
