@@ -32,6 +32,8 @@ const events = [
     enddate: "2024-11-15",
     endtime: "17:00:00+00",
     visibility: true,
+    image:
+      "https://m.media-amazon.com/images/M/MV5BOWZiNzZkZGEtMWEwOS00NjZkLWFmYTctZmQyMDY3NGU0OWZjXkEyXkFqcGc@._V1_.jpg", // temporary
   },
   {
     id: "2",
@@ -47,23 +49,9 @@ const events = [
     starttime: "19:00:00+00",
     enddate: "2024-12-01",
     endtime: "21:00:00+00",
-    visibility: false,
-  },
-  {
-    id: "3",
-    title: "Food Festival",
-    eventtype: "Food",
-    description: "A festival with foods from around the world.",
-    address: "789 Gourmet St, City",
-    coordinates: {
-      x: 40.7612,
-      y: -73.9822,
-    },
-    startdate: "2024-11-20",
-    starttime: "11:00:00+00",
-    enddate: "2024-11-20",
-    endtime: "16:00:00+00",
-    visibility: false,
+    visibility: true,
+    image:
+      "https://www.horizonsmusic.co.uk/cdn/shop/articles/image1_1600x1600.jpg?v=1621417277", // temporary
   },
 ];
 
@@ -73,12 +61,13 @@ const ReviewEventPage = () => {
   const isMobile = useMediaQuery("(max-width:600px)");
   const onEditPage = location.pathname.includes("edit");
 
-  let reviewTime, startTimeTrimmed, endTimeTrimmed;
+  let reviewTime, startTimeTrimmed, endTimeTrimmed, databaseImage;
 
   if (onEditPage) {
     startTimeTrimmed = events[id - 1].starttime.slice(0, -6);
     endTimeTrimmed = events[id - 1].endtime.slice(0, -6);
     reviewTime = startTimeTrimmed.concat(" - ", endTimeTrimmed);
+    databaseImage = events[id - 1].image;
   }
 
   if (isMobile) {
@@ -206,7 +195,19 @@ const ReviewEventPage = () => {
               }}
             >
               {/* Picture goes here */}
-              <p id="EventReviewPhoto">Picture here</p>
+              {onEditPage ? (
+                <Box
+                  component="img"
+                  id="EventReviewPhotoDesktop"
+                  src={databaseImage}
+                ></Box>
+              ) : (
+                <Box
+                  component="img"
+                  id="EventReviewPhotoDesktop"
+                  src="https://s1.ticketm.net/dam/a/8b3/7896254c-063b-4815-b3a3-04cc7b6b68b3_RETINA_PORTRAIT_3_2.jpg"
+                ></Box>
+              )}
             </Box>
           </Box>
           {/* Details */}
@@ -353,7 +354,7 @@ const ReviewEventPage = () => {
                     margin: "4px 0", // Vertical margin for each <p> tag
                     padding: 0, // Remove any padding inside <p> tags
                   },
-                  pb: "2rem"
+                  pb: "2rem",
                 }}
               >
                 {/* Left Group (Event details (dates, location))*/}
@@ -430,11 +431,19 @@ const ReviewEventPage = () => {
                 {/* Middle Group (Picture) */}
                 <Box sx={{ marginRight: "3rem" }}>
                   {/* Picture goes here */}
-                  <Box
-                    component="img"
-                    id="EventReviewPhotoDesktop"
-                    src="https://s1.ticketm.net/dam/a/8b3/7896254c-063b-4815-b3a3-04cc7b6b68b3_RETINA_PORTRAIT_3_2.jpg"
-                  ></Box>
+                  {onEditPage ? (
+                    <Box
+                      component="img"
+                      id="EventReviewPhotoDesktop"
+                      src={databaseImage}
+                    ></Box>
+                  ) : (
+                    <Box
+                      component="img"
+                      id="EventReviewPhotoDesktop"
+                      src="https://s1.ticketm.net/dam/a/8b3/7896254c-063b-4815-b3a3-04cc7b6b68b3_RETINA_PORTRAIT_3_2.jpg"
+                    ></Box>
+                  )}
                 </Box>
 
                 {/* Right Group (Event Description) */}
