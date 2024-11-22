@@ -90,7 +90,7 @@ export default function CreateEventPage() {
     endTimeTrimmed = events[id - 1].endtime.slice(0, -3);
   }
   else {
-    vis = false;
+    vis = true;
   }
 
   const [eventPublic, setEventPublic] = React.useState(vis);
