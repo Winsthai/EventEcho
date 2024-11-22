@@ -90,15 +90,9 @@ const MobileLayout = () => (
         >
           Guest
         </Avatar>
-      </Stack>
-
-        
         {/* Camera Icon Overlay */}
         <IconButton
-          sx={{
-            position: 'fixed', 
-            top: '22%',        
-            left: '57%',       
+          sx={{  
             backgroundColor: 'white',
             border: '1px solid #ccc',
           }}
@@ -106,6 +100,10 @@ const MobileLayout = () => (
         >
           <PhotoCameraIcon fontSize="small" />
         </IconButton>
+      </Stack>
+
+        
+        
             <Box sx={{ display: "flex", justifyContent: "left" }}>
               Name *
             </Box>
@@ -188,15 +186,9 @@ const MobileLayout = () => (
         >
           Guest
         </Avatar>
-      </Stack>
-
-        
         {/* Camera Icon Overlay */}
         <IconButton
-          sx={{
-            position: 'fixed', 
-            top: '32%',        
-            left: '57%',       
+          sx={{  
             backgroundColor: 'white',
             border: '1px solid #ccc',
           }}
@@ -204,6 +196,8 @@ const MobileLayout = () => (
         >
           <PhotoCameraIcon fontSize="small" />
         </IconButton>
+      </Stack>
+
             <Box sx={{ display: "flex", justifyContent: "left" }}>
               Name *
             </Box>
