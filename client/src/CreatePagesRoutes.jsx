@@ -1,9 +1,6 @@
 import { Routes, Route } from "react-router-dom";
 import DesktopProgressBar from "./Components/DesktopProgressBar";
-import DesktopCreateEventPage from "./Components/CreateEventPage/DesktopCreateEventPage";
 import DesktopAddGuestsPage from "./Components/CreateEventPage/DesktopAddGuestsPage";
-import DesktopReviewEventPage from "./Components/CreateEventPage/DesktopReviewEventPage";
-
 import CreateEventPage from "./Components/CreateEventPage/CreateEventPage";
 import ReviewEventPage from "./Components/ReviewEventPage/ReviewEventPage";
 import { useMediaQuery } from "@mui/material";

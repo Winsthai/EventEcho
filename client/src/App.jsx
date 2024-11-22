@@ -1,9 +1,6 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import HomePage from "./Components/HomePage/HomePage";
 import EventPage from "./Components/EventPage/EventPage";
-import CreateEventPage from "./Components/CreateEventPage/CreateEventPage";
-import EditEventPage from "./Components/EditEventPage/EditEventPage";
-import DesktopEditEventPage from "./Components/EditEventPage/DesktopEditEventPage";
 import MobileNavBar from "./Components/MobileNavBar";
 import LoginPage from "./Components/LoginPage/LoginPage";
 import SignUpPage from "./Components/SignUpPage/SignUpPage";
@@ -12,8 +9,6 @@ import NavBar from "./Components/NavBar";
 import UserPage from "./Components/UserPage/UserPage";
 import CreatePagesRoutes from "./CreatePagesRoutes";
 import EditPagesRoutes from "./EditPagesRoutes";
-import ReviewEventPage from "./Components/ReviewEventPage/ReviewEventPage";
-
 
 function App() {
   // Use media query to check if screen width is less than 600px (mobile view)
