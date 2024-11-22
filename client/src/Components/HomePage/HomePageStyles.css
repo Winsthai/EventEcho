@@ -1,64 +1,62 @@
 #homeHeaderStack {
-    align-items: center;
-    justify-content: space-between;
-    padding: 0 5vw 0 5vw;
-    background-color: white;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 5vw 0 5vw;
+  background-color: white;
 }
 
 #homeLoginButton {
-    display: flex;
-    justify-content: space-between;
-    padding-left: 0.5vw;
-    padding-right: 0.5vw;
+  display: flex;
+  justify-content: space-between;
+  padding-left: 0.5vw;
+  padding-right: 0.5vw;
 }
 
 #homeEventsStack {
-    padding: 2vw;
+  padding: 2vw;
 }
 
 #homeFiltersStack {
-    padding: 2vw;
+  padding: 2vw;
 }
 
 /* Make filters box scrollable */
 #homeFiltersBox {
-    padding: 2vw;
-    padding-bottom: 0.5vw;
-    overflow-x: auto;
-    white-space: nowrap;
-    
+  padding: 2vw;
+  padding-bottom: 0.5vw;
+  overflow-x: auto;
+  white-space: nowrap;
 }
 
 /* Height of scrollbar */
 #homeFiltersBox::-webkit-scrollbar {
-    height: 6px; 
+  height: 6px;
 }
 
 /* Make scrollbar transparent when not hovered */
 #homeFiltersBox::-webkit-scrollbar-thumb {
-    background-color: transparent;
+  background-color: transparent;
 }
 
 /* Make scrollbar visible on hover */
 #homeFiltersBox:hover::-webkit-scrollbar-thumb {
-    padding: 2vw;
-    background-color: #ccc;
-    border-radius: 4px;
-  }
+  padding: 2vw;
+  background-color: #ccc;
+  border-radius: 4px;
+}
 
 #homeFiltersBox > Button {
-    margin-right: 4vw;
-    height: 90%;
+  margin-right: 4vw;
+  height: 90%;
 }
 
 #homeUpcomingHeader {
-    padding: 5vw;
-    padding-bottom: 0;
-    margin: 0;
-    font-size: 2.5vh;
-    font-weight: bold;
+  padding: 5vw;
+  margin: 0;
+  font-size: 2.5vh;
+  font-weight: bold;
 }
 
 #homeDesktopStack {
-    padding: 3vw;
+  padding: 3vw;
 }
