@@ -1,184 +1,257 @@
 import SearchBar from "../SearchBar";
-import { Box, Stack, Button, useMediaQuery} from "@mui/material";
+import EventCard from "../EventCard/EventCard";
+import NoUpcomingEvents from "./Components/NoUpcomingEvents";
+import { Box, Stack, Button, useMediaQuery } from "@mui/material";
+import { useState } from "react";
 
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
-import SportsBasketballIcon from '@mui/icons-material/SportsBasketball';
-import MusicNoteIcon from '@mui/icons-material/MusicNote';
-import LocalDiningIcon from '@mui/icons-material/LocalDining';
-import ColorLensIcon from '@mui/icons-material/ColorLens';
-import GroupsIcon from '@mui/icons-material/Groups';
-import SportsEsportsIcon from '@mui/icons-material/SportsEsports';
-import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
-import AccessTimeIcon from '@mui/icons-material/AccessTime';
-import LocationOnIcon from '@mui/icons-material/LocationOn';
+import SportsBasketballIcon from "@mui/icons-material/SportsBasketball";
+import MusicNoteIcon from "@mui/icons-material/MusicNote";
+import LocalDiningIcon from "@mui/icons-material/LocalDining";
+import ColorLensIcon from "@mui/icons-material/ColorLens";
+import GroupsIcon from "@mui/icons-material/Groups";
+import SportsEsportsIcon from "@mui/icons-material/SportsEsports";
 
-// import CalendarDesktop from '../../images/CalendarDesktop.png';
-// import ClockDesktop from '../../images/ClockDesktop.png';
-// import LocationDesktop from '../../images/LocationDesktop.png';
-
-import './HomePageStyles.css';
+import "./HomePageStyles.css";
 
 const events = [
   {
-      "id": "1",
-      "title": "Football Game",
-      "eventtype": "Sports",
-      "description": "A friendly neighborhood football game.",
-      "address": "123 Stadium Rd, City",
-      "coordinates": {
-          "x": 40.7128,
-          "y": -74.006
-      },
-      "startdate": "2024-11-15T00:00:00.000Z",
-      "starttime": "15:00:00+00",
-      "enddate": "2024-11-15T00:00:00.000Z",
-      "endtime": "17:00:00+00",
-      "visibility": true
+    id: "1",
+    title: "Football Game",
+    eventtype: "Sports",
+    description: "A friendly neighborhood football game.",
+    address: "123 Stadium Rd, City",
+    coordinates: {
+      x: 40.7128,
+      y: -74.006,
+    },
+    startdate: "2024-11-15T00:00:00.000Z",
+    starttime: "15:00:00+00",
+    enddate: "2024-11-15T00:00:00.000Z",
+    endtime: "17:00:00+00",
+    visibility: true,
+    image:
+      "https://m.media-amazon.com/images/M/MV5BOWZiNzZkZGEtMWEwOS00NjZkLWFmYTctZmQyMDY3NGU0OWZjXkEyXkFqcGc@._V1_.jpg", // temporary
   },
   {
-      "id": "2",
-      "title": "Jazz Concert",
-      "eventtype": "Music",
-      "description": "Live jazz performance.",
-      "address": "456 Music Hall Ave, City",
-      "coordinates": {
-          "x": 40.7306,
-          "y": -73.9352
-      },
-      "startdate": "2024-12-01T00:00:00.000Z",
-      "starttime": "19:00:00+00",
-      "enddate": "2024-12-01T00:00:00.000Z",
-      "endtime": "21:00:00+00",
-      "visibility": true
-  }
+    id: "2",
+    title: "Jazz Concert",
+    eventtype: "Music",
+    description: "Live jazz performance.",
+    address: "456 Music Hall Ave, City",
+    coordinates: {
+      x: 40.7306,
+      y: -73.9352,
+    },
+    startdate: "2024-12-01T00:00:00.000Z",
+    starttime: "19:00:00+00",
+    enddate: "2024-12-01T00:00:00.000Z",
+    endtime: "21:00:00+00",
+    visibility: true,
+    image:
+      "https://www.horizonsmusic.co.uk/cdn/shop/articles/image1_1600x1600.jpg?v=1621417277", // temporary
+  },
 ];
 
 const HomePage = () => {
+  const [searchQuery, setSearchQuery] = useState(""); // State to manage search queries
+  const [activeFilters, setActiveFilters] = useState([]); // State to track active filters
+
   const isMobile = useMediaQuery("(max-width:600px)");
+
+  const handleSearchChange = (query) => {
+    setSearchQuery(query); // Update search query
+  };
+
+  const searchedEvents = events.filter((event) =>
+    event.title.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
+  // Finds all events with currently active filters
+  const filteredEvents = events.filter((event) =>
+    activeFilters.some((filter) =>
+      event.eventtype.toLowerCase().includes(filter.toLowerCase())
+    )
+  );
+
+  // Handle filter button clicks
+  const handleFilterClick = (clickedFilter) => {
+    setActiveFilters((prevFilters) =>
+      prevFilters.includes(clickedFilter)
+        ? prevFilters.filter((filters) => filters !== clickedFilter)
+        : [...prevFilters, clickedFilter]
+    );
+  };
+
+  // Checks if searchedEvents and filteredEvents have events in common
+  const getCommonEvents = () => {
+    // If no filters active, return searched events
+    if (activeFilters.length === 0) {
+      return searchedEvents;
+
+      // Find common events between searched events and filtered events
+    } else {
+      return searchedEvents.filter((searchedEvent) =>
+        filteredEvents.some(
+          (filteredEvent) => filteredEvent.id === searchedEvent.id
+        )
+      );
+    }
+  };
+
+  const commonEvents = getCommonEvents();
 
   if (isMobile) {
     // Mobile Component
     return (
-      <Box
-        id="homeBox"
-      >
-        <Stack
-          direction="row"
-          id="homeHeaderStack"
-        >
+      <Box id="homeBox">
+        {/* Top mobile component */}
+        <Stack direction="row" id="homeHeaderStack">
+          {/* Header */}
           <h1>Events</h1>
+
+          {/* Login button */}
           <Box>
-            <Button variant="contained" sx={{borderRadius:"20px"}} startIcon={<AccountCircleIcon/>}>
-              <Box id="homeLoginButton"> Login </Box>   
+            <Button
+              variant="contained"
+              sx={{ borderRadius: "20px" }}
+              startIcon={<AccountCircleIcon />}
+            >
+              <Box id="homeLoginButton"> Login </Box>
             </Button>
           </Box>
-          
         </Stack>
-  
-        <Stack
-          id="homeEventsStack"
-        >
-          <SearchBar></SearchBar>
-          <Stack
-            direction="row"
-            id="homeFiltersStack"
-          >
+
+        {/* Main body for events */}
+        <Stack id="homeEventsStack">
+          {/* Search bar */}
+          <SearchBar onSearchChange={handleSearchChange} />
+
+          {/* Filter buttons */}
+          <Stack direction="row" id="homeFiltersStack">
             <Box id="homeFiltersBox">
-              <Button 
-                variant="contained" 
-                sx={{borderRadius:"20px", backgroundColor:"#ff7474"}} 
-                startIcon={<SportsBasketballIcon/>}
+              {/* Sports */}
+              <Button
+                variant="contained"
+                sx={{
+                  borderRadius: "20px",
+                  backgroundColor: activeFilters.includes("Sports")
+                    ? "#A50B07"
+                    : "#ff7474",
+                }}
+                startIcon={<SportsBasketballIcon />}
+                onClick={() => handleFilterClick("Sports")}
               >
-                Sports 
+                Sports
               </Button>
 
-              <Button 
-                variant="contained" 
-                sx={{borderRadius:"20px", 
-                backgroundColor:"#ff7474"}} 
-                startIcon={<MusicNoteIcon/>}
-              > 
-                Music 
+              {/* Music */}
+              <Button
+                variant="contained"
+                sx={{
+                  borderRadius: "20px",
+                  backgroundColor: activeFilters.includes("Music")
+                    ? "#A50B07"
+                    : "#ff7474",
+                }}
+                startIcon={<MusicNoteIcon />}
+                onClick={() => handleFilterClick("Music")}
+              >
+                Music
               </Button>
 
-              <Button 
-                variant="contained" 
-                sx={{borderRadius:"20px", backgroundColor:"#ff7474"}} 
-                startIcon={<LocalDiningIcon/>}
-              > 
-                Food 
+              {/* Food */}
+              <Button
+                variant="contained"
+                sx={{
+                  borderRadius: "20px",
+                  backgroundColor: activeFilters.includes("Food")
+                    ? "#A50B07"
+                    : "#ff7474",
+                }}
+                startIcon={<LocalDiningIcon />}
+                onClick={() => handleFilterClick("Food")}
+              >
+                Food
               </Button>
-              
-              <Button 
-                variant="contained" 
-                sx={{borderRadius:"20px", backgroundColor:"#ff7474"}} 
-                startIcon={<ColorLensIcon/>}
-              > 
+
+              {/* Art */}
+              <Button
+                variant="contained"
+                sx={{
+                  borderRadius: "20px",
+                  backgroundColor: activeFilters.includes("Art")
+                    ? "#A50B07"
+                    : "#ff7474",
+                }}
+                startIcon={<ColorLensIcon />}
+                onClick={() => handleFilterClick("Art")}
+              >
                 Art
               </Button>
-              
-              <Button 
-                variant="contained" 
-                sx={{borderRadius:"20px", backgroundColor:"#ff7474"}}
-                startIcon={<GroupsIcon/>}
-              > 
+
+              {/* Hangout */}
+              <Button
+                variant="contained"
+                sx={{
+                  borderRadius: "20px",
+                  backgroundColor: activeFilters.includes("Hangout")
+                    ? "#A50B07"
+                    : "#ff7474",
+                }}
+                startIcon={<GroupsIcon />}
+                onClick={() => handleFilterClick("Hangout")}
+              >
                 Hangout
               </Button>
 
-              <Button 
-                variant="contained" 
-                sx={{borderRadius:"20px", backgroundColor:"#ff7474"}} 
-                startIcon={<SportsEsportsIcon/>}
-              > 
+              {/* Gaming */}
+              <Button
+                variant="contained"
+                sx={{
+                  borderRadius: "20px",
+                  backgroundColor: activeFilters.includes("Gaming")
+                    ? "#A50B07"
+                    : "#ff7474",
+                }}
+                startIcon={<SportsEsportsIcon />}
+                onClick={() => handleFilterClick("Gaming")}
+              >
                 Gaming
               </Button>
-            </Box>           
+            </Box>
           </Stack>
-
+          {/* Upcoming events section */}
           <Box id="homeUpcomingHeader"> Upcoming Events </Box>
 
-          <Box className="homeUpcomingEventBox"> 
-            <Box className="homeUpcomingEventPhoto">temp</Box>
-
-            <Stack className="homeUpcomingEventDetails">
-              <Box className="homeEventDate" color="text.secondary"> Thursday, November 14 </Box>
-              <Box className="homeEventName"> Football Game </Box>
-              <Stack direction="row" alignItems="center" className="homeEventTime" color="text.secondary"> <AccessTimeIcon className="homeEventIconsMobile" sx={{fontSize:"1rem"}}/> 8:00 AM </Stack>
-              <Stack direction="row" alignItems="center" className="homeEventLocation" color="text.secondary"> <LocationOnIcon className="homeEventIconsMobile" sx={{fontSize:"1rem"}}/>123 Stadium Rd, City </Stack>
-            </Stack>
-          </Box>
-          
+          {commonEvents.length !== 0 ? (
+            <>
+              {commonEvents.map((event) => (
+                <EventCard key={event.id} event={event} variant="" />
+              ))}
+            </>
+          ) : (
+            <NoUpcomingEvents />
+          )}
         </Stack>
-        
       </Box>
-      
     );
   } else {
     return (
       <Stack direction="column" id="homeDesktopStack">
-        <h1 style={{marginTop:"0"}}>Upcoming Events</h1>
-        <Box className="homeUpcomingEventBoxDesktop"> 
-          <Box className="homeUpcomingEventPhoto">temp</Box>
-            <Stack className="homeUpcomingEventDetailsDesktop" direction="row">
-              <Box className="homeEventNameDesktop"> Football Game </Box>
-              <Box className="homeEventDateDesktop" color="text.secondary"> <CalendarMonthIcon className="homeEventIconsDesktop" sx={{fontSize:"1em"}}/> Thursday, November 14 </Box>
-              <Box className="homeEventTimeDesktop" color="text.secondary"> <AccessTimeIcon className="homeEventIconsDesktop" sx={{fontSize:"1em"}}/> 8:00 AM </Box>
-              <Box className="homeEventLocationDesktop" color="text.secondary">  <LocationOnIcon className="homeEventIconsDesktop" sx={{fontSize:"1em"}}/> 123 Stadium Rd, City </Box>
-              <Box>
-                <Button 
-                  variant="contained" 
-                  sx={{borderRadius:"20px", height:"80%", backgroundColor:"#ff7474"}} 
-                >
-                  Register 
-                </Button>
-              </Box>
-            </Stack>
-        </Box>
+        <h1 style={{ marginTop: "0" }}>Upcoming Events</h1>
+        {events.length !== 0 ? (
+          <>
+            {events.map((event) => (
+              <EventCard key={event.id} event={event} variant="" />
+            ))}
+          </>
+        ) : (
+          <NoUpcomingEvents />
+        )}
       </Stack>
-
     );
   }
-  
 };
 
 export default HomePage;
