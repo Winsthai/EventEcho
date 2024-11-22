@@ -1,5 +1,8 @@
 import SearchBar from "../SearchBar";
+import EventCard from "../EventCard/EventCard"
+import NoUpcomingEvents from "./Components/NoUpcomingEvents"
 import { Box, Stack, Button, useMediaQuery} from "@mui/material";
+import { useState } from "react";
 
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import SportsBasketballIcon from '@mui/icons-material/SportsBasketball';
@@ -8,13 +11,6 @@ import LocalDiningIcon from '@mui/icons-material/LocalDining';
 import ColorLensIcon from '@mui/icons-material/ColorLens';
 import GroupsIcon from '@mui/icons-material/Groups';
 import SportsEsportsIcon from '@mui/icons-material/SportsEsports';
-import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
-import AccessTimeIcon from '@mui/icons-material/AccessTime';
-import LocationOnIcon from '@mui/icons-material/LocationOn';
-
-// import CalendarDesktop from '../../images/CalendarDesktop.png';
-// import ClockDesktop from '../../images/ClockDesktop.png';
-// import LocationDesktop from '../../images/LocationDesktop.png';
 
 import './HomePageStyles.css';
 
@@ -33,7 +29,9 @@ const events = [
       "starttime": "15:00:00+00",
       "enddate": "2024-11-15T00:00:00.000Z",
       "endtime": "17:00:00+00",
-      "visibility": true
+      "visibility": true,
+      "image":
+          "https://m.media-amazon.com/images/M/MV5BOWZiNzZkZGEtMWEwOS00NjZkLWFmYTctZmQyMDY3NGU0OWZjXkEyXkFqcGc@._V1_.jpg", // temporary
   },
   {
       "id": "2",
@@ -49,12 +47,43 @@ const events = [
       "starttime": "19:00:00+00",
       "enddate": "2024-12-01T00:00:00.000Z",
       "endtime": "21:00:00+00",
-      "visibility": true
+      "visibility": true,
+      "image":
+          "https://www.horizonsmusic.co.uk/cdn/shop/articles/image1_1600x1600.jpg?v=1621417277", // temporary
   }
 ];
 
 const HomePage = () => {
+  const [searchQuery, setSearchQuery] = useState(""); // State to manage search queries
+  const [activeFilter, setActiveFilter] = useState("");
+
   const isMobile = useMediaQuery("(max-width:600px)");
+
+  const handleSearchChange = (query) => {
+    setSearchQuery(query); // Update search query
+  };
+
+  const searchedEvents = events.filter((event) =>
+    event.title.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
+  const handleFilterChange = (filter) => {
+    setActiveFilter(filter);
+  }
+
+  const filteredEvents = events.filter((event) =>
+    event.eventtype.toLowerCase().includes(activeFilter.toLowerCase())
+  );
+
+  const handleFilterClick = (event) => {
+    handleFilterChange(event.target.value);
+    console.log(event.target.value);
+  }
+
+  // Checks if searchedEvents and filteredEvents have events in common
+  const commonEvents = searchedEvents.filter((searchedEvent) => 
+    filteredEvents.some((filteredEvent) => filteredEvent.id === searchedEvent.id)
+  );
 
   if (isMobile) {
     // Mobile Component
@@ -62,11 +91,15 @@ const HomePage = () => {
       <Box
         id="homeBox"
       >
+        {/* Top mobile component */}
         <Stack
           direction="row"
           id="homeHeaderStack"
         >
+          {/* Header */}
           <h1>Events</h1>
+
+          {/* Login button */}
           <Box>
             <Button variant="contained" sx={{borderRadius:"20px"}} startIcon={<AccountCircleIcon/>}>
               <Box id="homeLoginButton"> Login </Box>   
@@ -75,23 +108,31 @@ const HomePage = () => {
           
         </Stack>
   
+        {/* Main body for events */}
         <Stack
           id="homeEventsStack"
         >
-          <SearchBar></SearchBar>
+          {/* Search bar */}
+          <SearchBar onSearchChange={handleSearchChange} />
+
+          {/* Filter buttons */}
           <Stack
             direction="row"
             id="homeFiltersStack"
           >
             <Box id="homeFiltersBox">
+              {/* Sports */}
               <Button 
                 variant="contained" 
                 sx={{borderRadius:"20px", backgroundColor:"#ff7474"}} 
                 startIcon={<SportsBasketballIcon/>}
+                value="Sports"
+                onClick={handleFilterClick}
               >
                 Sports 
               </Button>
 
+              {/* Music */}
               <Button 
                 variant="contained" 
                 sx={{borderRadius:"20px", 
@@ -101,6 +142,7 @@ const HomePage = () => {
                 Music 
               </Button>
 
+              {/* Food */}
               <Button 
                 variant="contained" 
                 sx={{borderRadius:"20px", backgroundColor:"#ff7474"}} 
@@ -109,6 +151,7 @@ const HomePage = () => {
                 Food 
               </Button>
               
+              {/* Art */}
               <Button 
                 variant="contained" 
                 sx={{borderRadius:"20px", backgroundColor:"#ff7474"}} 
@@ -117,6 +160,7 @@ const HomePage = () => {
                 Art
               </Button>
               
+              {/* Hangout */}
               <Button 
                 variant="contained" 
                 sx={{borderRadius:"20px", backgroundColor:"#ff7474"}}
@@ -125,6 +169,7 @@ const HomePage = () => {
                 Hangout
               </Button>
 
+              {/* Gaming */}
               <Button 
                 variant="contained" 
                 sx={{borderRadius:"20px", backgroundColor:"#ff7474"}} 
@@ -134,22 +179,19 @@ const HomePage = () => {
               </Button>
             </Box>           
           </Stack>
-
+          {/* Upcoming events section */}
           <Box id="homeUpcomingHeader"> Upcoming Events </Box>
 
-          <Box className="homeUpcomingEventBox"> 
-            <Box className="homeUpcomingEventPhoto">temp</Box>
-
-            <Stack className="homeUpcomingEventDetails">
-              <Box className="homeEventDate" color="text.secondary"> Thursday, November 14 </Box>
-              <Box className="homeEventName"> Football Game </Box>
-              <Stack direction="row" alignItems="center" className="homeEventTime" color="text.secondary"> <AccessTimeIcon className="homeEventIconsMobile" sx={{fontSize:"1rem"}}/> 8:00 AM </Stack>
-              <Stack direction="row" alignItems="center" className="homeEventLocation" color="text.secondary"> <LocationOnIcon className="homeEventIconsMobile" sx={{fontSize:"1rem"}}/>123 Stadium Rd, City </Stack>
-            </Stack>
-          </Box>
-          
+          {commonEvents.length !== 0 ? (
+            <>
+              {commonEvents.map((event) => (
+                <EventCard key={event.id} event={event} variant=""/>
+              ))}
+            </>
+          ) : (
+            <NoUpcomingEvents />
+          )}       
         </Stack>
-        
       </Box>
       
     );
@@ -157,23 +199,15 @@ const HomePage = () => {
     return (
       <Stack direction="column" id="homeDesktopStack">
         <h1 style={{marginTop:"0"}}>Upcoming Events</h1>
-        <Box className="homeUpcomingEventBoxDesktop"> 
-          <Box className="homeUpcomingEventPhoto">temp</Box>
-            <Stack className="homeUpcomingEventDetailsDesktop" direction="row">
-              <Box className="homeEventNameDesktop"> Football Game </Box>
-              <Box className="homeEventDateDesktop" color="text.secondary"> <CalendarMonthIcon className="homeEventIconsDesktop" sx={{fontSize:"1em"}}/> Thursday, November 14 </Box>
-              <Box className="homeEventTimeDesktop" color="text.secondary"> <AccessTimeIcon className="homeEventIconsDesktop" sx={{fontSize:"1em"}}/> 8:00 AM </Box>
-              <Box className="homeEventLocationDesktop" color="text.secondary">  <LocationOnIcon className="homeEventIconsDesktop" sx={{fontSize:"1em"}}/> 123 Stadium Rd, City </Box>
-              <Box>
-                <Button 
-                  variant="contained" 
-                  sx={{borderRadius:"20px", height:"80%", backgroundColor:"#ff7474"}} 
-                >
-                  Register 
-                </Button>
-              </Box>
-            </Stack>
-        </Box>
+        {events.length !== 0 ? (
+            <>
+              {events.map((event) => (
+                <EventCard key={event.id} event={event} variant=""/>
+              ))}
+            </>
+          ) : (
+            <NoUpcomingEvents />
+          )}
       </Stack>
 
     );
