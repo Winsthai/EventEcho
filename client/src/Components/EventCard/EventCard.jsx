@@ -24,7 +24,7 @@ const EventCard = ({ event, variant = "" }) => {
     return (
       <Box
         className="homeUpcomingEventBox"
-      // onClick={() => navigate(`/event/${event.id}`)}
+        onClick={() => navigate(`/event/${event.id}`)}
       >
         {event.image ? (
           <Box

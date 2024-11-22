@@ -7,8 +7,8 @@ import CalendarMonthIcon from "@mui/icons-material/CalendarMonth";
 import AccessTimeIcon from "@mui/icons-material/AccessTime";
 import LocationOnIcon from "@mui/icons-material/LocationOn";
 import {
-    AppBar, Toolbar, IconButton, Typography,
-  } from '@mui/material';
+  AppBar, Toolbar, IconButton, Typography,
+} from '@mui/material';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 
 import "./EventPage.css";
@@ -105,7 +105,7 @@ const EventPage = () => {
             <Toolbar sx={{ color: "secondary" }}>
               <Box sx={{ flexGrow: 1, display: "flex" }}>
                 <IconButton
-                  onClick={onEditPage ? () => navigate('/user/1') : () => navigate('/')}
+                  onClick={() => navigate(-1)}
                   edge="start"
                   color="inherit"
                   aria-label="back"
@@ -115,7 +115,7 @@ const EventPage = () => {
                 </IconButton>
               </Box>
               <Typography variant="h6" component="div" sx={{ flexGrow: 0 }}>
-                {onEditPage ? 'Edit an Event' : 'Create a New Event'}
+                Event Details
               </Typography>
               <Box sx={{ flexGrow: 2 }} />
             </Toolbar>
@@ -125,17 +125,17 @@ const EventPage = () => {
         {/* Event Picture */}
         {/* TODO: implement this when possible */}
         <Box
-            sx={{
-                display: "flex",
-                justifyContent: "center",
-                pt: "4.5rem",
-            }}
+          sx={{
+            display: "flex",
+            justifyContent: "center",
+            pt: "4.5rem",
+          }}
         >
-            <Box
-                component="img"
-                id="EventPagePhotoBackground"
-                src={event.image}
-            ></Box>
+          <Box
+            component="img"
+            id="EventPagePhotoBackground"
+            src={event.image}
+          ></Box>
         </Box>
 
         {/* Event Details */}
@@ -270,11 +270,11 @@ const EventPage = () => {
                 marginTop: "1.5rem",
               }}
             >
-                <Box
-                    component="img"
-                    id="EventPagePhotoBackground"
-                    src={event.image}
-                ></Box>
+              <Box
+                component="img"
+                id="EventPagePhotoBackground"
+                src={event.image}
+              ></Box>
             </Box>
             {/* Event Title */}
             {/* Date, time, and address */}
