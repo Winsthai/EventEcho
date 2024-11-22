@@ -4,19 +4,19 @@
 }
 
 #EventReviewTitle {
-  color: #1D1D1D;
+  color: #1d1d1d;
   font-size: 24px;
   margin-top: 4px;
   margin-bottom: 4px;
 }
 
 #EventReviewHeader {
-  color: #1D1D1D;
+  color: #1d1d1d;
   font-size: 18px;
 }
 
 #EventReviewNames {
-  color: #1D1D1D;
+  color: #1d1d1d;
   font-size: 16px;
   margin-bottom: 4px;
   margin-top: 4px;
@@ -25,7 +25,7 @@
 
 #EventReviewRVSP {
   margin: 0;
-  color: #039BE5;
+  color: #039be5;
   font-size: 16px;
 }
 
@@ -43,17 +43,17 @@
 }
 
 #EventReviewTitleDesktop {
-  color: #1D1D1D;
+  color: #1d1d1d;
   font-size: 32px;
 }
 
 #EventReviewHeaderDesktop {
-  color: #1D1D1D;
+  color: #1d1d1d;
   font-size: 28px;
 }
 
 #EventReviewNamesDesktop {
-  color: #1D1D1D;
+  color: #1d1d1d;
   font-size: 20px;
   margin-bottom: 4px;
   margin-top: 4px;
@@ -62,7 +62,7 @@
 
 #EventReviewRVSPDesktop {
   margin: 0;
-  color: #039BE5;
+  color: #039be5;
   font-size: 16px;
 }
 
@@ -76,17 +76,30 @@
 }
 
 #EventReviewDateAndTimeLocationHeadersDesktop {
-  color: #2D2C3C;
+  color: #2d2c3c;
   font-size: 22px;
   font-weight: 500;
 }
 
 #EventReviewDateTimeLocationDesktop {
-  color: #2D2C3C;
+  color: #2d2c3c;
   font-size: 20px;
 }
 
 #EventReviewAddToCalendarDesktop {
-  color: #4539B4;
+  color: #4539b4;
   font-size: 16px;
+}
+
+.ReviewEventPage-desktop-avatar {
+  width: 50px;
+  height: 50px;
+  background-color: #fde4e4;
+  color: #f0534f;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  margin-right: 1em;
 }
