@@ -53,7 +53,7 @@ const NavBar = () => {
       </Box>
 
       {/* Search Bar */}
-      <TextField
+      {/* <TextField
         variant="outlined"
         placeholder="Search for events..."
         size="small"
@@ -82,7 +82,7 @@ const NavBar = () => {
             ),
           },
         }}
-      />
+      /> */}
 
       {/* Chips */}
       <Box
@@ -92,7 +92,7 @@ const NavBar = () => {
           flexShrink: 0, // Prevents chips from resizing or shrinking
         }}
       >
-        <Chip icon={<FilterAltIcon />} label="Filters" sx={chipStyle} />
+        {/* <Chip icon={<FilterAltIcon />} label="Filters" sx={chipStyle} /> */}
         <Chip
           icon={<AddIcon />}
           label="Create event"

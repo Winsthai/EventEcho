@@ -1,7 +1,16 @@
 import SearchBar from "../SearchBar";
 import EventCard from "../EventCard/EventCard";
 import NoUpcomingEvents from "./Components/NoUpcomingEvents";
-import { Box, Stack, Button, useMediaQuery } from "@mui/material";
+import {
+  Box,
+  Stack,
+  Button,
+  useMediaQuery,
+  FormControl,
+  Select,
+  MenuItem,
+  InputLabel,
+} from "@mui/material";
 import { useState } from "react";
 
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
@@ -11,6 +20,7 @@ import LocalDiningIcon from "@mui/icons-material/LocalDining";
 import ColorLensIcon from "@mui/icons-material/ColorLens";
 import GroupsIcon from "@mui/icons-material/Groups";
 import SportsEsportsIcon from "@mui/icons-material/SportsEsports";
+import FilterAltIcon from "@mui/icons-material/FilterAlt";
 
 import "./HomePageStyles.css";
 
@@ -100,6 +110,16 @@ const HomePage = () => {
   };
 
   const commonEvents = getCommonEvents();
+
+  const [open, setOpen] = useState(false);
+
+  const handleDropdownClick = () => {
+    setOpen ((prev) => !prev);
+  }
+
+  const handleDropdownClose = () => {
+    setOpen(false);
+  }
 
   if (isMobile) {
     // Mobile Component
@@ -239,7 +259,37 @@ const HomePage = () => {
   } else {
     return (
       <Stack direction="column" id="homeDesktopStack">
+        <Stack direction="row" sx={{ alignItems: "center" }}>
+          <SearchBar></SearchBar>
+          <FormControl sx={{ minWidth: 50 }}>
+            <Button
+              variant="contained"
+              sx={{
+                borderRadius: "20px",
+                backgroundColor: "#A50B07"
+              }}
+              startIcon={<FilterAltIcon/>}
+            >
+              Filters
+            </Button>
+            <Select
+              labelId="demo-simple-select-label"
+              id="demo-simple-select"
+              value={[]}
+              label="Age"
+              // onChange={handleChange}
+              autoWidth
+              multiple
+            >
+              <MenuItem value={10}>Ten</MenuItem>
+              <MenuItem value={20}>Twenty</MenuItem>
+              <MenuItem value={30}>Thirty</MenuItem>
+            </Select>
+          </FormControl>
+        </Stack>
+
         <h1 style={{ marginTop: "0" }}>Upcoming Events</h1>
+
         {events.length !== 0 ? (
           <>
             {events.map((event) => (
