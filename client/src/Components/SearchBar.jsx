@@ -13,7 +13,6 @@ export default function SearchBar({ noMargin = false, onSearchChange }) {
         marginLeft: noMargin ? 0 : "16px",
         marginRight: noMargin ? 0 : "16px",
         minWidth: "150px",
-        maxWidth: "600px",
         backgroundColor: "white",
         borderRadius: "24px",
         "& .MuiOutlinedInput-root": {
