@@ -9,11 +9,12 @@ import "./DesktopInviteGuests.css";
 import "./MobileInviteGuests.css";
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import PhotoCameraIcon from '@mui/icons-material/PhotoCamera';
-
+import { useParams, useNavigate } from 'react-router-dom';
 
 export default function AddNewGuestsPage() {
   const onEditPage = location.pathname.includes("edit");
-  console.log(onEditPage);
+  const { id } = useParams();
+  const navigate = useNavigate();
   const isMobile = useMediaQuery("(max-width:600px)");
 
 
@@ -46,7 +47,16 @@ export default function AddNewGuestsPage() {
         <AppBar position="static">
           <Toolbar sx={{ color: "secondary" }}>
             <Box sx={{ flexGrow: 1, display: "flex" }}>
-              <IconButton edge="start" color="inherit" aria-label="back" sx={{ mr: 2 }}>
+              <IconButton
+                onClick={onEditPage ?
+                  () => navigate(`/editEvent/${id}/changeGuests`) :
+                  () => navigate('/createEvent/addGuests')
+                } // should NOT save the guest and go back
+                edge="start"
+                color="inherit"
+                aria-label="back"
+                sx={{ mr: 2 }}
+              >
                 <ArrowBackIcon />
               </IconButton>
             </Box>
@@ -129,6 +139,10 @@ export default function AddNewGuestsPage() {
 
           <TextField fullWidth required id="event-title" label="Enter phone" variant="outlined" sx={{ width: "100%" }} />
           <Button variant='contained'
+            onClick={onEditPage ?
+              () => navigate(`/editEvent/${id}/changeGuests`) :
+              () => navigate('/createEvent/addGuests')
+            } // should SAVE then return to add guests
             sx={{
               borderRadius: '10px',
               backgroundColor: "#F68F8D",
@@ -241,6 +255,10 @@ export default function AddNewGuestsPage() {
           }}
         >
           <Button variant='contained'
+            onClick={onEditPage ?
+              () => navigate(`/editEvent/${id}/changeGuests`) :
+              () => navigate('/createEvent/addGuests')
+            } // should NOT save then return to add guests
             sx={{
               borderRadius: '10px',
               backgroundColor: "#F68F8D",
@@ -252,6 +270,10 @@ export default function AddNewGuestsPage() {
             Cancel
           </Button>
           <Button variant='contained'
+            onClick={onEditPage ?
+              () => navigate(`/editEvent/${id}/changeGuests`) :
+              () => navigate('/createEvent/addGuests')
+            } // should SAVE then return to add guests
             sx={{
               borderRadius: '10px',
               backgroundColor: "#F68F8D",

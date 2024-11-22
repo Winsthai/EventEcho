@@ -84,7 +84,16 @@ const ReviewEventPage = () => {
           <AppBar position="static" sx={{ mb: 2 }}>
             <Toolbar sx={{ color: "secondary" }}>
               <Box sx={{ flexGrow: 1, display: "flex" }}>
-                <IconButton edge="start" color="inherit" aria-label="back" sx={{ mr: 2 }}>
+                <IconButton
+                  onClick={onEditPage ?
+                    () => navigate(`/editEvent/${id}/changeGuests`) :
+                    () => navigate('/createEvent/addGuests')
+                  }
+                  edge="start"
+                  color="inherit"
+                  aria-label="back"
+                  sx={{ mr: 2 }}
+                >
                   <ArrowBackIcon />
                 </IconButton>
               </Box>
@@ -218,6 +227,7 @@ const ReviewEventPage = () => {
         </Box>
         <Button
           variant='contained'
+          onClick={() => navigate('/user/1')}
           sx={{
             borderRadius: '10px',
             // width: "25%", // button width
@@ -387,6 +397,7 @@ const ReviewEventPage = () => {
           </Box>
           <Button
             variant='contained'
+            onClick={() => navigate('/user/1')}
             sx={{
               borderRadius: '10px',
               // width: "25%", // button width

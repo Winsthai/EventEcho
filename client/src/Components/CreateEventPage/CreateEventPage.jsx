@@ -65,7 +65,8 @@ export default function CreateEventPage() {
   const [eventType, setEventType] = React.useState('');
   const [eventPhotoName, setEventPhotoName] = React.useState('');
 
-  let vis, startTimeTrimmed, endTimeTrimmed; // in db, public=true and private=false, however switch logic wise, private=true and public=false
+  // in db, public=true and private=false 
+  let vis, startTimeTrimmed, endTimeTrimmed;
 
   if (onEditPage) {
     vis = events[id - 1].visibility;
@@ -128,7 +129,7 @@ export default function CreateEventPage() {
             <Toolbar sx={{ color: "secondary" }}>
               <Box sx={{ flexGrow: 1, display: "flex" }}>
                 <IconButton
-                  onClick={() => navigate('/')}
+                  onClick={onEditPage ? () => navigate('/user/1') : () => navigate('/')}
                   edge="start"
                   color="inherit"
                   aria-label="back"
@@ -511,7 +512,10 @@ export default function CreateEventPage() {
           <Box sx={{ pt: 1 }}>
             <Button
               variant='contained'
-              onClick={() => navigate('/createEvent/addGuests')} // should also complete the step in desktopProgressBar
+              onClick={onEditPage ?
+                () => navigate(`/editEvent/${id}/changeGuests`) :
+                () => navigate('/createEvent/addGuests')
+              } // should also complete the step in desktopProgressBar
               sx={{
                 borderRadius: '10px',
                 mb: 2,

@@ -26,7 +26,9 @@ const contacts = [
 
 export default function DesktopAddGuestsPage() {
   const onEditPage = location.pathname.includes("edit");
+  const { id } = useParams();
   const navigate = useNavigate();
+
   // const [eventType, setEventType] = React.useState('');
   // const [eventPhotoName, setEventPhotoName] = React.useState('');
 
@@ -85,7 +87,7 @@ export default function DesktopAddGuestsPage() {
           <Toolbar sx={{ color: "secondary" }}>
             <Box sx={{ flexGrow: 1, display: "flex" }}>
               <IconButton
-                onClick={() => navigate('/createEvent')}
+                onClick={onEditPage ? () => navigate(`/editEvent/${id}/`) : () => navigate('/createEvent')}
                 edge="start"
                 color="inherit"
                 aria-label="back"
@@ -100,7 +102,10 @@ export default function DesktopAddGuestsPage() {
             <BottomNavigationAction
               icon={<PersonAddIcon sx={{ color: "white" }} />}
               className="add-icon"
-              onClick={() => navigate('/createEvent/newGuests')}
+              onClick={onEditPage ?
+                () => navigate(`/editEvent/${id}/newGuests`) :
+                () => navigate('/createEvent/newGuests')
+              }
             />
           </Toolbar>
         </AppBar>
@@ -142,7 +147,10 @@ export default function DesktopAddGuestsPage() {
           </div>
 
           <Button variant='contained'
-            onClick={() => navigate('/createEvent/reviewEvent')}
+            onClick={onEditPage ?
+              () => navigate(`/editEvent/${id}/reviewEvent`) :
+              () => navigate('/createEvent/reviewEvent')
+            }
             sx={{
               borderRadius: '10px',
               backgroundColor: "#F68F8D",
@@ -172,7 +180,10 @@ export default function DesktopAddGuestsPage() {
           <BottomNavigationAction
             icon={<PersonAddIcon />}
             className="add-icon"
-            onClick={() => navigate('/createEvent/newGuests')}
+            onClick={onEditPage ?
+              () => navigate(`/editEvent/${id}/newGuests`) :
+              () => navigate('/createEvent/newGuests')
+            }
           />
         </div>
 
@@ -209,7 +220,10 @@ export default function DesktopAddGuestsPage() {
         >
           <Button
             variant="contained"
-            onClick={() => navigate('/createEvent/reviewEvent')} // should also complete the 2nd step in DesktopProgressBar
+            onClick={onEditPage ?
+              () => navigate(`/editEvent/${id}/reviewEvent`) :
+              () => navigate('/createEvent/reviewEvent')
+            } // should also complete the 2nd step in DesktopProgressBar
             sx={{
               borderRadius: "10px",
               width: "25%", // button width
