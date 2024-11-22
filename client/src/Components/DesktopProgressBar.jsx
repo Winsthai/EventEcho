@@ -13,6 +13,7 @@ const steps = ['Event Details', 'Invite Guests', 'Review and Post'];
 export default function DesktopProgressBar() {
   const navigate = useNavigate();
   const { id } = useParams();
+  const onEditPage = location.pathname.includes("edit");
 
   const [activeStep, setActiveStep] = React.useState(0);
   const [completed, setCompleted] = React.useState({});
@@ -138,7 +139,7 @@ export default function DesktopProgressBar() {
           ml: 8
         }}
       >
-        Create a New Event
+        {onEditPage ? "Edit an Event" : "Create a New Event"}
       </Typography>
 
       {/* The actual progress bar */}

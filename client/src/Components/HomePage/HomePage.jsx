@@ -21,46 +21,48 @@ import ColorLensIcon from "@mui/icons-material/ColorLens";
 import GroupsIcon from "@mui/icons-material/Groups";
 import SportsEsportsIcon from "@mui/icons-material/SportsEsports";
 import FilterAltIcon from "@mui/icons-material/FilterAlt";
+import { useParams, useNavigate } from 'react-router-dom';
+
 
 import "./HomePageStyles.css";
 
 const events = [
   {
-    id: "1",
-    title: "Football Game",
-    eventtype: "Sports",
-    description: "A friendly neighborhood football game.",
-    address: "123 Stadium Rd, City",
-    coordinates: {
-      x: 40.7128,
-      y: -74.006,
+    "id": "1",
+    "title": "Football Game",
+    "eventtype": "Sports",
+    "description": "A friendly neighborhood football game.",
+    "address": "123 Stadium Rd, City",
+    "coordinates": {
+      "x": 40.7128,
+      "y": -74.006
     },
-    startdate: "2024-11-15T00:00:00.000Z",
-    starttime: "15:00:00+00",
-    enddate: "2024-11-15T00:00:00.000Z",
-    endtime: "17:00:00+00",
-    visibility: true,
+    "startdate": "2024-11-15T00:00:00.000Z",
+    "starttime": "15:00:00+00",
+    "enddate": "2024-11-15T00:00:00.000Z",
+    "endtime": "17:00:00+00",
+    "visibility": true,
     image:
       "https://m.media-amazon.com/images/M/MV5BOWZiNzZkZGEtMWEwOS00NjZkLWFmYTctZmQyMDY3NGU0OWZjXkEyXkFqcGc@._V1_.jpg", // temporary
   },
   {
-    id: "2",
-    title: "Jazz Concert",
-    eventtype: "Music",
-    description: "Live jazz performance.",
-    address: "456 Music Hall Ave, City",
-    coordinates: {
-      x: 40.7306,
-      y: -73.9352,
+    "id": "2",
+    "title": "Jazz Concert",
+    "eventtype": "Music",
+    "description": "Live jazz performance.",
+    "address": "456 Music Hall Ave, City",
+    "coordinates": {
+      "x": 40.7306,
+      "y": -73.9352
     },
-    startdate: "2024-12-01T00:00:00.000Z",
-    starttime: "19:00:00+00",
-    enddate: "2024-12-01T00:00:00.000Z",
-    endtime: "21:00:00+00",
-    visibility: true,
+    "startdate": "2024-12-01T00:00:00.000Z",
+    "starttime": "19:00:00+00",
+    "enddate": "2024-12-01T00:00:00.000Z",
+    "endtime": "21:00:00+00",
+    "visibility": true,
     image:
       "https://www.horizonsmusic.co.uk/cdn/shop/articles/image1_1600x1600.jpg?v=1621417277", // temporary
-  },
+  }
 ];
 
 const HomePage = () => {
@@ -68,6 +70,8 @@ const HomePage = () => {
   const [activeFilters, setActiveFilters] = useState([]); // State to track active filters
 
   const isMobile = useMediaQuery("(max-width:600px)");
+  const { id } = useParams();
+  const navigate = useNavigate();
 
   const handleSearchChange = (query) => {
     setSearchQuery(query); // Update search query
@@ -132,8 +136,8 @@ const HomePage = () => {
 
           {/* Login button */}
           <Box>
-            <Button
-              variant="contained"
+            <Button variant="contained"
+              onClick={() => navigate('/user/1')}
               sx={{ borderRadius: "20px" }}
               startIcon={<AccountCircleIcon />}
             >
