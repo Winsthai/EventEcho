@@ -7,11 +7,14 @@ import DesktopReviewEventPage from "./Components/CreateEventPage/DesktopReviewEv
 
 import CreateEventPage from "./Components/CreateEventPage/CreateEventPage";
 import ReviewEventPage from "./Components/ReviewEventPage/ReviewEventPage";
+import { useMediaQuery } from "@mui/material";
 
 function EditPagesRoutes() {
+  const isMobile = useMediaQuery("(max-width:600px)");
+
   return (
     <>
-      <DesktopProgressBar />
+      {isMobile ? <></> : <DesktopProgressBar />}
       <Routes>
         <Route path="/" element={<CreateEventPage></CreateEventPage>}></Route>
         <Route path="/changeGuests" element={<DesktopAddGuestsPage></DesktopAddGuestsPage>}></Route>
