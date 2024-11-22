@@ -103,6 +103,17 @@ const EventPage = () => {
         >
           <AppBar position="static" sx={{ mb: 2 }}>
             <Toolbar sx={{ color: "secondary" }}>
+              <Typography variant="h6" component="div"
+                sx={{
+                  flexGrow: 1,
+                  textAlign: 'center',
+                  position: 'absolute',
+                  left: 0,
+                  right: 0,
+                  margin: 'auto'
+                }}>
+                Event Details
+              </Typography>
               <Box sx={{ flexGrow: 1, display: "flex" }}>
                 <IconButton
                   onClick={() => navigate(-1)}
@@ -114,9 +125,7 @@ const EventPage = () => {
                   <ArrowBackIcon />
                 </IconButton>
               </Box>
-              <Typography variant="h6" component="div" sx={{ flexGrow: 0 }}>
-                Event Details
-              </Typography>
+
               <Box sx={{ flexGrow: 2 }} />
             </Toolbar>
           </AppBar>
@@ -232,7 +241,7 @@ const EventPage = () => {
             Register
           </Button>
         </Box>
-      </Box>
+      </Box >
     );
   } else {
     // Desktop component
@@ -251,7 +260,7 @@ const EventPage = () => {
           <h1 id="EventPageHeaderDesktop">Event Details</h1>
         </Box>
         {/* Box here that makes the background of all the content white */}
-        <Box borderBottom="1px solid #ddd" bgcolor="white" mx="2.5rem">
+        <Box borderBottom="1px solid #ddd" bgcolor="white" mx="2.5rem" borderRadius="20px">
           {/* Put picture on the left, and Event Details to its right */}
           <Box
             sx={{
