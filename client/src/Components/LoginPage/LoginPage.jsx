@@ -46,12 +46,12 @@ const LoginPage = () => {
               direction="row"
               id="loginButtonStack"
             >
-              <Button variant="text" color="tertiary" onClick={() => handleClick("/signUp")}>Create Account</Button>
+              <Button variant="text" onClick={() => handleClick("/signUp")}>Create Account</Button>
               <Button variant="contained" sx={{borderRadius:"15px", padding:"2vw 5vw 2vw 5vw",}}>Next</Button>
             </Stack>
             
             <Box>
-              <Button variant="text" color="tertiary">Stay on Guest Mode</Button>
+              <Button variant="text">Stay on Guest Mode</Button>
             </Box>   
           </Stack>
         </Box>
@@ -85,9 +85,9 @@ const LoginPage = () => {
               direction="row"
               id="loginButtonStack"
             >
-              <Button variant="text" color="tertiary">Stay on Guest Mode</Button>
+              <Button variant="text">Stay on Guest Mode</Button>
               <Box>
-                <Button variant="text" color="tertiary" onClick={() => handleClick("/signUp")}>Create Account</Button>
+                <Button variant="text" onClick={() => handleClick("/signUp")}>Create Account</Button>
                 <Button variant="contained" sx={{marginLeft:"1.5vw"}}>Next</Button>
               </Box>
             </Stack>
