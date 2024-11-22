@@ -70,6 +70,7 @@
   background-color: gray;
   height: 130px;
   min-width: 100px;
+  max-width: 200px;
   margin-left: 10px;
   border-radius: 15px;
 }
@@ -87,5 +88,5 @@
 
 #EventReviewAddToCalendarDesktop {
   color: #4539B4;
-  font-size: 22px;
+  font-size: 16px;
 }
