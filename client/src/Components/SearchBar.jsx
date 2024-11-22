@@ -1,7 +1,7 @@
 import {TextField, InputAdornment } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
 
-export default function SearchBar({ noMargin = false }) {
+export default function SearchBar() {
     return (
         <TextField
             variant="outlined"
@@ -9,8 +9,8 @@ export default function SearchBar({ noMargin = false }) {
             size="small"
             sx={{
             flexGrow: 1, // Ensures the search bar takes available space
-            marginLeft: noMargin ? 0 : "16px", 
-            marginRight: noMargin ? 0 : "16px", 
+            marginLeft: "16px",
+            marginRight: "16px",
             minWidth: "150px",
             maxWidth: "600px",
             backgroundColor: "white",

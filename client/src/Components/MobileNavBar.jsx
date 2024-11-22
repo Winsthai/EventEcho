@@ -18,11 +18,7 @@ const MobileNavBar = () => {
       setValue(0);
     } else if (basePath === "createEvent") {
       setValue(1);
-    } else if (
-      basePath === "login" ||
-      basePath === "signUp" ||
-      basePath.includes("user")
-    ) {
+    } else if (basePath === "login" || basePath === "signUp") {
       setValue(2);
     }
   }, [location.pathname]);
