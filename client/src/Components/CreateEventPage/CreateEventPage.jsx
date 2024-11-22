@@ -18,7 +18,7 @@ import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { TimePicker } from '@mui/x-date-pickers/TimePicker';
 import { useMediaQuery } from "@mui/material";
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 
 const events = [
   {
@@ -57,6 +57,7 @@ const events = [
 
 export default function CreateEventPage() {
   const { id } = useParams();
+  const navigate = useNavigate();
 
   const isMobile = useMediaQuery("(max-width:600px)");
   const onEditPage = location.pathname.includes("edit");
@@ -126,7 +127,13 @@ export default function CreateEventPage() {
           <AppBar position="static" sx={{ mb: 2 }}>
             <Toolbar sx={{ color: "secondary" }}>
               <Box sx={{ flexGrow: 1, display: "flex" }}>
-                <IconButton edge="start" color="inherit" aria-label="back" sx={{ mr: 2 }}>
+                <IconButton
+                  onClick={() => navigate('/')}
+                  edge="start"
+                  color="inherit"
+                  aria-label="back"
+                  sx={{ mr: 2 }}
+                >
                   <ArrowBackIcon />
                 </IconButton>
               </Box>
@@ -197,6 +204,7 @@ export default function CreateEventPage() {
               defaultValue={onEditPage ? events[id - 1].address : ""}
             />
 
+            {/* Event Timing Title */}
             <Box sx={{ display: "flex", justifyContent: "left" }}>
               Event Timing
             </Box>
@@ -273,6 +281,7 @@ export default function CreateEventPage() {
             {onEditPage ?
               <Stack direction="row" spacing={2} sx={{ display: "flex", justifyContent: "center" }}>
                 <Button variant='contained'
+                  onClick={() => navigate(`/editEvent/${id}/reviewEvent`)}
                   sx={{
                     borderRadius: '10px',
                     backgroundColor: "#F68F8D",
@@ -284,6 +293,7 @@ export default function CreateEventPage() {
                   Confirm Changes
                 </Button>
                 <Button variant='contained'
+                  onClick={() => navigate(`/editEvent/${id}/changeGuests`)}
                   sx={{
                     borderRadius: '10px',
                     backgroundColor: "#F68F8D",
@@ -296,6 +306,7 @@ export default function CreateEventPage() {
                 </Button>
               </Stack> :
               <Button variant='contained'
+                onClick={() => navigate('/createEvent/addGuests')}
                 sx={{
                   borderRadius: '10px',
                   backgroundColor: "#F68F8D",
@@ -500,6 +511,7 @@ export default function CreateEventPage() {
           <Box sx={{ pt: 1 }}>
             <Button
               variant='contained'
+              onClick={() => navigate('/createEvent/addGuests')} // should also complete the step in desktopProgressBar
               sx={{
                 borderRadius: '10px',
                 mb: 2,
