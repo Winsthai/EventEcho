@@ -33,28 +33,18 @@ const LoginPage = () => {
 
             <TextField id="loginUser" label="Username" variant="standard" />
             <PasswordBox></PasswordBox>
-
-            <Stack direction="row" id="loginButtonStack">
-              <Button
-                variant="text"
-                color="tertiary"
-                onClick={() => handleClick("/signUp")}
-              >
-                Create Account
-              </Button>
-              <Button
-                variant="contained"
-                sx={{ borderRadius: "15px", padding: "2vw 5vw 2vw 5vw" }}
-              >
-                Next
-              </Button>
+  
+            <Stack 
+              direction="row"
+              id="loginButtonStack"
+            >
+              <Button variant="text" onClick={() => handleClick("/signUp")}>Create Account</Button>
+              <Button variant="contained" sx={{borderRadius:"15px", padding:"2vw 5vw 2vw 5vw",}}>Next</Button>
             </Stack>
 
             <Box>
-              <Button variant="text" color="tertiary">
-                Stay on Guest Mode
-              </Button>
-            </Box>
+              <Button variant="text">Stay on Guest Mode</Button>
+            </Box>   
           </Stack>
         </Box>
       </Box>
@@ -72,22 +62,15 @@ const LoginPage = () => {
 
             <TextField id="loginUser" label="Username" variant="standard" />
             <PasswordBox></PasswordBox>
-
-            <Stack direction="row" id="loginButtonStack">
-              <Button variant="text" color="tertiary">
-                Stay on Guest Mode
-              </Button>
+  
+            <Stack 
+              direction="row"
+              id="loginButtonStack"
+            >
+              <Button variant="text">Stay on Guest Mode</Button>
               <Box>
-                <Button
-                  variant="text"
-                  color="tertiary"
-                  onClick={() => handleClick("/signUp")}
-                >
-                  Create Account
-                </Button>
-                <Button variant="contained" sx={{ marginLeft: "1.5vw" }}>
-                  Next
-                </Button>
+                <Button variant="text" onClick={() => handleClick("/signUp")}>Create Account</Button>
+                <Button variant="contained" sx={{marginLeft:"1.5vw"}}>Next</Button>
               </Box>
             </Stack>
           </Stack>

@@ -1,0 +1,152 @@
+.desktop-container {
+    font-family: "Arial", sans-serif;
+  }
+  
+  .desktop-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 16px;
+    border-bottom: 1px solid #ddd;
+  }
+
+  .desktop-search-and-add {
+    display: flex;
+    align-items: center; 
+    width: 50%; 
+    margin: 0 auto;
+  }
+  
+  .desktop-search-and-add .search-input {
+    flex: 1; 
+    min-width: 0; 
+    padding: 8px; 
+    font-size: 16px; 
+    border: 1px solid #ccc; 
+    border-radius: 10px; 
+    box-sizing: border-box; 
+    height: 50px;
+  }
+  
+  .desktop-search-and-add .add-icon {
+    flex-shrink: 0; 
+    width: 20px; 
+    height: 40px; 
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer; 
+  }
+  
+  
+  .desktop-logo {
+    font-size: 24px;
+    font-weight: bold;
+  }
+  
+  .desktop-searchBar {
+    padding: 8px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    flex: 1;
+    margin: 0 16px;
+  }
+  
+  .desktop-headerActions {
+    display: flex;
+    gap: 8px;
+  }
+  
+  .desktop-actionButton {
+    background: #ff5c5c;
+    color: #fff;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 4px;
+    cursor: pointer;
+  }
+  
+  .desktop-content {
+    padding: 32px;
+  }
+  
+  .desktop-progress {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 16px;
+    font-size: 14px;
+  }
+  
+  .desktop-activeStep {
+    font-weight: bold;
+    color: #ff5c5c;
+  }
+  
+  .desktop-searchInput {
+    max-width: 90%;
+    padding: 8px;
+    margin-bottom: 16px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+  }
+  
+  .desktop-contactGrid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+    width: 75%;
+    margin: 0 auto;
+  }
+  
+  .your-friends-text {
+    display: flex;
+    margin-left: 10% ;
+    margin-top: 40px;
+    margin-bottom: 20px;
+  }
+  
+  .desktop-contactCard {
+    display: flex;
+    border-radius: 8px;
+    padding: 16px;
+    text-align: center;
+  }
+  
+  .desktop-avatar {
+    width: 50px;
+    height: 50px;
+    background-color: #f2f2f2;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    margin: 0 auto 8px;
+  }
+  
+  .desktop-name {
+    font-size: 16px;
+    margin: 0;
+  }
+  
+  .desktop-phone {
+    font-size: 12px;
+    color: #888;
+    margin: 0;
+  }
+  
+  .desktop-checkbox {
+    margin-top: 8px;
+  }
+  
+  .desktop-reviewButton {
+    margin-top: 16px;
+    background-color: #ff5c5c;
+    color: #fff;
+    border: none;
+    padding: 12px;
+    border-radius: 4px;
+    font-size: 16px;
+    cursor: pointer;
+    width: 100%;
+  }
