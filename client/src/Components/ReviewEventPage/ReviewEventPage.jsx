@@ -3,11 +3,58 @@ import { AppBar, Toolbar, IconButton, Typography, Box, Button, useMediaQuery } f
 import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
 import AccessTimeIcon from '@mui/icons-material/AccessTime';
 import LocationOnIcon from '@mui/icons-material/LocationOn';
+import { useParams, useNavigate } from 'react-router-dom';
 
 import './ReviewEventPageStyles.css';
 
+const events = [
+  {
+    "id": "1",
+    "title": "Football Game",
+    "eventtype": "Sports",
+    "description": "A friendly neighborhood football game.",
+    "address": "123 Stadium Rd, City",
+    "coordinates": {
+      "x": 40.7128,
+      "y": -74.006
+    },
+    "startdate": "2024-11-15",
+    "starttime": "15:00:00+00",
+    "enddate": "2024-11-15",
+    "endtime": "17:00:00+00",
+    "visibility": true
+  },
+  {
+    "id": "2",
+    "title": "Jazz Concert",
+    "eventtype": "Music",
+    "description": "Live jazz performance.",
+    "address": "456 Music Hall Ave, City",
+    "coordinates": {
+      "x": 40.7306,
+      "y": -73.9352
+    },
+    "startdate": "2024-12-01",
+    "starttime": "19:00:00+00",
+    "enddate": "2024-12-01",
+    "endtime": "21:00:00+00",
+    "visibility": false
+  }
+];
+
 const ReviewEventPage = () => {
+  const { id } = useParams();
+  const navigate = useNavigate();
   const isMobile = useMediaQuery("(max-width:600px)");
+  const onEditPage = location.pathname.includes("edit");
+
+  let reviewTime, startTimeTrimmed, endTimeTrimmed;
+
+  if (onEditPage) {
+    startTimeTrimmed = events[id - 1].starttime.slice(0, -6);
+    endTimeTrimmed = events[id - 1].endtime.slice(0, -6);
+    reviewTime = startTimeTrimmed.concat(" - ", endTimeTrimmed);
+  }
 
   if (isMobile) {
     return (
@@ -52,7 +99,7 @@ const ReviewEventPage = () => {
         {/* Event Details */}
         <Box component="form" sx={{ width: "85%", height: "100%", pt: 8, textAlign: "left" }}>
           {/* Event Title */}
-          <h1 id="EventReviewTitle">keshi: REQUIEM TOUR</h1>
+          <h1 id="EventReviewTitle">{onEditPage ? events[id - 1].title : "keshi: REQUIEM TOUR"}</h1>
           <Box
             sx={{
               display: "flex",
@@ -74,12 +121,16 @@ const ReviewEventPage = () => {
               <Box color="text.secondary" sx={{ display: "flex", alignItems: "center" }}>
                 <CalendarMonthIcon />
                 {/* Adjust marginLeft later */}
-                <p id="EventReviewP" style={{ marginLeft: "8px" }}>Friday, 15 Nov 2024</p>
+                <p id="EventReviewP" style={{ marginLeft: "8px" }}>
+                  {onEditPage ? events[id - 1].startdate : "2024-01-01"}
+                </p>
               </Box>
               <Box color="text.secondary" sx={{ display: "flex", alignItems: "center" }}>
                 <AccessTimeIcon />
                 {/* Adjust marginLeft later */}
-                <p id="EventReviewP" style={{ marginLeft: "8px" }}>7:00 PM - 10:00 PM</p>
+                <p id="EventReviewP" style={{ marginLeft: "8px" }}>
+                  {onEditPage ? reviewTime : "19:00 - 22:00"}
+                </p>
               </Box>
               <Box sx={{ display: "flex", alignItems: "center" }}>
                 <p id="EventReviewP" style={{ color: "blue" }}>+ Add to Calendar</p>
@@ -87,7 +138,9 @@ const ReviewEventPage = () => {
               <Box color="text.secondary" sx={{ display: "flex", alignItems: "center" }}>
                 <LocationOnIcon />
                 {/* Adjust marginLeft later */}
-                <p id="EventReviewP" style={{ marginLeft: "8px" }}>Edmonton, AB</p>
+                <p id="EventReviewP" style={{ marginLeft: "8px" }}>
+                  {onEditPage ? events[id - 1].address : "Edmonton, AB"}
+                </p>
               </Box>
             </Box>
             {/* Right Group: Picture */}
@@ -111,7 +164,9 @@ const ReviewEventPage = () => {
           >
             <h1 id="EventReviewHeader">Event Description</h1>
             {/* Change the line below eventually */}
-            <p id="EventReviewP">show up please</p>
+            <p id="EventReviewP">
+              {onEditPage ? events[id - 1].description : "show up please"}
+            </p>
           </Box>
 
           {/* Guest List */}
@@ -165,11 +220,18 @@ const ReviewEventPage = () => {
           variant='contained'
           sx={{
             borderRadius: '10px',
-            width: "85%",
-            mb: 9
+            // width: "25%", // button width
+            mb: 4,
+            mt: 4,
+            alignSelf: "center", // centers button
+            padding: "1rem", // button height
+            backgroundColor: "#F68F8D",
+            "&:hover": {
+              backgroundColor: "#A50B07",
+            },
           }}
         >
-          Confirm Event and Invite Guests
+          Post Event and Send Invites
         </Button>
       </Box>
     );
@@ -201,7 +263,7 @@ const ReviewEventPage = () => {
 
             {/* DESKTOP NAVBAR WOULD GO HERE, or maybe up a box who knows, but for sure below Create a New Event */}
 
-            <h1 id="EventReviewHeaderDesktop">keshi: REQUIEM TOUR</h1>
+            <h1 id="EventReviewHeaderDesktop">{onEditPage ? events[id - 1].title : "keshi: REQUIEM TOUR"}</h1>
             <Box
               sx={{
                 display: "flex",
@@ -219,12 +281,16 @@ const ReviewEventPage = () => {
                 <Box color="text.secondary" sx={{ display: "flex", alignItems: "center" }}>
                   <CalendarMonthIcon />
                   {/* Adjust marginLeft later */}
-                  <p id="EventReviewDateTimeLocationDesktop" style={{ marginLeft: "8px" }}>Friday, 15 Nov 2024</p>
+                  <p id="EventReviewDateTimeLocationDesktop" style={{ marginLeft: "8px" }}>
+                    {onEditPage ? events[id - 1].startdate : "2024-01-01"}
+                  </p>
                 </Box>
                 <Box color="text.secondary" sx={{ display: "flex", alignItems: "center" }}>
                   <AccessTimeIcon />
                   {/* Adjust marginLeft later */}
-                  <p id="EventReviewDateTimeLocationDesktop" style={{ marginLeft: "8px" }}>7:00 PM - 10:00 PM</p>
+                  <p id="EventReviewDateTimeLocationDesktop" style={{ marginLeft: "8px" }}>
+                    {onEditPage ? reviewTime : "19:00 - 22:00"}
+                  </p>
                 </Box>
                 <Box sx={{ display: "flex", alignItems: "center" }}>
                   <p id="EventReviewAddToCalendarDesktop" style={{ color: "blue" }}>+ Add to Calendar</p>
@@ -233,7 +299,9 @@ const ReviewEventPage = () => {
                 <Box color="text.secondary" sx={{ display: "flex", alignItems: "center" }}>
                   <LocationOnIcon />
                   {/* Adjust marginLeft later */}
-                  <p id="EventReviewDateTimeLocationDesktop" style={{ marginLeft: "8px" }}>Edmonton, AB</p>
+                  <p id="EventReviewDateTimeLocationDesktop" style={{ marginLeft: "8px" }}>
+                    {onEditPage ? events[id - 1].address : "Edmonton, AB"}
+                  </p>
                 </Box>
               </Box>
 
@@ -253,10 +321,14 @@ const ReviewEventPage = () => {
               >
                 <h1 id="EventReviewHeaderDesktop" style={{ fontSize: "22px" }}>Event Description</h1>
                 {/* Change the line below eventually */}
-                <p id="EventReviewPDesktop">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean mollis dapibus purus, ut condimentum enim egestas ut.
-                  Maecenas commodo fringilla risus, at faucibus leo lacinia ut. Nullam a justo egestas, lacinia erat et, dignissim lectus. Nulla vel feugiat
-                  massa. Proin in orci eget ligula pharetra dictum. Nunc vehicula malesuada rhoncus. Morbi a turpis id metus egestas luctus sed vel purus.
-                  Sed vel auctor lorem, vel tincidunt est. Nunc sit amet fringilla eros, a facilisis risus.</p>
+                <p id="EventReviewPDesktop">
+                  {onEditPage ? events[id - 1].description :
+                    `Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean mollis dapibus purus, ut condimentum enim egestas ut. 
+                  Maecenas commodo fringilla risus, at faucibus leo lacinia ut. Nullam a justo egestas, lacinia erat et, dignissim lectus. 
+                  Nulla vel feugiat massa. Proin in orci eget ligula pharetra dictum. Nunc vehicula malesuada rhoncus. 
+                  Morbi a turpis id metus egestas luctus sed vel purus. 
+                  Sed vel auctor lorem, vel tincidunt est. Nunc sit amet fringilla eros, a facilisis risus.`}
+                </p>
               </Box>
             </Box>
 
@@ -317,7 +389,7 @@ const ReviewEventPage = () => {
             variant='contained'
             sx={{
               borderRadius: '10px',
-              width: "25%", // button width
+              // width: "25%", // button width
               mb: 4,
               mt: 4,
               alignSelf: "center", // centers button
