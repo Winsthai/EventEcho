@@ -11,38 +11,54 @@ import LocationOnIcon from '@mui/icons-material/LocationOn';
 import './EventPage.css';
 
 const events = [
-  {
-      "id": "1",
-      "title": "Football Game",
-      "eventtype": "Sports",
-      "description": "A friendly neighborhood football game.",
-      "address": "123 Stadium Rd, City",
-      "coordinates": {
-          "x": 40.7128,
-          "y": -74.006
-      },
-      "startdate": "2024-11-15T00:00:00.000Z",
-      "starttime": "15:00:00+00",
-      "enddate": "2024-11-15T00:00:00.000Z",
-      "endtime": "17:00:00+00",
-      "visibility": true
-  },
-  {
-      "id": "2",
-      "title": "Jazz Concert",
-      "eventtype": "Music",
-      "description": "Live jazz performance.",
-      "address": "456 Music Hall Ave, City",
-      "coordinates": {
-          "x": 40.7306,
-          "y": -73.9352
-      },
-      "startdate": "2024-12-01T00:00:00.000Z",
-      "starttime": "19:00:00+00",
-      "enddate": "2024-12-01T00:00:00.000Z",
-      "endtime": "21:00:00+00",
-      "visibility": true
-  }
+    {
+        "id": "1",
+        "title": "Football Game",
+        "eventtype": "Sports",
+        "description": "A friendly neighborhood football game.",
+        "address": "123 Stadium Rd, City",
+        "coordinates": {
+            "x": 40.7128,
+            "y": -74.006
+        },
+        "startdate": "2024-11-15T00:00:00.000Z",
+        "starttime": "15:00:00+00",
+        "enddate": "2024-11-15T00:00:00.000Z",
+        "endtime": "17:00:00+00",
+        "visibility": true
+    },
+    {
+        "id": "2",
+        "title": "Jazz Concert",
+        "eventtype": "Music",
+        "description": "Live jazz performance.",
+        "address": "456 Music Hall Ave, City",
+        "coordinates": {
+            "x": 40.7306,
+            "y": -73.9352
+        },
+        "startdate": "2024-12-01T00:00:00.000Z",
+        "starttime": "19:00:00+00",
+        "enddate": "2024-12-01T00:00:00.000Z",
+        "endtime": "21:00:00+00",
+        "visibility": true
+    },
+    {
+        id: "3",
+        title: "Food Festival",
+        eventtype: "Food",
+        description: "A festival with foods from around the world.",
+        address: "789 Gourmet St, City",
+        coordinates: {
+            x: 40.7612,
+            y: -73.9822,
+        },
+        startdate: "2024-11-20",
+        starttime: "11:00:00+00",
+        enddate: "2024-11-20",
+        endtime: "16:00:00+00",
+        visibility: false,
+    },
 ];
 
 const EventPage = () => {
@@ -82,23 +98,23 @@ const EventPage = () => {
                     borderBottom="1px solid #ddd"
                     bgcolor="white"
                     sx={{
-                        width:"100%",
+                        width: "100%",
                         height: "100%",
                         display: "flex",
-                        justifyContent:"center",
-                        alignItems: "center", 
-                        textAlign:"center",
+                        justifyContent: "center",
+                        alignItems: "center",
+                        textAlign: "center",
                     }}
                 >
                     {/* Event Details text, that is centered */}
                     <h1 id="EventPageHeader">Event Details</h1>
-                    
+
                     {/* X button, which is aligned with the right side of the screen */}
-                    <Button 
+                    <Button
                         // Arrow function to navigate back to the root page
                         onClick={() => navigate("/")}
-                        sx={{ 
-                            fontSize: "2.5rem", 
+                        sx={{
+                            fontSize: "2.5rem",
                             color: "black",
                             position: "absolute",
                             right: "0.5rem",
@@ -110,13 +126,13 @@ const EventPage = () => {
 
                 {/* Event Picture */}
                 {/* TODO: implement this when possible */}
-                <p id="EventPagePhotoBackground" style={{ textAlign: "center"}}>
+                <p id="EventPagePhotoBackground" style={{ textAlign: "center" }}>
                     Event Picture Placeholder
                 </p>
 
                 {/* Event Details */}
                 <Box
-                    sx={{ 
+                    sx={{
                         px: 3 // Padding on left and right for the outer container
                     }}
                 >
@@ -128,7 +144,7 @@ const EventPage = () => {
                     <Stack spacing={1}>
                         {/* Date */}
                         <Stack direction="row" alignItems="center" spacing={1} color="text.secondary">
-                            <CalendarMonthIcon/>
+                            <CalendarMonthIcon />
                             <p id="EventPageP">
                                 {new Date(event.startdate).toLocaleDateString("en-US", {
                                     weekday: "long",
@@ -139,7 +155,7 @@ const EventPage = () => {
                         </Stack>
                         {/* Time */}
                         <Stack direction="row" alignItems="center" spacing={1} color="text.secondary">
-                            <AccessTimeIcon/>
+                            <AccessTimeIcon />
                             <p id="EventPageP">
                                 {startDateTime.toLocaleTimeString("en-US", { hour: "numeric", minute: "numeric", hour12: true })} - {/* This comment apparently helps for whitespace. dont delete LOL. not a joke */}
                                 {endDateTime.toLocaleTimeString("en-US", { hour: "numeric", minute: "numeric", hour12: true })}
@@ -147,15 +163,15 @@ const EventPage = () => {
                         </Stack>
                         {/* Address */}
                         <Stack direction="row" alignItems="flex-start" spacing={1} color="text.secondary">
-                            <LocationOnIcon/>
+                            <LocationOnIcon />
                             <p id="EventPageP">{event.address}</p>
                         </Stack>
                     </Stack>
                     {/* Event Description */}
                     <Box
-                        sx={{ 
+                        sx={{
                             "& h1": { mb: 1 }, //
-                            "& p": { mt: 0 } 
+                            "& p": { mt: 0 }
                         }}
                     >
                         <h1 id="EventPageED">Event Description</h1>
@@ -166,14 +182,14 @@ const EventPage = () => {
                 <Box
                     sx={{
                         display: "flex",
-                        justifyContent:"center",
+                        justifyContent: "center",
                     }}
                 >
-                    <Button 
+                    <Button
                         variant="contained"
                         sx={{
-                            backgroundColor: "#F68F8D", 
-                            borderRadius: "20px", 
+                            backgroundColor: "#F68F8D",
+                            borderRadius: "20px",
                             marginBottom: "80px", // so button doesn't overlap with mobile interface at the bottom.
                             "&:hover": {
                                 backgroundColor: "#A50B07",
@@ -192,7 +208,7 @@ const EventPage = () => {
                 {/* Header Box */}
                 <Box
                     sx={{
-                        width:"100%",
+                        width: "100%",
                         height: "100%",
                         display: "flex",
                         mx: "2.5rem", // Margin left and right
@@ -208,9 +224,9 @@ const EventPage = () => {
                     mx="2.5rem"
                 >
                     {/* Put picture on the left, and Event Details to its right */}
-                    <Box 
-                        sx={{ 
-                            display: "flex", 
+                    <Box
+                        sx={{
+                            display: "flex",
                             gap: "1rem",
                             alignItems: "center",    // Center vertically
                             textAlign: "center",     // Ensures the text inside is centered
@@ -219,7 +235,7 @@ const EventPage = () => {
                         {/* Event Picture */}
                         {/* TODO: implement this when possible */}
                         <Box
-                            sx={{ 
+                            sx={{
                                 marginLeft: "1.5rem",
                                 marginRight: "1.5rem",
                                 marginTop: "1.5rem",
@@ -232,7 +248,7 @@ const EventPage = () => {
                         {/* Event Title */}
                         {/* Date, time, and address */}
                         <Box
-                            sx={{ 
+                            sx={{
                                 marginTop: "1.5rem",
                                 marginRight: "1.5rem",
                                 display: "flex",
@@ -245,7 +261,7 @@ const EventPage = () => {
                             <Stack spacing={1}>
                                 {/* Date */}
                                 <Stack direction="row" alignItems="center" spacing={1} color="text.secondary">
-                                    <CalendarMonthIcon/>
+                                    <CalendarMonthIcon />
                                     <p id="EventPagePDesktop">
                                         {new Date(event.startdate).toLocaleDateString("en-US", {
                                             weekday: "long",
@@ -256,7 +272,7 @@ const EventPage = () => {
                                 </Stack>
                                 {/* Time */}
                                 <Stack direction="row" alignItems="center" spacing={1.2} color="text.secondary">
-                                    <AccessTimeIcon/>
+                                    <AccessTimeIcon />
                                     <p id="EventPagePDesktop">
                                         {startDateTime.toLocaleTimeString("en-US", { hour: "numeric", minute: "numeric", hour12: true })} - {/* This comment apparently helps for whitespace. dont delete LOL. not a joke */}
                                         {endDateTime.toLocaleTimeString("en-US", { hour: "numeric", minute: "numeric", hour12: true })}
@@ -264,7 +280,7 @@ const EventPage = () => {
                                 </Stack>
                                 {/* Address */}
                                 <Stack direction="row" alignItems="center" spacing={1.6} color="text.secondary">
-                                    <LocationOnIcon/>
+                                    <LocationOnIcon />
                                     <p id="EventPagePDesktop">{event.address}</p>
                                 </Stack>
                             </Stack>
@@ -272,13 +288,13 @@ const EventPage = () => {
                     </Box>
                     {/* Event Details */}
                     <Box
-                        sx={{ 
+                        sx={{
                             px: 6 // Padding on left and right for the outer container
                         }}
                     >
                         {/* Event Description */}
                         <Box
-                            sx={{ 
+                            sx={{
                                 "& h1": { mb: 1 }, // margin bottom of 8px
                                 "& p": { mt: 0 } // margin top of 0px
                             }}
@@ -286,11 +302,11 @@ const EventPage = () => {
                             <h1 id="EventPageEDDesktop">Event Description</h1>
                             <p id="EventPagePDesktop">{event.description}</p>
                             {/* Register button */}
-                            <Button 
+                            <Button
                                 variant="contained"
                                 sx={{
                                     marginBottom: "1.5rem",
-                                    backgroundColor: "#F68F8D", 
+                                    backgroundColor: "#F68F8D",
                                     borderRadius: "30px", // This is different compared to the 20px in mobile version
                                     fontSize: "20px",
                                     //fontFamily: "Poppins", // this does nothing?
@@ -299,7 +315,7 @@ const EventPage = () => {
                                     },
                                 }}
                             >
-                            Register
+                                Register
                             </Button>
                         </Box>
                     </Box>

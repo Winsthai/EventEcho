@@ -39,7 +39,23 @@ const events = [
     "enddate": "2024-12-01",
     "endtime": "21:00:00+00",
     "visibility": false
-  }
+  },
+  {
+    id: "3",
+    title: "Food Festival",
+    eventtype: "Food",
+    description: "A festival with foods from around the world.",
+    address: "789 Gourmet St, City",
+    coordinates: {
+      x: 40.7612,
+      y: -73.9822,
+    },
+    startdate: "2024-11-20",
+    starttime: "11:00:00+00",
+    enddate: "2024-11-20",
+    endtime: "16:00:00+00",
+    visibility: false,
+  },
 ];
 
 const ReviewEventPage = () => {

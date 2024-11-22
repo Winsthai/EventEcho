@@ -105,7 +105,7 @@ const EventCard = ({ event, variant = "" }) => {
                   marginRight: "3vw",
                   textTransform: "none",
                 }}
-                onClick={() => navigate(`/event/${event.id}`)} // Probably change this later
+                onClick={() => navigate(`/editEvent/${event.id}`)} // Probably change this later
               >
                 Edit
               </Button>
@@ -190,7 +190,7 @@ const EventCard = ({ event, variant = "" }) => {
                   backgroundColor: "#ff7474",
                   textTransform: "none",
                 }}
-                onClick={() => navigate(`/event/${event.id}`)}
+                onClick={() => navigate(`/editEvent/${event.id}`)}
               >
                 Edit
               </Button>
