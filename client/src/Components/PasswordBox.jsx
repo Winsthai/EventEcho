@@ -8,7 +8,7 @@ import FormControl from '@mui/material/FormControl';
 import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
 
-export default function PasswordBox() {
+export default function PasswordBox({ label = 'Password', id = 'password' }) {
   const [showPassword, setShowPassword] = React.useState(false);
 
   const handleClickShowPassword = () => setShowPassword((show) => !show);
@@ -23,27 +23,27 @@ export default function PasswordBox() {
 
   return (
     <Box>
-        <FormControl sx={{ m: 0, width: '100%' }} variant="standard">
-          <InputLabel htmlFor="standard-adornment-password">Password</InputLabel>
-          <Input
-            id="standard-adornment-password"
-            type={showPassword ? 'text' : 'password'}
-            endAdornment={
-              <InputAdornment position="end">
-                <IconButton
-                  aria-label={
-                    showPassword ? 'hide the password' : 'display the password'
-                  }
-                  onClick={handleClickShowPassword}
-                  onMouseDown={handleMouseDownPassword}
-                  onMouseUp={handleMouseUpPassword}
-                >
-                  {showPassword ? <VisibilityOff /> : <Visibility />}
-                </IconButton>
-              </InputAdornment>
-            }
-          />
-        </FormControl>
+      <FormControl sx={{ m: 0, width: '100%' }} variant="standard">
+        <InputLabel htmlFor={`standard-adornment-${id}`}>{label}</InputLabel>
+        <Input
+          id={`standard-adornment-${id}`}
+          type={showPassword ? 'text' : 'password'}
+          endAdornment={
+            <InputAdornment position="end">
+              <IconButton
+                aria-label={
+                  showPassword ? 'hide the password' : 'display the password'
+                }
+                onClick={handleClickShowPassword}
+                onMouseDown={handleMouseDownPassword}
+                onMouseUp={handleMouseUpPassword}
+              >
+                {showPassword ? <VisibilityOff /> : <Visibility />}
+              </IconButton>
+            </InputAdornment>
+          }
+        />
+      </FormControl>
     </Box>
   );
 }
