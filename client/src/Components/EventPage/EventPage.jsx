@@ -6,10 +6,15 @@ import { Box, Stack, Button, useMediaQuery } from "@mui/material";
 import CalendarMonthIcon from "@mui/icons-material/CalendarMonth";
 import AccessTimeIcon from "@mui/icons-material/AccessTime";
 import LocationOnIcon from "@mui/icons-material/LocationOn";
-import {
-  AppBar, Toolbar, IconButton, Typography,
-} from '@mui/material';
-import ArrowBackIcon from '@mui/icons-material/ArrowBack';
+import { AppBar, Toolbar, IconButton, Typography } from "@mui/material";
+import ArrowBackIcon from "@mui/icons-material/ArrowBack";
+
+import SportsBasketballIcon from "@mui/icons-material/SportsBasketball";
+import MusicNoteIcon from "@mui/icons-material/MusicNote";
+import LocalDiningIcon from "@mui/icons-material/LocalDining";
+import ColorLensIcon from "@mui/icons-material/ColorLens";
+import GroupsIcon from "@mui/icons-material/Groups";
+import SportsEsportsIcon from "@mui/icons-material/SportsEsports";
 
 import "./EventPage.css";
 
@@ -91,27 +96,31 @@ const EventPage = () => {
       <Box>
         {/* Header Box */}
         {/* Top App Bar */}
-        <Box component="section"
+        <Box
+          component="section"
           sx={{
             width: "100%",
             height: "20%",
             position: "fixed",
             top: 0,
             left: 0,
-            zIndex: 1000
+            zIndex: 1000,
           }}
         >
           <AppBar position="static" sx={{ mb: 2 }}>
             <Toolbar sx={{ color: "secondary" }}>
-              <Typography variant="h6" component="div"
+              <Typography
+                variant="h6"
+                component="div"
                 sx={{
                   flexGrow: 1,
-                  textAlign: 'center',
-                  position: 'absolute',
+                  textAlign: "center",
+                  position: "absolute",
                   left: 0,
                   right: 0,
-                  margin: 'auto'
-                }}>
+                  margin: "auto",
+                }}
+              >
                 Event Details
               </Typography>
               <Box sx={{ flexGrow: 1, display: "flex" }}>
@@ -241,7 +250,7 @@ const EventPage = () => {
             Register
           </Button>
         </Box>
-      </Box >
+      </Box>
     );
   } else {
     // Desktop component
@@ -260,36 +269,69 @@ const EventPage = () => {
           <h1 id="EventPageHeaderDesktop">Event Details</h1>
         </Box>
         {/* Box here that makes the background of all the content white */}
-        <Box borderBottom="1px solid #ddd" bgcolor="white" mx="2.5rem" borderRadius="20px">
+        <Box
+          borderBottom="1px solid #ddd"
+          bgcolor="white"
+          mx="2.5rem"
+          borderRadius="20px"
+          sx={{
+            padding: "2rem 20rem", // Padding for all items inside the white box
+          }}
+        >
           {/* Put picture on the left, and Event Details to its right */}
           <Box
             sx={{
-              display: "flex",
-              gap: "1rem",
               alignItems: "center", // Center vertically
               textAlign: "center", // Ensures the text inside is centered
             }}
           >
             {/* Event Picture */}
             {/* TODO: implement this when possible */}
+
             <Box
               sx={{
-                marginLeft: "1.5rem",
-                marginRight: "1.5rem",
-                marginTop: "1.5rem",
+                position: "relative", // Allow pseudo-element positioning
+                overflow: "hidden", // Prevent pseudo-element from exceeding bounds
+                height: "550px", // Match the image height
+                borderRadius: "15px", // Add border radius
               }}
             >
+              {/* Blurred Background Image */}
+              <Box
+                sx={{
+                  position: "absolute",
+                  top: 0,
+                  left: 0,
+                  width: "100%",
+                  height: "100%",
+                  backgroundImage: `url(${event.image})`,
+                  backgroundSize: "cover",
+                  backgroundPosition: "center",
+                  filter: "blur(20px)", // Adjust blur intensity
+                  transform: "scale(1.1)", // Slightly zoom out for better blur
+                  zIndex: 1, // Place behind the image
+                }}
+              ></Box>
+
+              {/* Event Image */}
               <Box
                 component="img"
-                id="EventPagePhotoBackground"
+                id="EventPagePhotoBackgroundDesktop"
                 src={event.image}
-              ></Box>
+                sx={{
+                  position: "relative",
+                  zIndex: 2, // Place above the blur
+                }}
+              />
             </Box>
             {/* Event Title */}
+          </Box>
+          {/* Event Information (time, date, title, description, etc.)*/}
+          <Box>
             {/* Date, time, and address */}
             <Box
               sx={{
-                marginTop: "1.5rem",
+                marginTop: "1rem",
                 marginRight: "1.5rem",
                 display: "flex",
                 flexDirection: "column", // Ensures title and details stack vertically
@@ -306,7 +348,7 @@ const EventPage = () => {
                   spacing={1}
                   color="text.secondary"
                 >
-                  <CalendarMonthIcon />
+                  <CalendarMonthIcon id="EventPageIconsDesktop"/>
                   <p id="EventPagePDesktop">
                     {new Date(event.startdate).toLocaleDateString("en-US", {
                       weekday: "long",
@@ -322,15 +364,14 @@ const EventPage = () => {
                   spacing={1.2}
                   color="text.secondary"
                 >
-                  <AccessTimeIcon />
+                  <AccessTimeIcon id="EventPageIconsDesktop"/>
                   <p id="EventPagePDesktop">
                     {startDateTime.toLocaleTimeString("en-US", {
                       hour: "numeric",
                       minute: "numeric",
                       hour12: true,
                     })}{" "}
-                    -{" "}
-                    {/* This comment apparently helps for whitespace. dont delete LOL. not a joke */}
+                    -{" "} {/* Add spaces to the left and right of - */}
                     {endDateTime.toLocaleTimeString("en-US", {
                       hour: "numeric",
                       minute: "numeric",
@@ -342,25 +383,56 @@ const EventPage = () => {
                 <Stack
                   direction="row"
                   alignItems="center"
-                  spacing={1.6}
+                  spacing={1.2}
                   color="text.secondary"
                 >
-                  <LocationOnIcon />
+                  <LocationOnIcon id="EventPageIconsDesktop"/>
                   <p id="EventPagePDesktop">{event.address}</p>
                 </Stack>
               </Stack>
             </Box>
-          </Box>
-          {/* Event Details */}
-          <Box
-            sx={{
-              px: 6, // Padding on left and right for the outer container
-            }}
-          >
+
+            <h1
+              id="EventPageHeaderDesktop"
+              style={{
+                marginBottom: 0,
+                paddingBottom: 0,
+              }}
+            >
+              Event Type
+            </h1>
+            {/* Event Type Tag */}
+            <Box
+              sx={{
+                display: "inline-flex", // Tag doesn't take up full container width, only its content
+                alignItems: "center",
+                gap: "0.5rem", // Space between mui icon / tag
+                marginTop: "0.5rem",
+                marginBottom: "0.5rem",
+                backgroundColor: "#ff7474", // color
+                borderRadius: "20px",
+                padding: "0.5rem 1rem", // make button bigger
+                color: "white", // font color
+                fontWeight: "bold",
+                textTransform: "uppercase", // Make text all caps (to match the filters box on homepage)
+              }}
+            >
+              {/* Event Type Icon */}
+              {event.eventtype === "Sports" && <SportsBasketballIcon />}
+              {event.eventtype === "Music" && <MusicNoteIcon />}
+              {event.eventtype === "Food" && <LocalDiningIcon />}
+              {event.eventtype === "Art" && <ColorLensIcon />}
+              {event.eventtype === "Hangout" && <GroupsIcon />}
+              {event.eventtype === "Gaming" && <SportsEsportsIcon />}
+
+              {/* Event Type Text */}
+              {event.eventtype}
+            </Box>
+
             {/* Event Description */}
             <Box
               sx={{
-                "& h1": { mb: 1 }, // margin bottom of 8px
+                "& h1": { mb: "0.5rem" }, // margin bottom of 8px
                 "& p": { mt: 0 }, // margin top of 0px
               }}
             >
