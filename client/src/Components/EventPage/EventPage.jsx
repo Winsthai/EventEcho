@@ -262,7 +262,7 @@ const EventPage = () => {
             width: "100%",
             height: "100%",
             display: "flex",
-            mx: "2.5rem", // Margin left and right
+            px: "2.5rem", // padding left and right
           }}
         >
           {/* Event Details text, that is centered */}
