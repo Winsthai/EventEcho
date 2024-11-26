@@ -1,9 +1,9 @@
-INSERT INTO users (username, email, phonenum, salt, password, friendslist, admin) VALUES
-('john_doe', 'john.doe@example.com', '123-456-7890', 'salty123', 'password_hash_1', '{2,3}', FALSE),
-('jane_smith', 'jane.smith@example.com', '123-555-6789', 'salty456', 'password_hash_2', '{1,3}', FALSE),
-('mark_brown', 'mark.brown@example.com', '123-789-0123', 'salty789', 'password_hash_3', '{1,2}', TRUE),
-('lucy_liu', 'lucy.liu@example.com', '123-123-1234', 'salty321', 'password_hash_4', '{5}', FALSE),
-('mike_tyson', 'mike.tyson@example.com', '123-234-3456', 'salty654', 'password_hash_5', '{}', FALSE);
+INSERT INTO users (username, email, phonenum, salt, password, admin) VALUES
+('john_doe', 'john.doe@example.com', '123-456-7890', 'salty123', 'password_hash_1', FALSE),
+('jane_smith', 'jane.smith@example.com', '123-555-6789', 'salty456', 'password_hash_2', FALSE),
+('mark_brown', 'mark.brown@example.com', '123-789-0123', 'salty789', 'password_hash_3', TRUE),
+('lucy_liu', 'lucy.liu@example.com', '123-123-1234', 'salty321', 'password_hash_4', FALSE),
+('mike_tyson', 'mike.tyson@example.com', '123-234-3456', 'salty654', 'password_hash_5', FALSE);
 
 INSERT INTO events (title, eventtype, description, address, coordinates, startdate, starttime, enddate, endtime, visibility) VALUES
 ('Football Game', 'Sports', 'A friendly neighborhood football game.', '123 Stadium Rd, City', '(40.7128, -74.0060)', '2024-11-15', '15:00:00+00', '2024-11-15', '17:00:00+00', TRUE),
@@ -29,3 +29,28 @@ INSERT INTO event_creator (event_id, user_id) VALUES
 (3, 2),
 (4, 4),
 (5, 5);
+
+INSERT INTO friends_list (user_id, friend_id) VALUES
+(1, 2),
+(1, 3),
+(2, 1),
+(2, 3),
+(3, 1),
+(3, 2),
+(4, 5);
+
+INSERT INTO guest_users (email, phonenum) VALUES
+('pablo_escobar@example.com', '789-123-4567'),
+('charlie_brown@example.com', '789-123-1234'),
+('peter_parker@example.com', '789-234-5678'),
+('david_davidson@example.com', '789-345-6789');
+
+INSERT INTO guest_user_connections (guest_id, user_id) VALUES
+(1, 1),
+(2, 1),
+(2, 2),
+(2, 3),
+(3, 2),
+(3, 4),
+(4, 1),
+(4, 5);
