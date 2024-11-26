@@ -4,6 +4,7 @@ import EventPage from "./Components/EventPage/EventPage";
 import MobileNavBar from "./Components/MobileNavBar";
 import LoginPage from "./Components/LoginPage/LoginPage";
 import SignUpPage from "./Components/SignUpPage/SignUpPage";
+import AdminPage from "./Components/AdminPage/AdminPage";
 import { useMediaQuery } from "@mui/material";
 import NavBar from "./Components/NavBar";
 import UserPage from "./Components/UserPage/UserPage";
@@ -34,6 +35,7 @@ function App() {
           <Route path="/user/:id" element={<UserPage></UserPage>}></Route>
           <Route path="/login" element={<LoginPage></LoginPage>}></Route>
           <Route path="/signUp" element={<SignUpPage></SignUpPage>}></Route>
+          <Route path="/admin" element={<AdminPage></AdminPage>}></Route>
           <Route path="*" element={<div>Page not found</div>}></Route>
         </Routes>
         {isMobile ? <MobileNavBar></MobileNavBar> : <></>}
