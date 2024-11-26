@@ -68,9 +68,11 @@ const SignUpPage = () => {
                             <img src={logo} alt="EventEcho Logo" style={{ width: '150px', margin: '-3vh' }} />
                         </Box>
 
-                        <TextField label="Username" variant="standard" />
-                        <PasswordBox onChange={handlePasswordChange} />
-                        <PasswordBox label="Confirm Password" onChange={handleConfirmPasswordChange} />
+                        <TextField label="Username*" variant="standard" />
+                        <PasswordBox label="Password*"onChange={handlePasswordChange} />
+                        <PasswordBox label="Confirm Password*" onChange={handleConfirmPasswordChange} />
+                        <TextField label="Email" variant="standard" />
+                        <TextField label="Phone Number*" variant="standard" />
 
                         <Box>
                             <Chip label="Create Account" sx={chipStyle} onClick={() => console.log("Account Created")} />
@@ -109,9 +111,11 @@ const SignUpPage = () => {
                             <h1 id ='signupHeader'>EventEcho</h1>
                         </Stack>
 
-                        <TextField label="Username" variant="standard" />
-                        <PasswordBox onChange={handlePasswordChange} />
-                        <PasswordBox label="Confirm Password" onChange={handleConfirmPasswordChange} />
+                        <TextField label="Username*" variant="standard" />
+                        <PasswordBox label="Password*"onChange={handlePasswordChange} />
+                        <PasswordBox label="Confirm Password*" onChange={handleConfirmPasswordChange} />
+                        <TextField label="Email" variant="standard" />
+                        <TextField label="Phone Number*" variant="standard" />
 
                         <Stack direction="row" justifyContent="space-between">
                             <div>
