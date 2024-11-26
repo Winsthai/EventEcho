@@ -273,6 +273,7 @@ const EventPage = () => {
           borderBottom="1px solid #ddd"
           bgcolor="white"
           mx="2.5rem"
+          marginBottom="2.5rem"
           borderRadius="20px"
           sx={{
             padding: "2rem 20rem", // Padding for all items inside the white box
