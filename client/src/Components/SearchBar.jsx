@@ -1,11 +1,11 @@
 import { TextField, InputAdornment } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
 
-export default function SearchBar({ noMargin = false, onSearchChange }) {
+export default function SearchBar({ noMargin = false, onSearchChange, placeholder="" }) {
   return (
     <TextField
       variant="outlined"
-      placeholder="Search for events..."
+      placeholder={placeholder}
       size="small"
       onChange={(event) => onSearchChange(event.target.value)}
       sx={{
