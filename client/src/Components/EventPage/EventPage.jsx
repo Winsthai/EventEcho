@@ -262,7 +262,7 @@ const EventPage = () => {
             width: "100%",
             height: "100%",
             display: "flex",
-            mx: "2.5rem", // Margin left and right
+            px: "2.5rem", // padding left and right
           }}
         >
           {/* Event Details text, that is centered */}
@@ -273,6 +273,7 @@ const EventPage = () => {
           borderBottom="1px solid #ddd"
           bgcolor="white"
           mx="2.5rem"
+          marginBottom="2.5rem"
           borderRadius="20px"
           sx={{
             padding: "2rem 20rem", // Padding for all items inside the white box
