@@ -110,6 +110,22 @@ const EventCard = ({ event, variant = "" }) => {
                 Edit
               </Button>
             </Box>
+          ) : variant === "admin" ? (
+            <Box>
+              <Button
+                variant="contained"
+                sx={{
+                  borderRadius: "20px",
+                  height: "80%",
+                  backgroundColor: "#A50B07",
+                  marginRight: "3vw",
+                  textTransform: "none",
+                }}
+                // onClick=
+              >
+                Remove
+              </Button>
+            </Box>
           ) : (
             <></>
           )}
@@ -193,6 +209,21 @@ const EventCard = ({ event, variant = "" }) => {
                 onClick={() => navigate(`/editEvent/${event.id}`)}
               >
                 Edit
+              </Button>
+            </Box>
+          ) : variant === "admin" ? (
+            <Box>
+              <Button
+                variant="contained"
+                sx={{
+                  borderRadius: "20px",
+                  height: "80%",
+                  backgroundColor: "#A50B07",
+                  textTransform: "none",
+                }}
+                // onClick=
+              >
+                Remove
               </Button>
             </Box>
           ) : (

@@ -1,0 +1,40 @@
+.adminUserBox {
+  margin-bottom: 2vh;
+  background-color: white;
+  border-radius: 15px;
+  text-align: center;
+  height: 150px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between; /* This ensures the space is split between the photo/details and the button */
+}
+
+.adminUserDetails {
+  height: 130px;
+  margin-left: 15px;
+  text-align: left;
+  flex-grow: 1; /* This makes the details section take up available space */
+}
+
+.adminUserBoxDesktop {
+  margin-bottom: 2vh;
+  background-color: white;
+  border-radius: 15px;
+  text-align: center;
+  height: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.adminUserDetailsDesktop {
+  width: 100%;
+  padding: 2vw;
+  justify-content: space-between;
+}
+
+.adminUserDetailsDesktop > div {
+  margin-bottom: 0px;
+  display: flex;
+  align-items: center;
+}

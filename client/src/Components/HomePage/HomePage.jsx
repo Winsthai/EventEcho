@@ -149,7 +149,7 @@ const HomePage = () => {
         {/* Main body for events */}
         <Stack id="homeEventsStack">
           {/* Search bar */}
-          <SearchBar onSearchChange={handleSearchChange} />
+          <SearchBar onSearchChange={handleSearchChange} placeholder="Search for events..."/>
 
           {/* Filter buttons */}
           <Stack direction="row" id="homeFiltersStack">
@@ -265,7 +265,7 @@ const HomePage = () => {
     return (
       <Stack direction="column" id="homeDesktopStack">
         <Stack direction="row" sx={{ alignItems: "center" }}>
-          <SearchBar onSearchChange={handleSearchChange}></SearchBar>
+          <SearchBar onSearchChange={handleSearchChange} placeholder="Search for events..."></SearchBar>
 
           <Button
             id="desktopFiltersButton"
