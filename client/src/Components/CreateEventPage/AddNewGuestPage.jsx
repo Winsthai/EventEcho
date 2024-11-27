@@ -102,20 +102,6 @@ export default function AddNewGuestsPage() {
               >
                 Guest
               </Avatar>
-              {/* Camera Icon Overlay */}
-              <IconButton
-                sx={{
-                  backgroundColor: 'white',
-                  border: '1px solid #ccc',
-                  bottom: 35,
-                  right: 35,
-                  position: 'absolute',
-                  zIndex: 10
-                }}
-                size="large"
-              >
-                <PhotoCameraIcon fontSize="small" />
-              </IconButton>
             </Avatar>
           </Stack>
 
@@ -207,20 +193,6 @@ export default function AddNewGuestsPage() {
             >
               Guest
             </Avatar>
-            {/* Camera Icon Overlay */}
-            <IconButton
-              sx={{
-                backgroundColor: 'white',
-                border: '1px solid #ccc',
-                bottom: 25,
-                right: 25,
-                position: 'absolute',
-                zIndex: 10
-              }}
-              size="large"
-            >
-              <PhotoCameraIcon fontSize="small" />
-            </IconButton>
           </Avatar>
         </Stack>
 
