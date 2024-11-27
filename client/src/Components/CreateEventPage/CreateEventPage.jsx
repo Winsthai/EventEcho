@@ -125,6 +125,10 @@ export default function CreateEventPage({ eventDetails, setEventDetails }) {
 
   const handleVisibilityChange = (event) => {
     setEventPublic(event.target.checked);
+    const { checked } = event.target;
+    const updatedDetails = { ...eventDetails, visibility: checked };
+    console.log(updatedDetails);
+    return updatedDetails;
   }
 
   const handleFileChange = (event) => {
