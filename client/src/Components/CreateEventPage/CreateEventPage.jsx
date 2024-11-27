@@ -71,15 +71,19 @@ const events = [
   },
 ];
 
-export default function CreateEventPage() {
+export default function CreateEventPage({ eventDetails, setEventDetails }) {
   const { id } = useParams();
   const navigate = useNavigate();
 
   const isMobile = useMediaQuery("(max-width:600px)");
   const onEditPage = location.pathname.includes("edit");
 
+  const [eventTitle, setEventTitle] = React.useState('');
   const [eventType, setEventType] = React.useState('');
   const [eventPhotoName, setEventPhotoName] = React.useState('');
+  const [eventDescription, setEventDescription] = React.useState('');
+  const [eventLocation, setEventLocation] = React.useState('');
+  const [startDate, setStartDate] = React.useState('');
 
   // in db, public=true and private=false 
   let vis, startTimeTrimmed, endTimeTrimmed;
@@ -95,9 +99,33 @@ export default function CreateEventPage() {
 
   const [eventPublic, setEventPublic] = React.useState(vis);
 
+  const updateDetails = (event) => {
+    const { name, value } = event.target;
+    setEventDetails((prevDetails) => {
+      const updatedDetails = { ...eventDetails, [name]: value };
+      console.log(updatedDetails);
+      return updatedDetails;
+    });
+  };
+
+  const handleEventTitleChange = (event) => {
+    setEventTitle(event.target.value);
+    updateDetails(event);
+  };
+
   const handleEventTypeChange = (event) => {
     setEventType(event.target.value);
+    updateDetails(event);
   };
+
+  const handleEventDescriptionChange = (event) => {
+    setEventDescription(event.target.value);
+    updateDetails(event);
+  };
+
+  const handleVisibilityChange = (event) => {
+    setEventPublic(event.target.checked);
+  }
 
   const handleFileChange = (event) => {
     if (event.target.files && event.target.files.length > 0) {
@@ -105,14 +133,14 @@ export default function CreateEventPage() {
     }
   }
 
-  const handleVisibilityChange = (event) => {
-    setEventPublic(event.target.checked);
-  }
-
   // just clears the text field for now, will have to actually delete uploaded file later
   const handleDeleteFile = (event) => {
     setEventPhotoName('');
   }
+
+  const handleNavigate = (url) => {
+    navigate(url, { state: { message: 'testing testing' } });
+  };
 
   // MOBILE VERSION
   if (isMobile) {
@@ -134,7 +162,6 @@ export default function CreateEventPage() {
         <Box component="section"
           sx={{
             width: "100%",
-            height: "20%",
             position: "fixed",
             top: 0,
             left: 0,
@@ -172,27 +199,32 @@ export default function CreateEventPage() {
         </Box>
 
         {/* forms */}
-        <Box component="form" sx={{ width: "85%", height: "100%", pt: 8, pb: 8 }}>
+        <Box component="form" noValidate sx={{ width: "85%", height: "100%", pt: 8, pb: 8 }}>
           <Stack
             direction="column"
             spacing={2}
             sx={{ height: "100%", padding: 2 }}
           >
             {/* Event title */}
-            <TextField required
+            <TextField required fullWidth
+              name="title"
               id="event-title"
               label="Event Title"
               variant="outlined"
               sx={{ pb: 2 }}
-              defaultValue={onEditPage ? events[id - 1].title : ""}
+              // defaultValue={onEditPage ? events[id - 1].title : ""}
+              value={eventTitle}
+              onChange={handleEventTitleChange}
             />
 
             {/* Event Type */}
             <FormControl fullWidth sx={{ pb: 2 }}>
               <InputLabel id="event-type">Event Type *</InputLabel>
               <Select labelId="select-event-type"
-                defaultValue={onEditPage ? events[id - 1].eventtype : eventType}
+                name='eventtype'
+                // defaultValue={onEditPage ? events[id - 1].eventtype : eventType}
                 label="Event Types"
+                value={eventType}
                 onChange={handleEventTypeChange}
                 sx={{ textAlign: 'left' }}
               >
@@ -206,17 +238,24 @@ export default function CreateEventPage() {
 
             {/* Event Description */}
             <TextField required
+              name="description"
               id="event-description"
               label="Event Description"
               variant="outlined"
               multiline={true}
               minRows={3}
               sx={{ pb: 2 }}
-              defaultValue={onEditPage ? events[id - 1].description : ""}
+              // defaultValue={onEditPage ? events[id - 1].description : ""}
+              value={eventDescription}
+              onChange={handleEventDescriptionChange}
             />
 
-            {/* Location */}
-            <TextField required id="event-location" label="Location" variant="outlined"
+            {/* Location (THERE'S NO WAY WE'RE DOING GOOGLE MAPS API AUTOFILL) */}
+            <TextField required
+              id="event-location"
+              name="address"
+              label="Location"
+              variant="outlined"
               slotProps={{
                 input: {
                   startAdornment: (
@@ -229,6 +268,7 @@ export default function CreateEventPage() {
                 }
               }}
               defaultValue={onEditPage ? events[id - 1].address : ""}
+
             />
 
             {/* Event Timing Title */}
@@ -397,21 +437,26 @@ export default function CreateEventPage() {
 
             {/* Event title */}
             <TextField fullWidth required
+              name='title'
               id="event-title"
               label="Event Title"
               variant="outlined"
               sx={{ width: "100%" }}
-              defaultValue={onEditPage ? events[id - 1].title : ""}
+              // defaultValue={onEditPage ? events[id - 1].title : ""}
+              value={eventTitle}
+              onChange={handleEventTitleChange}
             />
 
             {/* Event Type */}
             <FormControl fullWidth sx={{ width: "80%" }}>
               <InputLabel id="event-type">Event Type *</InputLabel>
               <Select labelId="select-event-type"
-                defaultValue={onEditPage ? events[id - 1].eventtype : eventType}
+                name='eventtype'
+                // defaultValue={onEditPage ? events[id - 1].eventtype : eventType}
                 label="Event Types"
                 onChange={handleEventTypeChange}
                 sx={{ textAlign: 'left' }}
+                value={eventType}
               >
                 <MenuItem value="Sports">Sports</MenuItem>
                 <MenuItem value="Music">Music</MenuItem>
@@ -424,13 +469,16 @@ export default function CreateEventPage() {
 
           {/* Event Description */}
           <TextField fullWidth required
+            name='description'
             id="event-description"
             label="Event Description"
             variant="outlined"
             multiline={true}
             minRows={3}
             sx={{ pb: 2, width: "80%" }}
-            defaultValue={onEditPage ? events[id - 1].description : ""}
+            // defaultValue={onEditPage ? events[id - 1].description : ""}
+            value={eventDescription}
+            onChange={handleEventDescriptionChange}
           />
 
           {/* Location and Private Toggle Horizontal Stack */}
@@ -550,8 +598,8 @@ export default function CreateEventPage() {
             <Button
               variant='contained'
               onClick={onEditPage ?
-                () => navigate(`/editEvent/${id}/changeGuests`) :
-                () => navigate('/createEvent/addGuests')
+                () => handleNavigate(`/editEvent/${id}/changeGuests`) :
+                () => handleNavigate('/createEvent/addGuests')
               } // should also complete the step in desktopProgressBar
               sx={{
                 borderRadius: '10px',
