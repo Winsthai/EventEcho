@@ -33,20 +33,25 @@ export const adminConfirmation = (request, _response, next) => {
 export const userConfirmation = (request, _response, next) => {
   let token;
 
-  const id = request.params.id;
-
   const authorization = request.get("authorization");
   if (authorization && authorization.startsWith("Bearer ")) {
     token = authorization.replace("Bearer ", "");
 
-    const decodedToken = jwt.verify(token, SECRET);
+    try {
+      const decodedToken = jwt.verify(token, SECRET);
 
-    if (!decodedToken.id || decodedToken.id != id) {
-      next(jwt.JsonWebTokenError);
+      // Ensure the token contains a valid user ID and role
+      if (!decodedToken.id || decodedToken.role !== "user") {
+        return next(jwt.JsonWebTokenError);
+      }
+
+      request.userId = decodedToken.id; // Add the user ID to the request object
+
+      next();
+    } catch (error) {
+      return next(error);
     }
   } else {
-    next(jwt.JsonWebTokenError);
+    return next(jwt.JsonWebTokenError); // Wrong authorization header
   }
-
-  next();
 };

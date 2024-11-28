@@ -136,7 +136,6 @@ eventRouter.post("/", userConfirmation, async (request, response, next) => {
     eventtype,
     description,
     address,
-    coordinates,
     startdate,
     starttime,
     enddate,
@@ -144,30 +143,34 @@ eventRouter.post("/", userConfirmation, async (request, response, next) => {
     visibility,
   } = request.body;
 
+  const userId = request.userId; // Access the user ID from the token
+
   if (
     !title ||
     !eventtype ||
     !description ||
     !address ||
-    !coordinates ||
     !startdate ||
     !starttime
   ) {
     return response.status(400).json({ error: "Missing required fields" });
   }
 
+  if (!userId) {
+    return response.status(400).json({ error: "Invalid token" });
+  }
+
   try {
     const result = await client.query(
       `INSERT INTO events 
-       (title, eventtype, description, address, coordinates, startdate, starttime, enddate, endtime, visibility) 
-       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10) 
+       (title, eventtype, description, address, startdate, starttime, enddate, endtime, visibility) 
+       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9) 
        RETURNING *`,
       [
         title,
         eventtype,
         description,
         address,
-        coordinates,
         startdate,
         starttime,
         enddate,
@@ -176,7 +179,14 @@ eventRouter.post("/", userConfirmation, async (request, response, next) => {
       ]
     );
 
-    response.status(201).json({ event: result.rows[0] });
+    await client.query(
+      `INSERT INTO event_participants (event_id, user_id) VALUES ($1, $2)`,
+      [result.rows[0].id, userId]
+    );
+
+    response
+      .status(201)
+      .json({ event: result.rows[0], eventCreatorId: userId });
   } catch (error) {
     next(error);
   }

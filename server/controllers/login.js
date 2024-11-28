@@ -35,6 +35,13 @@ loginRouter.post("/", async (request, response, next) => {
       });
     }
 
+    if (user.status == 3) {
+      // Banned
+      return response.status(403).json({
+        error: "This account has been banned",
+      });
+    }
+
     // Determine user role based on 'status' column
     const role = user.status == 1 ? "user" : "admin";
 
