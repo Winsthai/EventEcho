@@ -89,7 +89,10 @@ const EventCard = ({ event, variant = "" }) => {
                   marginRight: "3vw",
                   textTransform: "none",
                 }}
-                onClick={() => navigate(`/event/${event.id}`)} // Probably change this later
+                onClick={(e) => {
+                  e.stopPropagation();
+                  navigate(`/event/${event.id}`);
+                }} // Probably change this later
               >
                 Unregister
               </Button>
@@ -105,7 +108,10 @@ const EventCard = ({ event, variant = "" }) => {
                   marginRight: "3vw",
                   textTransform: "none",
                 }}
-                onClick={() => navigate(`/editEvent/${event.id}`)} // Probably change this later
+                onClick={(e) => {
+                  e.stopPropagation();
+                  navigate(`/editEvent/${event.id}`);
+                }} // Probably change this later
               >
                 Edit
               </Button>
@@ -121,7 +127,9 @@ const EventCard = ({ event, variant = "" }) => {
                   marginRight: "3vw",
                   textTransform: "none",
                 }}
-                // onClick=
+                onClick={(e) => {
+                  e.stopPropagation();
+                }}
               >
                 Remove
               </Button>
@@ -134,7 +142,10 @@ const EventCard = ({ event, variant = "" }) => {
     );
   } else {
     return (
-      <Box className="homeUpcomingEventBoxDesktop">
+      <Box
+        className="homeUpcomingEventBoxDesktop"
+        onClick={() => navigate(`/event/${event.id}`)}
+      >
         {event.image ? (
           <Box
             component="img"
@@ -191,7 +202,10 @@ const EventCard = ({ event, variant = "" }) => {
                   backgroundColor: "#ff7474",
                   textTransform: "none",
                 }}
-                onClick={() => navigate(`/event/${event.id}`)}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  navigate(`/event/${event.id}`);
+                }}
               >
                 Unregister
               </Button>
@@ -206,7 +220,10 @@ const EventCard = ({ event, variant = "" }) => {
                   backgroundColor: "#ff7474",
                   textTransform: "none",
                 }}
-                onClick={() => navigate(`/editEvent/${event.id}`)}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  navigate(`/editEvent/${event.id}`);
+                }}
               >
                 Edit
               </Button>
@@ -221,7 +238,9 @@ const EventCard = ({ event, variant = "" }) => {
                   backgroundColor: "#A50B07",
                   textTransform: "none",
                 }}
-                // onClick=
+                onClick={(e) => {
+                  e.stopPropagation();
+                }}
               >
                 Remove
               </Button>
@@ -235,7 +254,10 @@ const EventCard = ({ event, variant = "" }) => {
                   height: "80%",
                   backgroundColor: "#ff7474",
                 }}
-                onClick={() => navigate(`/event/${event.id}`)}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  navigate(`/event/${event.id}`);
+                }}
               >
                 Register
               </Button>
