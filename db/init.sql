@@ -4,7 +4,7 @@ CREATE TABLE IF not EXISTS users (
     email VARCHAR(255),
     phonenum VARCHAR(255) NOT NULL UNIQUE,
     password VARCHAR(255) NOT NULL,
-    status INT DEFAULT 1,
+    status INT DEFAULT 1
 );
 
 CREATE TYPE categories as ENUM ('Sports', 'Music', 'Food', 'Art', 'Hangout', 'Gaming', 'Convention');
