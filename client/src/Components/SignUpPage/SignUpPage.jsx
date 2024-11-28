@@ -56,11 +56,6 @@ const SignUpPage = () => {
     };
 
     const handleCreateAccount = async () => {
-        setUsername("too");
-        setPhonenum("1234567890");
-        setPassword("that");
-        setConfirmPassword("that");
-        // Validate the form
         if (!username || !phonenum || !password || !confirmPassword) {
           console.log(`username: ${username}, password: ${password}, phonenum: ${phonenum}, confirm: ${confirmPassword}`);
           setFormError("Please fill out all required fields.");
