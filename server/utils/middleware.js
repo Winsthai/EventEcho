@@ -1,7 +1,7 @@
-const jwt = require("jsonwebtoken");
-const { SECRET } = require("./config");
+import jwt from "jsonwebtoken";
+import { SECRET } from "./config.js";
 
-const errorHandler = (error, _request, response, next) => {
+export const errorHandler = (error, _request, response, next) => {
   if (error.name === "JsonWebTokenError") {
     return response.status(401).json({ error: "token invalid" });
   } else if (error.name === "TokenExpiredError") {
@@ -11,7 +11,7 @@ const errorHandler = (error, _request, response, next) => {
   next(error);
 };
 
-const adminConfirmation = (request, _response, next) => {
+export const adminConfirmation = (request, _response, next) => {
   let token;
 
   const authorization = request.get("authorization");
@@ -30,7 +30,7 @@ const adminConfirmation = (request, _response, next) => {
   next();
 };
 
-const userConfirmation = (request, _response, next) => {
+export const userConfirmation = (request, _response, next) => {
   let token;
 
   const id = request.params.id;
@@ -49,10 +49,4 @@ const userConfirmation = (request, _response, next) => {
   }
 
   next();
-};
-
-module.exports = {
-  errorHandler,
-  adminConfirmation,
-  userConfirmation,
 };

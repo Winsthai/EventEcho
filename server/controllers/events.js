@@ -1,5 +1,6 @@
 import express from "express";
 import client from "../index.js";
+import { userConfirmation } from "../utils/middleware.js";
 
 const eventRouter = express.Router();
 const eventTypes = new Set([
@@ -129,7 +130,7 @@ eventRouter.get("/:id", async (request, response, next) => {
 });
 
 // Create a new event
-eventRouter.post("/", async (request, response, next) => {
+eventRouter.post("/", userConfirmation, async (request, response, next) => {
   const {
     title,
     eventtype,

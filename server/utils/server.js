@@ -1,5 +1,7 @@
-import eventRouter from "../controllers/events";
-import { errorHandler } from "./middleware";
+import express from "express";
+import eventRouter from "../controllers/events.js";
+import loginRouter from "../controllers/login.js";
+import { errorHandler } from "./middleware.js";
 
 const createServer = () => {
   const app = express();
@@ -7,6 +9,8 @@ const createServer = () => {
   app.use(express.json());
 
   app.use("/api/events", eventRouter);
+
+  app.use("/api/login", loginRouter);
 
   app.use(errorHandler);
 

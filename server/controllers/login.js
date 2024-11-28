@@ -1,7 +1,7 @@
 import jwt from "jsonwebtoken";
 import bcrypt from "bcryptjs";
 import express from "express";
-import { SECRET } from "../utils/config";
+import { SECRET } from "../utils/config.js";
 import client from "../index.js";
 
 const loginRouter = express.Router();
@@ -41,7 +41,7 @@ loginRouter.post("/", async (request, response, next) => {
     // Create a token, contains username, user id, and digital signature
     const userForToken = {
       username: user.username,
-      id: user._id,
+      id: user.id,
       role: role,
     };
 
@@ -55,7 +55,7 @@ loginRouter.post("/", async (request, response, next) => {
     response.status(200).send({
       token,
       username: user.username,
-      id: user._id,
+      id: user.id,
     });
   } catch (error) {
     next(error);
