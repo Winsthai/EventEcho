@@ -1,6 +1,6 @@
 import express from "express";
 import client from "../index.js";
-import { userConfirmation } from "../utils/middleware.js";
+import { deleteConfirmation, userConfirmation } from "../utils/middleware.js";
 
 const eventRouter = express.Router();
 const eventTypes = new Set([
@@ -130,6 +130,7 @@ eventRouter.get("/:id", async (request, response, next) => {
 });
 
 // Create a new event
+// Requires a token to identify who the user is making this event
 eventRouter.post("/", userConfirmation, async (request, response, next) => {
   const {
     title,
@@ -180,7 +181,7 @@ eventRouter.post("/", userConfirmation, async (request, response, next) => {
     );
 
     await client.query(
-      `INSERT INTO event_participants (event_id, user_id) VALUES ($1, $2)`,
+      `INSERT INTO event_creator (event_id, user_id) VALUES ($1, $2)`,
       [result.rows[0].id, userId]
     );
 
@@ -191,5 +192,31 @@ eventRouter.post("/", userConfirmation, async (request, response, next) => {
     next(error);
   }
 });
+
+// Delete an event
+// Requires a token to ensure that the user deleting the event is the one who made it, or is an admin
+eventRouter.delete(
+  "/:id",
+  deleteConfirmation,
+  async (request, response, next) => {
+    const id = request.params.id;
+
+    try {
+      const result = await client.query(`DELETE FROM events WHERE id = $1;`, [
+        id,
+      ]);
+
+      if (result.rowCount === 0) {
+        // No rows were deleted (event not found)
+        return response.status(404).json({ error: "Event not found" });
+      }
+
+      // Send a success response with no content
+      response.status(204).send(); // No content response after successful deletion
+    } catch (error) {
+      next(error);
+    }
+  }
+);
 
 export default eventRouter;
