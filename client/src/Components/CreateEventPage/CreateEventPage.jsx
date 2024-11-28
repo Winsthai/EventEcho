@@ -201,11 +201,15 @@ export default function CreateEventPage({ eventDetails, setEventDetails }) {
   };
 
   const checkFields = () => {
-    if (startDate === null) {
-      setStartDate(dayjs(''));
+    if (eventDetails.startdate === null && eventDetails.starttime === null) {
+      setEventDetails({ ...eventDetails, startdateraw: dayjs(''), starttimeraw: dayjs('') });
+      console.log("no event timings!");
     }
-    if (startTime === null) {
-      setStartTime(dayjs(''));
+    else if (eventDetails.starttime === null) {
+      setEventDetails({ ...eventDetails, starttimeraw: dayjs('') });
+    }
+    else if (eventDetails.startdate === null) {
+      setEventDetails({ ...eventDetails, startdateraw: dayjs('') });
     }
 
     const newErrors = {

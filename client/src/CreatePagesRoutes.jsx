@@ -33,7 +33,7 @@ function CreatePagesRoutes() {
         <Route path="/" element={<CreateEventPage eventDetails={eventDetails} setEventDetails={setEventDetails}></CreateEventPage>}></Route>
         <Route path="/addGuests" element={<DesktopAddGuestsPage eventDetails={eventDetails} ></DesktopAddGuestsPage>}></Route>
         <Route path="/newGuests" element={<AddGuestsNewPage></AddGuestsNewPage>}></Route>
-        <Route path="/reviewEvent" element={<ReviewEventPage></ReviewEventPage>}></Route>
+        <Route path="/reviewEvent" element={<ReviewEventPage eventDetails={eventDetails}></ReviewEventPage>}></Route>
       </Routes>
     </>
   );

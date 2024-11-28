@@ -73,19 +73,40 @@ const events = [
   },
 ];
 
-const ReviewEventPage = () => {
+const ReviewEventPage = ({ eventDetails }) => {
   const { id } = useParams();
   const navigate = useNavigate();
   const isMobile = useMediaQuery("(max-width:600px)");
   const onEditPage = location.pathname.includes("edit");
 
-  let reviewTime, startTimeTrimmed, endTimeTrimmed, databaseImage;
+  let reviewTime, reviewDate, startTimeTrimmed, endTimeTrimmed, databaseImage;
 
   if (onEditPage) {
     startTimeTrimmed = events[id - 1].starttime.slice(0, -6);
     endTimeTrimmed = events[id - 1].endtime.slice(0, -6);
     reviewTime = startTimeTrimmed.concat(" - ", endTimeTrimmed);
     databaseImage = events[id - 1].image;
+  }
+  else {
+    startTimeTrimmed = eventDetails.starttime.slice(0, -6);
+    if (eventDetails.endtime !== null) {
+      endTimeTrimmed = eventDetails.endtime.slice(0, -6);
+      reviewTime = startTimeTrimmed.concat(" - ", endTimeTrimmed);
+      console.log("end time exists");
+    }
+    else {
+      reviewTime = startTimeTrimmed;
+    }
+
+    if (eventDetails.enddate !== null) {
+      reviewDate = eventDetails.startdate.concat(" - ", eventDetails.enddate);
+    }
+    else {
+      reviewDate = eventDetails.startdate;
+    }
+
+    console.log(startTimeTrimmed);
+    console.log(eventDetails.endtime);
   }
 
   if (isMobile) {
@@ -159,7 +180,7 @@ const ReviewEventPage = () => {
         >
           {/* Event Title */}
           <h1 id="EventReviewTitle">
-            {onEditPage ? events[id - 1].title : "keshi: REQUIEM TOUR"}
+            {onEditPage ? events[id - 1].title : eventDetails.title}
           </h1>
           <Box
             sx={{
@@ -187,7 +208,7 @@ const ReviewEventPage = () => {
                 <CalendarMonthIcon />
                 {/* Adjust marginLeft later */}
                 <p id="EventReviewP" style={{ marginLeft: "8px" }}>
-                  {onEditPage ? events[id - 1].startdate : "2024-01-01"}
+                  {onEditPage ? events[id - 1].startdate : reviewDate}
                 </p>
               </Box>
               <Box
@@ -197,7 +218,7 @@ const ReviewEventPage = () => {
                 <AccessTimeIcon />
                 {/* Adjust marginLeft later */}
                 <p id="EventReviewP" style={{ marginLeft: "8px" }}>
-                  {onEditPage ? reviewTime : "19:00 - 22:00"}
+                  {onEditPage ? reviewTime : reviewTime}
                 </p>
               </Box>
               <Box
@@ -207,7 +228,7 @@ const ReviewEventPage = () => {
                 <LocationOnIcon />
                 {/* Adjust marginLeft later */}
                 <p id="EventReviewP" style={{ marginLeft: "8px" }}>
-                  {onEditPage ? events[id - 1].address : "Edmonton, AB"}
+                  {onEditPage ? events[id - 1].address : eventDetails.address}
                 </p>
               </Box>
             </Box>
@@ -247,11 +268,7 @@ const ReviewEventPage = () => {
             <p id="EventReviewP">
               {onEditPage
                 ? events[id - 1].description
-                : `Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean mollis dapibus purus, ut condimentum enim egestas ut. 
-                    Maecenas commodo fringilla risus, at faucibus leo lacinia ut. Nullam a justo egestas, lacinia erat et, dignissim lectus. 
-                    Nulla vel feugiat massa. Proin in orci eget ligula pharetra dictum. Nunc vehicula malesuada rhoncus. 
-                    Morbi a turpis id metus egestas luctus sed vel purus. 
-                    Sed vel auctor lorem, vel tincidunt est. Nunc sit amet fringilla eros, a facilisis risus.`}
+                : eventDetails.description}
             </p>
           </Box>
 
