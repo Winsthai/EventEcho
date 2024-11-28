@@ -15,11 +15,14 @@ function CreatePagesRoutes() {
     eventtype: '',
     description: '',
     address: '',
-    coordinates: { x: 0, y: 0 },
-    startdate: '',
-    starttime: '',
-    enddate: '',
-    endtime: '',
+    startdate: null,
+    startdateraw: null,
+    starttime: null,
+    starttimeraw: null,
+    enddate: null,
+    enddateraw: null,
+    endtime: null,
+    endtimeraw: null,
     visibility: true
   });
 
