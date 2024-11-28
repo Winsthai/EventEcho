@@ -7,6 +7,13 @@
     display: flex;
     align-items: center;
     justify-content: space-between; /* This ensures the space is split between the photo/details and the button */
+    transform: scale(0.95);
+    transition: transform 0.2s ease, background-color 0.2s ease;
+}
+
+.homeUpcomingEventBox:hover {
+    cursor: pointer;
+    transform: scale(1.0);
 }
 
 .homeUpcomingEventPhoto {
@@ -63,6 +70,13 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
+    transform: scale(1);
+    transition: transform 0.2s ease, background-color 0.2s ease;
+}
+
+.homeUpcomingEventBoxDesktop:hover {
+    cursor: pointer;
+    transform: scale(1.03);
 }
 
 .homeEventNameDesktop {
