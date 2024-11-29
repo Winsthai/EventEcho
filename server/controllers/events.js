@@ -219,4 +219,40 @@ eventRouter.delete(
   }
 );
 
+// Register a user for an event
+// Requires a token to identify who the user is registering for this event
+eventRouter.post(
+  "/:id/register",
+  userConfirmation,
+  async (request, response, next) => {
+    const eventId = request.params.id;
+    const userId = request.userId; // Access the user ID from the token
+
+    if (!userId) {
+      return response.status(400).json({ error: "Invalid token" });
+    }
+
+    try {
+      const eventExistsResult = await client.query(
+        `SELECT 1 FROM events WHERE id = $1`,
+        [eventId]
+      );
+
+      if (eventExistsResult.rowCount === 0) {
+        // If no rows are returned, the event doesn't exist
+        return response.status(400).json({ error: "EventId does not exist" });
+      }
+
+      await client.query(
+        `INSERT INTO event_participants (event_id, user_id) VALUES ($1, $2)`,
+        [eventId, userId]
+      );
+
+      response.status(201).json({ eventId: eventId, userRegisteredId: userId });
+    } catch (error) {
+      next(error);
+    }
+  }
+);
+
 export default eventRouter;
