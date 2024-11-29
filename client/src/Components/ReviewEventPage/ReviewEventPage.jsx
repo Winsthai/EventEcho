@@ -329,7 +329,9 @@ const ReviewEventPage = ({ eventDetails }) => {
         </Button>
       </Box>
     );
-  } else {
+  }
+  // ---------DESKTOP VERSION---------------
+  else {
     return (
       <Box>
         {/* Header Box */}
@@ -360,7 +362,7 @@ const ReviewEventPage = ({ eventDetails }) => {
             {/* Stack to left justify the event title */}
             <Stack>
               <h1 id="EventReviewHeaderDesktop">
-                {onEditPage ? events[id - 1].title : "keshi: REQUIEM TOUR"}
+                {onEditPage ? events[id - 1].title : eventDetails.title}
               </h1>
               <Box
                 sx={{
@@ -401,7 +403,7 @@ const ReviewEventPage = ({ eventDetails }) => {
                         id="EventReviewDateTimeLocationDesktop"
                         style={{ marginLeft: "8px" }}
                       >
-                        {onEditPage ? events[id - 1].startdate : "2024-01-01"}
+                        {onEditPage ? events[id - 1].startdate : reviewDate}
                       </p>
                     </Box>
                     <Box
@@ -414,7 +416,7 @@ const ReviewEventPage = ({ eventDetails }) => {
                         id="EventReviewDateTimeLocationDesktop"
                         style={{ marginLeft: "8px" }}
                       >
-                        {onEditPage ? reviewTime : "19:00 - 22:00"}
+                        {onEditPage ? reviewTime : reviewTime}
                       </p>
                     </Box>
                   </Box>
@@ -432,7 +434,7 @@ const ReviewEventPage = ({ eventDetails }) => {
                         id="EventReviewDateTimeLocationDesktop"
                         style={{ marginLeft: "8px" }}
                       >
-                        {onEditPage ? events[id - 1].address : "Edmonton, AB"}
+                        {onEditPage ? events[id - 1].address : eventDetails.address}
                       </p>
                     </Box>
                   </Box>
@@ -474,11 +476,7 @@ const ReviewEventPage = ({ eventDetails }) => {
                   <p id="EventReviewPDesktop">
                     {onEditPage
                       ? events[id - 1].description
-                      : `Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean mollis dapibus purus, ut condimentum enim egestas ut. 
-                    Maecenas commodo fringilla risus, at faucibus leo lacinia ut. Nullam a justo egestas, lacinia erat et, dignissim lectus. 
-                    Nulla vel feugiat massa. Proin in orci eget ligula pharetra dictum. Nunc vehicula malesuada rhoncus. 
-                    Morbi a turpis id metus egestas luctus sed vel purus. 
-                    Sed vel auctor lorem, vel tincidunt est. Nunc sit amet fringilla eros, a facilisis risus.`}
+                      : eventDetails.description}
                   </p>
                 </Box>
               </Box>
