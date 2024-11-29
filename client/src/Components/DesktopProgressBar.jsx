@@ -8,6 +8,8 @@ import Typography from '@mui/material/Typography';
 import { useNavigate } from "react-router-dom";
 import { useParams } from 'react-router-dom';
 
+import CreateEventPage from './CreateEventPage/CreateEventPage';
+
 const steps = ['Event Details', 'Invite Guests', 'Review and Post'];
 
 export default function DesktopProgressBar() {
@@ -144,7 +146,7 @@ export default function DesktopProgressBar() {
 
       {/* The actual progress bar */}
       <Box sx={{ width: '80%' }}>
-        <Stepper nonLinear activeStep={activeStep} alternativeLabel>
+        <Stepper activeStep={activeStep} alternativeLabel>
           {steps.map((label, index) => (
             <Step key={label} completed={completed[index]}>
               <StepButton color="inherit" onClick={handleStep(index)}>

@@ -21,6 +21,7 @@ import RadioButtonUncheckedIcon from "@mui/icons-material/RadioButtonUnchecked";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import { useParams, useNavigate } from "react-router-dom";
 import SearchIcon from "@mui/icons-material/Search";
+import { useLocation } from "react-router-dom";
 
 const contacts = [
   { id: 1, name: "Steven Nguyen", phone: "(403)-000-0000" },
@@ -30,10 +31,14 @@ const contacts = [
   { id: 5, name: "Desmond Lau", phone: "(403)-444-4444" },
 ];
 
-export default function DesktopAddGuestsPage() {
+export default function DesktopAddGuestsPage({ eventDetails }) {
+  const location = useLocation();
   const onEditPage = location.pathname.includes("edit");
   const { id } = useParams();
   const navigate = useNavigate();
+  console.log(eventDetails);
+
+  const { message } = location.state || {};
 
   const [selectedContacts, setSelectedContacts] = useState([]);
   const isMobile = useMediaQuery("(max-width:600px)");
@@ -263,6 +268,7 @@ export default function DesktopAddGuestsPage() {
         </div>
 
         <h2 className="your-friends-text">Your Friends</h2>
+        {/* {message && <p>{message}</p>} */}
 
         <div className="desktop-contactGrid">
           {contacts.map((contact) => (

@@ -2,10 +2,12 @@ import dotenv from "dotenv";
 dotenv.config();
 import pkg from "pg";
 const { Client } = pkg;
+import cors from 'cors';
 import createServer from "./utils/server.js";
 
 const app = createServer();
 
+app.use(cors());
 const PORT = process.env.PORT || 3001;
 
 const client = new Client({
