@@ -1,6 +1,6 @@
 import express, { query } from "express";
 import client from "../index.js";
-import { deleteConfirmation, userConfirmation } from "../utils/middleware.js";
+import { creatorConfirmation, userConfirmation } from "../utils/middleware.js";
 
 const eventRouter = express.Router();
 const eventTypes = new Set([
@@ -36,11 +36,12 @@ eventRouter.get("/", async (request, response, next) => {
 
     let placeholderIndex = 1; // Start the placeholder index from 1
 
-    const eventTypesArray = request.query.eventType
-      .split(",")
-      .map((type) => type.trim()); // Split the eventType by commas and trim spaces
+    let eventTypesArray;
     // Apply eventType filter if provided, multiple should be separated by comma
     if (request.query.eventType) {
+      eventTypesArray = request.query.eventType
+        .split(",")
+        .map((type) => type.trim()); // Split the eventType by commas and trim spaces
       if (eventTypesArray.length > 0) {
         // Validate that each eventType is valid
         for (let eventType of eventTypesArray) {
@@ -157,9 +158,13 @@ eventRouter.post("/", userConfirmation, async (request, response, next) => {
     description,
     address,
     startdate,
+    startdateraw,
     starttime,
+    starttimeraw,
     enddate,
+    enddateraw,
     endtime,
+    endtimeraw,
     visibility,
   } = request.body;
 
@@ -171,7 +176,9 @@ eventRouter.post("/", userConfirmation, async (request, response, next) => {
     !description ||
     !address ||
     !startdate ||
-    !starttime
+    !startdateraw ||
+    !starttime ||
+    !starttimeraw
   ) {
     return response.status(400).json({ error: "Missing required fields" });
   }
@@ -183,8 +190,8 @@ eventRouter.post("/", userConfirmation, async (request, response, next) => {
   try {
     const result = await client.query(
       `INSERT INTO events 
-       (title, eventtype, description, address, startdate, starttime, enddate, endtime, visibility) 
-       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9) 
+       (title, eventtype, description, address, startdate, starttime, enddate, endtime, visibility, startdateraw, starttimeraw, enddateraw, endtimeraw) 
+       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13) 
        RETURNING *`,
       [
         title,
@@ -196,6 +203,10 @@ eventRouter.post("/", userConfirmation, async (request, response, next) => {
         enddate,
         endtime,
         visibility,
+        startdateraw,
+        starttimeraw,
+        enddateraw,
+        endtimeraw,
       ]
     );
 
@@ -216,7 +227,7 @@ eventRouter.post("/", userConfirmation, async (request, response, next) => {
 // Requires a token to ensure that the user deleting the event is the one who made it, or is an admin
 eventRouter.delete(
   "/:id",
-  deleteConfirmation,
+  creatorConfirmation,
   async (request, response, next) => {
     const id = request.params.id;
 
@@ -268,6 +279,93 @@ eventRouter.post(
       );
 
       response.status(201).json({ eventId: eventId, userRegisteredId: userId });
+    } catch (error) {
+      next(error);
+    }
+  }
+);
+
+// Edit an event
+// Requires a token to ensure that the user editing the event is the one who made it, or is an admin
+eventRouter.put(
+  "/:id",
+  creatorConfirmation,
+  async (request, response, next) => {
+    const { id } = request.params;
+    const {
+      title,
+      eventtype,
+      description,
+      address,
+      startdate,
+      startdateraw,
+      starttime,
+      starttimeraw,
+      enddate,
+      enddateraw,
+      endtime,
+      endtimeraw,
+      visibility,
+    } = request.body;
+
+    // Check if the event exists
+    const eventExists = await client.query(
+      "SELECT * FROM events WHERE id = $1",
+      [id]
+    );
+
+    if (eventExists.rows.length === 0) {
+      return response.status(404).json({ error: "Event not found" });
+    }
+
+    // Set the updated values, but only if they are provided (or keep existing values if not)
+    const updatedValues = [
+      title || eventExists.rows[0].title,
+      eventtype || eventExists.rows[0].eventtype,
+      description || eventExists.rows[0].description,
+      address || eventExists.rows[0].address,
+      startdate || eventExists.rows[0].startdate,
+      starttime || eventExists.rows[0].starttime,
+      enddate || eventExists.rows[0].enddate,
+      endtime || eventExists.rows[0].endtime,
+      visibility || eventExists.rows[0].visibility,
+      startdateraw || eventExists.rows[0].startdateraw,
+      starttimeraw || eventExists.rows[0].starttimeraw,
+      enddateraw || eventExists.rows[0].enddateraw,
+      endtimeraw || eventExists.rows[0].endtimeraw,
+      id,
+    ];
+
+    try {
+      // Update the event in the database
+      const updateQuery = `
+        UPDATE events
+        SET 
+          title = $1,
+          eventtype = $2,
+          description = $3,
+          address = $4,
+          startdate = $5,
+          starttime = $6,
+          enddate = $7,
+          endtime = $8,
+          visibility = $9,
+          startdateraw = $10,
+          starttimeraw = $11,
+          enddateraw = $12,
+          endtimeraw = $13
+        WHERE id = $14
+        RETURNING *;
+      `;
+
+      const result = await client.query(updateQuery, updatedValues);
+
+      // Check if the event was updated successfully
+      if (result.rows.length === 0) {
+        return response.status(400).json({ error: "Event update failed" });
+      }
+
+      response.status(200).json({ event: result.rows[0] });
     } catch (error) {
       next(error);
     }
