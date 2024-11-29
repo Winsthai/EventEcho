@@ -3,7 +3,7 @@ INSERT INTO users (username, name, email, phonenum, password, status) VALUES
 ('jane_smith', 'Jane Smith', 'jane.smith@example.com', '123-555-6789', '$2a$10$wRaaYN0FCbshCatdJcCVQeje5sClGtAz.ZfOecVW/clY0NfvdPp0S', 1),
 ('mark_brown', 'Mark Brown', 'mark.brown@example.com', '123-789-0123', '$2a$10$rFXtHa5StF2tbVEbKikOfu15R/dtnco4Lk4ZzqbSx7ajlT/hriaa6', 2),
 ('lucy_liu', 'Lucy Liu', 'lucy.liu@example.com', '123-123-1234', '$2a$10$G8wp/upkZfhdPstSgHH/resG5ves0zbdfKZ0oBTNGqAja2dFdyGYG', 1),
-('mike_tyson', 'Mike Tyson', 'mike.tyson@example.com', '123-234-3456', '$2a$10$BwLogBGlE1rvPP1dROJiMe7nXWszk.iSJBx2NoW61aE24HOeNkZ1W', 1);
+('mike_tyson', 'Mike Tyson', 'mike.tyson@example.com', '123-234-3456', '$2a$10$BwLogBGlE1rvPP1dROJiMe7nXWszk.iSJBx2NoW61aE24HOeNkZ1W', 3);
 
 INSERT INTO events (
     title, 
@@ -61,7 +61,12 @@ INSERT INTO friends_list (user_id, friend_id) VALUES
 (2, 3),
 (3, 1),
 (3, 2),
-(4, 5);
+(4, 5),
+(5, 4);
+
+INSERT INTO friend_requests (outgoing_request, incoming_request) VALUES
+(1, 5),
+(2, 4);
 
 INSERT INTO guest_users (name, email, phonenum) VALUES
 ('Pablo Escobar', 'pablo_escobar@example.com', '789-123-4567'),

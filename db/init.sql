@@ -45,6 +45,13 @@ CREATE TABLE IF NOT EXISTS friends_list (
     PRIMARY KEY (user_id, friend_id)
 );
 
+CREATE TABLE IF NOT EXISTS friend_requests (
+    outgoing_request INT REFERENCES users(id) ON DELETE CASCADE,
+    incoming_request INT REFERENCES users(id) ON DELETE CASCADE,
+    PRIMARY KEY (outgoing_request, incoming_request)
+);
+
+
 CREATE TABLE IF NOT EXISTS guest_users (
     id BIGSERIAL PRIMARY KEY,
     name VARCHAR(255),
