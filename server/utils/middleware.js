@@ -60,7 +60,7 @@ export const userConfirmation = (request, _response, next) => {
   }
 };
 
-export const deleteConfirmation = async (request, _response, next) => {
+export const creatorConfirmation = async (request, _response, next) => {
   let token;
 
   const id = request.params.id;
