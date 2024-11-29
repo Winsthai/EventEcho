@@ -1,4 +1,4 @@
-import express from "express";
+import express, { query } from "express";
 import client from "../index.js";
 import { deleteConfirmation, userConfirmation } from "../utils/middleware.js";
 
@@ -15,7 +15,11 @@ const eventTypes = new Set([
 
 // Get all events, has pagination, search, and filter functionality
 // Only shows public events
-// Optional parameters: eventType = <event type>, search = <search Term>, page = <page number>, limit = <items per page>
+// Optional parameters:
+// eventType = <event type> (multiple values should be separated by comma, no space),
+// search = <search Term>,
+// page = <page number>,
+// limit = <items per page>
 eventRouter.get("/", async (request, response, next) => {
   try {
     // Default pagination values
@@ -32,16 +36,29 @@ eventRouter.get("/", async (request, response, next) => {
 
     let placeholderIndex = 1; // Start the placeholder index from 1
 
-    // Apply eventType filter if provided
+    const eventTypesArray = request.query.eventType
+      .split(",")
+      .map((type) => type.trim()); // Split the eventType by commas and trim spaces
+    // Apply eventType filter if provided, multiple should be separated by comma
     if (request.query.eventType) {
-      if (eventTypes.has(request.query.eventType)) {
-        queryText += ` AND eventtype = $${placeholderIndex}`; // Use current placeholder index
-        queryParams.push(request.query.eventType); // Ensure eventType is a string
-        placeholderIndex++; // Increment placeholder index for the next parameter
-      } else {
-        return response.status(400).json({
-          error: `Event type ${request.query.eventType} does not exist`,
-        });
+      if (eventTypesArray.length > 0) {
+        // Validate that each eventType is valid
+        for (let eventType of eventTypesArray) {
+          if (!eventTypes.has(eventType)) {
+            return response.status(400).json({
+              error: `Event type ${eventType} does not exist`,
+            });
+          }
+        }
+
+        console.log(eventTypesArray);
+
+        // Add the `IN` filter to the query
+        queryText += ` AND eventtype IN (${eventTypesArray
+          .map((_, index) => `$${placeholderIndex + index}`)
+          .join(", ")})`;
+        queryParams.push(...eventTypesArray);
+        placeholderIndex += eventTypesArray.length; // Increment the placeholder index for each eventType
       }
     }
 
@@ -66,9 +83,11 @@ eventRouter.get("/", async (request, response, next) => {
 
     // Apply eventType filter for total count query
     if (request.query.eventType) {
-      countQuery += ` AND eventtype = $${countPlaceholderIndex}`;
-      countQueryParams.push(request.query.eventType);
-      countPlaceholderIndex++;
+      countQuery += ` AND eventtype IN (${eventTypesArray
+        .map((_, index) => `$${countPlaceholderIndex + index}`)
+        .join(", ")})`;
+      countQueryParams.push(...eventTypesArray);
+      countPlaceholderIndex += eventTypesArray.length;
     }
 
     // Apply search filter for total count query
