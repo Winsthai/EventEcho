@@ -21,6 +21,7 @@ import { useMediaQuery } from "@mui/material";
 import { useParams, useNavigate } from 'react-router-dom';
 import { format } from 'date-fns';
 
+// remove later
 const events = [
   {
     "id": "1",
@@ -72,7 +73,7 @@ const events = [
   },
 ];
 
-export default function CreateEventPage({ eventDetails, setEventDetails }) {
+export default function CreateEventPage({ eventDetails, setEventDetails, detailsCompleted, setDetailsCompleted }) {
   const { id } = useParams();
   const navigate = useNavigate();
   console.log(eventDetails);
@@ -80,19 +81,12 @@ export default function CreateEventPage({ eventDetails, setEventDetails }) {
   const isMobile = useMediaQuery("(max-width:600px)");
   const onEditPage = location.pathname.includes("edit");
 
-  const [eventTitle, setEventTitle] = React.useState('');
-  const [eventType, setEventType] = React.useState('');
   const [eventPhotoName, setEventPhotoName] = React.useState('');
-  const [eventDescription, setEventDescription] = React.useState('');
-  const [eventLocation, setEventLocation] = React.useState('');
-  const [startDate, setStartDate] = React.useState(null);
-  const [startTime, setStartTime] = React.useState(null);
-  const [endDate, setEndDate] = React.useState(null);
-  const [endTime, setEndTime] = React.useState(null);
 
   // in db, public=true and private=false 
   let vis, startTimeTrimmed, endTimeTrimmed;
   let formattedDate;
+  let goodTimings = true;
 
   const [requiredFieldsErrors, setRequiredFieldErrors] = React.useState({
     title: false,
@@ -124,30 +118,10 @@ export default function CreateEventPage({ eventDetails, setEventDetails }) {
     });
   };
 
-  const handleEventTitleChange = (event) => {
-    setEventTitle(event.target.value);
-    updateDetails(event);
-  };
-
-  const handleEventTypeChange = (event) => {
-    setEventType(event.target.value);
-    updateDetails(event);
-  };
-
-  const handleEventDescriptionChange = (event) => {
-    setEventDescription(event.target.value);
-    updateDetails(event);
-  };
-
-  const handleEventLocationChange = (event) => {
-    setEventLocation(event.target.value);
-    updateDetails(event);
-  };
-
   const handleStartDateChange = (date) => {
     const jsonDate = JSON.stringify(date);
     console.log(`json stringify: ${jsonDate}`);
-    setStartDate(date);
+
     formattedDate = format(date, 'yyyy-MM-dd');
     setEventDetails({ ...eventDetails, startdate: formattedDate, startdateraw: jsonDate });
 
@@ -157,7 +131,6 @@ export default function CreateEventPage({ eventDetails, setEventDetails }) {
     const jsonTime = JSON.stringify(time);
     console.log(`json stringify: ${jsonTime}`);
 
-    setStartTime(time);
     const formattedTime = format(time, "HH:mm:ss'+00'");
     console.log(time);
     setEventDetails({ ...eventDetails, starttime: formattedTime, starttimeraw: jsonTime });
@@ -166,7 +139,7 @@ export default function CreateEventPage({ eventDetails, setEventDetails }) {
   const handleEndDateChange = (date) => {
     const jsonDate = JSON.stringify(date);
     console.log(`json stringify: ${jsonDate}`);
-    setEndDate(date);
+
     formattedDate = format(date, 'yyyy-MM-dd');
     setEventDetails({ ...eventDetails, enddate: formattedDate, enddateraw: jsonDate });
   }
@@ -174,7 +147,7 @@ export default function CreateEventPage({ eventDetails, setEventDetails }) {
   const handleEndTimeChange = (time) => {
     const jsonTime = JSON.stringify(time);
     console.log(`json stringify: ${jsonTime}`);
-    setEndTime(time);
+
     const formattedTime = format(time, "HH:mm:ss'+00'");
     console.log(time);
     setEventDetails({ ...eventDetails, endtime: formattedTime, endtimeraw: jsonTime });
@@ -204,22 +177,48 @@ export default function CreateEventPage({ eventDetails, setEventDetails }) {
     if (checkFields()) {
       console.log("Hey hey hey");
       alert("missing shit");
+      console.log(detailsCompleted);
+    }
+    else if (goodTimings === false) {
+      alert("bad timings!");
     }
     else {
+      setDetailsCompleted(true);
+      console.log(detailsCompleted);
       navigate(url, { state: { message: 'testing testing' } });
     }
   };
 
   const checkFields = () => {
+    goodTimings = true;
+    // both start date and time missing
     if (eventDetails.startdate === null && eventDetails.starttime === null) {
-      setEventDetails({ ...eventDetails, startdateraw: dayjs(''), starttimeraw: dayjs('') });
+      setEventDetails({ ...eventDetails, startdateraw: JSON.stringify(''), starttimeraw: JSON.stringify('') });
       console.log("no event timings!");
     }
+    // just start time missing
     else if (eventDetails.starttime === null) {
-      setEventDetails({ ...eventDetails, starttimeraw: dayjs('') });
+      setEventDetails({ ...eventDetails, starttimeraw: JSON.stringify('') });
     }
+    // just start date missing
     else if (eventDetails.startdate === null) {
-      setEventDetails({ ...eventDetails, startdateraw: dayjs('') });
+      setEventDetails({ ...eventDetails, startdateraw: JSON.stringify('') });
+    }
+    else {
+      // start date is after end date
+      if (dayjs(JSON.parse(eventDetails.startdateraw)).isAfter(dayjs(JSON.parse(eventDetails.enddateraw)))) {
+        console.log("bad times");
+        goodTimings = false;
+        setEventDetails({ ...eventDetails, enddateraw: JSON.stringify('') });
+      }
+      // same day but start time is after end time
+      else if (dayjs(JSON.parse(eventDetails.startdateraw)).isSame(dayjs(JSON.parse(eventDetails.enddateraw))) &&
+        dayjs(JSON.parse(eventDetails.starttimeraw)).isAfter(dayjs(JSON.parse(eventDetails.endtimeraw)))) {
+        console.log("same day bad times");
+        goodTimings = false;
+        setEventDetails({ ...eventDetails, endtimeraw: JSON.stringify('') });
+      }
+
     }
 
     const newErrors = {
@@ -230,6 +229,7 @@ export default function CreateEventPage({ eventDetails, setEventDetails }) {
       startdate: !eventDetails.startdate,
       starttime: !eventDetails.starttime
     };
+
     setRequiredFieldErrors(newErrors);
     return Object.values(newErrors).includes(true);
   };
@@ -305,7 +305,7 @@ export default function CreateEventPage({ eventDetails, setEventDetails }) {
               variant="outlined"
               sx={{ pb: 2 }}
               value={eventDetails.title}
-              onChange={handleEventTitleChange}
+              onChange={updateDetails}
               error={requiredFieldsErrors.title}
             />
 
@@ -317,7 +317,7 @@ export default function CreateEventPage({ eventDetails, setEventDetails }) {
                 // defaultValue={onEditPage ? events[id - 1].eventtype : eventType}
                 label="Event Types"
                 value={eventDetails.eventtype}
-                onChange={handleEventTypeChange}
+                onChange={updateDetails}
                 sx={{ textAlign: 'left' }}
                 error={requiredFieldsErrors.eventtype}
               >
@@ -339,7 +339,7 @@ export default function CreateEventPage({ eventDetails, setEventDetails }) {
               minRows={3}
               sx={{ pb: 2 }}
               value={eventDetails.description}
-              onChange={handleEventDescriptionChange}
+              onChange={updateDetails}
               error={requiredFieldsErrors.description}
             />
 
@@ -361,7 +361,7 @@ export default function CreateEventPage({ eventDetails, setEventDetails }) {
                 }
               }}
               value={eventDetails.address}
-              onChange={handleEventLocationChange}
+              onChange={updateDetails}
               error={requiredFieldsErrors.address}
             />
 
@@ -541,7 +541,7 @@ export default function CreateEventPage({ eventDetails, setEventDetails }) {
               variant="outlined"
               sx={{ width: "100%" }}
               value={eventDetails.title}
-              onChange={handleEventTitleChange}
+              onChange={updateDetails}
               error={requiredFieldsErrors.title}
             />
 
@@ -552,7 +552,7 @@ export default function CreateEventPage({ eventDetails, setEventDetails }) {
                 name='eventtype'
                 label="Event Types"
                 value={eventDetails.eventtype}
-                onChange={handleEventTypeChange}
+                onChange={updateDetails}
                 sx={{ textAlign: 'left' }}
                 error={requiredFieldsErrors.eventtype}
               >
@@ -575,7 +575,7 @@ export default function CreateEventPage({ eventDetails, setEventDetails }) {
             minRows={3}
             sx={{ pb: 2, width: "80%" }}
             value={eventDetails.description}
-            onChange={handleEventDescriptionChange}
+            onChange={updateDetails}
             error={requiredFieldsErrors.description}
           />
 
@@ -601,7 +601,7 @@ export default function CreateEventPage({ eventDetails, setEventDetails }) {
               }}
               sx={{ width: "50%" }}
               value={eventDetails.address}
-              onChange={handleEventLocationChange}
+              onChange={updateDetails}
               error={requiredFieldsErrors.address}
             />
 

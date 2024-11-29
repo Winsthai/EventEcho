@@ -13,6 +13,8 @@ import CalendarMonthIcon from "@mui/icons-material/CalendarMonth";
 import AccessTimeIcon from "@mui/icons-material/AccessTime";
 import LocationOnIcon from "@mui/icons-material/LocationOn";
 import { useParams, useNavigate } from "react-router-dom";
+import { useEffect } from "react";
+import dayjs from 'dayjs';
 
 import "./ReviewEventPageStyles.css";
 
@@ -73,40 +75,61 @@ const events = [
   },
 ];
 
-const ReviewEventPage = ({ eventDetails }) => {
+const contacts = [
+  { id: 1, name: "Steven Nguyen", phone: "(403)-000-0000" },
+  { id: 2, name: "Winston Thai", phone: "(403)-111-1111" },
+  { id: 3, name: "Shaun Tapiau", phone: "(403)-222-2222" },
+  { id: 4, name: "Ahmed Elshabasi", phone: "(403)-333-3333" },
+  { id: 5, name: "Desmond Lau", phone: "(403)-444-4444" },
+];
+
+const ReviewEventPage = ({ eventDetails, detailsCompleted, invitedGuests }) => {
   const { id } = useParams();
   const navigate = useNavigate();
   const isMobile = useMediaQuery("(max-width:600px)");
   const onEditPage = location.pathname.includes("edit");
+  console.log(invitedGuests);
+
+  // if user forcefully enters in createEvent/reviewEvent before details finished need to redirect or something
+  useEffect(() => {
+    if (!detailsCompleted) {
+      navigate("/createEvent");
+    }
+  }, [detailsCompleted, navigate]);
 
   let reviewTime, reviewDate, startTimeTrimmed, endTimeTrimmed, databaseImage;
 
-  if (onEditPage) {
-    startTimeTrimmed = events[id - 1].starttime.slice(0, -6);
-    endTimeTrimmed = events[id - 1].endtime.slice(0, -6);
-    reviewTime = startTimeTrimmed.concat(" - ", endTimeTrimmed);
-    databaseImage = events[id - 1].image;
-  }
-  else {
-    startTimeTrimmed = eventDetails.starttime.slice(0, -6);
-    if (eventDetails.endtime !== null) {
-      endTimeTrimmed = eventDetails.endtime.slice(0, -6);
+  if (detailsCompleted) {
+    if (onEditPage) {
+      startTimeTrimmed = events[id - 1].starttime.slice(0, -6);
+      endTimeTrimmed = events[id - 1].endtime.slice(0, -6);
       reviewTime = startTimeTrimmed.concat(" - ", endTimeTrimmed);
-      console.log("end time exists");
+      databaseImage = events[id - 1].image;
     }
     else {
-      reviewTime = startTimeTrimmed;
-    }
+      startTimeTrimmed = eventDetails.starttime.slice(0, -6);
+      // if there is end time
+      if (eventDetails.endtime !== null) {
+        endTimeTrimmed = eventDetails.endtime.slice(0, -6);
+        reviewTime = startTimeTrimmed.concat(" - ", endTimeTrimmed);
+        console.log("end time exists");
+      }
+      else {
+        reviewTime = startTimeTrimmed;
+      }
 
-    if (eventDetails.enddate !== null) {
-      reviewDate = eventDetails.startdate.concat(" - ", eventDetails.enddate);
-    }
-    else {
-      reviewDate = eventDetails.startdate;
-    }
+      // if there is end date
+      if (eventDetails.enddate !== null &&
+        !dayjs(JSON.parse(eventDetails.startdateraw)).isSame(dayjs(JSON.parse(eventDetails.enddateraw)))) {
+        reviewDate = eventDetails.startdate.concat(" - ", eventDetails.enddate);
+      }
+      else {
+        reviewDate = eventDetails.startdate;
+      }
 
-    console.log(startTimeTrimmed);
-    console.log(eventDetails.endtime);
+      console.log(startTimeTrimmed);
+      console.log(eventDetails.endtime);
+    }
   }
 
   if (isMobile) {
@@ -275,39 +298,26 @@ const ReviewEventPage = ({ eventDetails }) => {
           {/* Guest List */}
           <h1 id="EventReviewHeader">Guest List</h1>
 
-          {/* Steven */}
-          {/* Box here is to set it up so pictures on the left, and name + waiting for rsvp is on the right */}
-          <Box
-            sx={{ display: "flex", alignItems: "center", marginBottom: "16px" }}
-          >
-            <div className="ReviewEventPage-desktop-avatar">SN</div>
-            {/* Have the persons name on top, and waiting for rsvp on the bottom, in blue */}
-            <Box sx={{ display: "flex", flexDirection: "column" }}>
-              <h1 id="EventReviewNames">Steven Nguyen</h1>
-            </Box>
-          </Box>
-          {/* Winston */}
-          {/* Box here is to set it up so pictures on the left, and name + waiting for rsvp is on the right */}
-          <Box
-            sx={{ display: "flex", alignItems: "center", marginBottom: "16px" }}
-          >
-            <div className="ReviewEventPage-desktop-avatar">WT</div>
-            {/* Have the persons name on top, and waiting for rsvp on the bottom, in blue */}
-            <Box sx={{ display: "flex", flexDirection: "column" }}>
-              <h1 id="EventReviewNames">Winston Thai</h1>
-            </Box>
-          </Box>
-          {/* Shaun */}
-          {/* Box here is to set it up so pictures on the left, and name + waiting for rsvp is on the right */}
-          <Box
-            sx={{ display: "flex", alignItems: "center", marginBottom: "16px" }}
-          >
-            <div className="ReviewEventPage-desktop-avatar">ST</div>
-            {/* Have the persons name on top, and waiting for rsvp on the bottom, in blue */}
-            <Box sx={{ display: "flex", flexDirection: "column" }}>
-              <h1 id="EventReviewNames">Shaun Tapiau</h1>
-            </Box>
-          </Box>
+          {/* Map Contacts */}
+          {invitedGuests.length === 0 ? "invite some friends loser" : invitedGuests.map((id, index) => {
+            const contact = contacts.find(contact => contact.id === id);
+            return (
+              <Box
+                sx={{ display: "flex", alignItems: "center", marginBottom: "16px" }}
+                key={id}
+              >
+                <div className="ReviewEventPage-desktop-avatar">
+                  {contact.name[0].toUpperCase()}
+                  {contact.name.split(" ")[1][0].toUpperCase()}
+                </div>
+                <Box sx={{ display: "flex", flexDirection: "column" }}>
+                  <h1 id="EventReviewNames">{contact.name}</h1>
+                </Box>
+              </Box>
+            );
+          })
+          }
+
         </Box>
         <Button
           variant="contained"
@@ -329,7 +339,9 @@ const ReviewEventPage = ({ eventDetails }) => {
         </Button>
       </Box>
     );
-  } else {
+  }
+  // ---------DESKTOP VERSION---------------
+  else {
     return (
       <Box>
         {/* Header Box */}
@@ -360,7 +372,7 @@ const ReviewEventPage = ({ eventDetails }) => {
             {/* Stack to left justify the event title */}
             <Stack>
               <h1 id="EventReviewHeaderDesktop">
-                {onEditPage ? events[id - 1].title : "keshi: REQUIEM TOUR"}
+                {onEditPage ? events[id - 1].title : eventDetails.title}
               </h1>
               <Box
                 sx={{
@@ -383,6 +395,7 @@ const ReviewEventPage = ({ eventDetails }) => {
                     height: "275px",
                   }}
                 >
+                  {/* Date and time */}
                   <Box>
                     <p id="EventReviewDateAndTimeLocationHeadersDesktop">
                       Date and Time
@@ -401,7 +414,7 @@ const ReviewEventPage = ({ eventDetails }) => {
                         id="EventReviewDateTimeLocationDesktop"
                         style={{ marginLeft: "8px" }}
                       >
-                        {onEditPage ? events[id - 1].startdate : "2024-01-01"}
+                        {onEditPage ? events[id - 1].startdate : reviewDate}
                       </p>
                     </Box>
                     <Box
@@ -414,10 +427,11 @@ const ReviewEventPage = ({ eventDetails }) => {
                         id="EventReviewDateTimeLocationDesktop"
                         style={{ marginLeft: "8px" }}
                       >
-                        {onEditPage ? reviewTime : "19:00 - 22:00"}
+                        {onEditPage ? reviewTime : reviewTime}
                       </p>
                     </Box>
                   </Box>
+                  {/* Location */}
                   <Box>
                     <p id="EventReviewDateAndTimeLocationHeadersDesktop">
                       Location
@@ -432,7 +446,7 @@ const ReviewEventPage = ({ eventDetails }) => {
                         id="EventReviewDateTimeLocationDesktop"
                         style={{ marginLeft: "8px" }}
                       >
-                        {onEditPage ? events[id - 1].address : "Edmonton, AB"}
+                        {onEditPage ? events[id - 1].address : eventDetails.address}
                       </p>
                     </Box>
                   </Box>
@@ -474,11 +488,7 @@ const ReviewEventPage = ({ eventDetails }) => {
                   <p id="EventReviewPDesktop">
                     {onEditPage
                       ? events[id - 1].description
-                      : `Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean mollis dapibus purus, ut condimentum enim egestas ut. 
-                    Maecenas commodo fringilla risus, at faucibus leo lacinia ut. Nullam a justo egestas, lacinia erat et, dignissim lectus. 
-                    Nulla vel feugiat massa. Proin in orci eget ligula pharetra dictum. Nunc vehicula malesuada rhoncus. 
-                    Morbi a turpis id metus egestas luctus sed vel purus. 
-                    Sed vel auctor lorem, vel tincidunt est. Nunc sit amet fringilla eros, a facilisis risus.`}
+                      : eventDetails.description}
                   </p>
                 </Box>
               </Box>
@@ -491,51 +501,27 @@ const ReviewEventPage = ({ eventDetails }) => {
                   flexWrap: "wrap",
                 }}
               >
-                {/* Steven */}
-                {/* Box here is to set it up so pictures on the left, and name + waiting for rsvp is on the right */}
-                <Box
-                  sx={{
-                    display: "flex",
-                    alignItems: "center",
-                    marginBottom: "16px",
-                  }}
-                >
-                  <div className="ReviewEventPage-desktop-avatar">SN</div>
-                  {/* Have the persons name on top, and waiting for rsvp on the bottom, in blue */}
-                  <Box sx={{ display: "flex", flexDirection: "column" }}>
-                    <h1 id="EventReviewNamesDesktop">Steven Nguyen</h1>
-                  </Box>
-                </Box>
-                {/* Winston */}
-                {/* Box here is to set it up so pictures on the left, and name + waiting for rsvp is on the right */}
-                <Box
-                  sx={{
-                    display: "flex",
-                    alignItems: "center",
-                    marginBottom: "16px",
-                  }}
-                >
-                  <div className="ReviewEventPage-desktop-avatar">WT</div>
-                  {/* Have the persons name on top, and waiting for rsvp on the bottom, in blue */}
-                  <Box sx={{ display: "flex", flexDirection: "column" }}>
-                    <h1 id="EventReviewNamesDesktop">Winston Thai</h1>
-                  </Box>
-                </Box>
-                {/* Shaun */}
-                {/* Box here is to set it up so pictures on the left, and name + waiting for rsvp is on the right */}
-                <Box
-                  sx={{
-                    display: "flex",
-                    alignItems: "center",
-                    marginBottom: "16px",
-                  }}
-                >
-                  <div className="ReviewEventPage-desktop-avatar">ST</div>
-                  {/* Have the persons name on top, and waiting for rsvp on the bottom, in blue */}
-                  <Box sx={{ display: "flex", flexDirection: "column" }}>
-                    <h1 id="EventReviewNamesDesktop">Shaun Tapiau</h1>
-                  </Box>
-                </Box>
+
+                {/* Map Guests */}
+                {invitedGuests.length === 0 ? "invite some friends loser" : invitedGuests.map((id, index) => {
+                  const contact = contacts.find(contact => contact.id === id);
+                  return (
+                    <Box
+                      sx={{ display: "flex", alignItems: "center", marginBottom: 2 }}
+                      key={id}
+                    >
+                      <div className="ReviewEventPage-desktop-avatar">
+                        {contact.name[0].toUpperCase()}
+                        {contact.name.split(" ")[1][0].toUpperCase()}
+                      </div>
+                      <Box sx={{ display: "flex", flexDirection: "column" }}>
+                        <h1 id="EventReviewNamesDesktop">{contact.name}</h1>
+                      </Box>
+                    </Box>
+                  );
+                })
+                }
+
               </Box>
             </Stack>
           </Box>

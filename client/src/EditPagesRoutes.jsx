@@ -5,18 +5,40 @@ import CreateEventPage from "./Components/CreateEventPage/CreateEventPage";
 import ReviewEventPage from "./Components/ReviewEventPage/ReviewEventPage";
 import { useMediaQuery } from "@mui/material";
 import AddGuestsNewPage from "./Components/CreateEventPage/AddNewGuestPage";
+import { useState } from "react";
 
 function EditPagesRoutes() {
   const isMobile = useMediaQuery("(max-width:600px)");
+
+  // pre populate fields and pull from API and insert here?
+  const [eventDetails, setEventDetails] = useState({
+    title: '',
+    eventtype: '',
+    description: '',
+    address: '',
+    startdate: null,
+    starttime: null,
+    enddate: null,
+    endtime: null,
+    visibility: true,
+    startdateraw: null,
+    starttimeraw: null,
+    enddateraw: null,
+    endtimeraw: null
+  });
+
+  const [detailsCompleted, setDetailsCompleted] = useState(false);
+
+  const [invitedGuests, setInvitedGuests] = useState([]);
 
   return (
     <>
       {isMobile ? <></> : <DesktopProgressBar />}
       <Routes>
-        <Route path="/" element={<CreateEventPage></CreateEventPage>}></Route>
-        <Route path="/changeGuests" element={<DesktopAddGuestsPage></DesktopAddGuestsPage>}></Route>
+        <Route path="/" element={<CreateEventPage eventDetails={eventDetails} setEventDetails={setEventDetails} detailsCompleted={detailsCompleted} setDetailsCompleted={setDetailsCompleted}></CreateEventPage>}></Route>
+        <Route path="/changeGuests" element={<DesktopAddGuestsPage invitedGuests={invitedGuests} setInvitedGuests={setInvitedGuests}></DesktopAddGuestsPage>}></Route>
         <Route path="/newGuests" element={<AddGuestsNewPage></AddGuestsNewPage>}></Route>
-        <Route path="/reviewEvent" element={<ReviewEventPage></ReviewEventPage>}></Route>
+        <Route path="/reviewEvent" element={<ReviewEventPage eventDetails={eventDetails} detailsCompleted={detailsCompleted} invitedGuests={invitedGuests}></ReviewEventPage>}></Route>
       </Routes>
     </>
   );
