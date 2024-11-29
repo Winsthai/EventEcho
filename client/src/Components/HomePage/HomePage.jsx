@@ -251,59 +251,58 @@ const HomePage = () => {
             </Box>
           </Stack>
           {/* Upcoming events section */}
-          <Stack sx={{mb: "80px"}}>
-            <Box id="homeUpcomingHeader"> Upcoming Events </Box>
+          <Box id="homeUpcomingHeader"> Upcoming Events </Box>
 
-            {error && (
-              <p style={{ color: "red", textAlign: "center" }}>{error}</p>
-            )}
+          {error && (
+            <p style={{ color: "red", textAlign: "center" }}>{error}</p>
+          )}
 
-            {events.length !== 0 ? (
-              <>
-                {events.map((event) => (
-                  <EventCard key={event.id} event={event} variant="" />
-                ))}
-              </>
-            ) : (
-              <NoUpcomingEvents />
-            )}
-            {/* Page Navigation */}
-            <Stack
-              direction="row"
+          {events.length !== 0 ? (
+            <>
+              {events.map((event) => (
+                <EventCard key={event.id} event={event} variant="" />
+              ))}
+            </>
+          ) : (
+            <NoUpcomingEvents />
+          )}
+          {/* Page Navigation */}
+          <Stack
+            direction="row"
+            sx={{
+              justifyContent: "center",
+              alignItems: "center",
+              mt: "1.5vh",
+              mb: "80px",
+            }}
+          >
+            <Button
+              variant="contained"
               sx={{
-                justifyContent: "center",
-                alignItems: "center",
-                mt: "1.5vh",
+                borderRadius: "20px",
+                backgroundColor: "#ff7474",
               }}
+              startIcon={<NavigateBeforeIcon />}
+              disabled={pageNum <= 1}
+              onClick={() => handlePrevPage()}
             >
-              <Button
-                variant="contained"
-                sx={{
-                  borderRadius: "20px",
-                  backgroundColor: "#ff7474",
-                }}
-                startIcon={<NavigateBeforeIcon />}
-                disabled={pageNum <= 1}
-                onClick={() => handlePrevPage()}
-              >
-                Prev
-              </Button>
-              <Box sx={{ ml: "4vw", mr: "4vw", fontSize: "14px" }}>
-                Page {pageNum} of {totalPages}
-              </Box>
-              <Button
-                variant="contained"
-                sx={{
-                  borderRadius: "20px",
-                  backgroundColor: "#ff7474",
-                }}
-                endIcon={<NavigateNextIcon />}
-                disabled={pageNum >= totalPages}
-                onClick={() => handleNextPage()}
-              >
-                Next
-              </Button>
-            </Stack>
+              Prev
+            </Button>
+            <Box sx={{ ml: "4vw", mr: "4vw", fontSize: "14px" }}>
+              Page {pageNum} of {totalPages}
+            </Box>
+            <Button
+              variant="contained"
+              sx={{
+                borderRadius: "20px",
+                backgroundColor: "#ff7474",
+              }}
+              endIcon={<NavigateNextIcon />}
+              disabled={pageNum >= totalPages}
+              onClick={() => handleNextPage()}
+            >
+              Next
+            </Button>
           </Stack>
         </Stack>
       </Box>
