@@ -19,7 +19,11 @@ CREATE TABLE IF not EXISTS events (
     starttime time WITH TIME ZONE NOT NULL,
     enddate date,
     endtime time WITH TIME ZONE,
-    visibility BOOLEAN DEFAULT TRUE
+    visibility BOOLEAN DEFAULT TRUE,
+    startdateraw text NOT NULL,
+    starttimeraw text NOT NULL,
+    enddateraw text,
+    endtimeraw text
 );
 
 CREATE TABLE IF NOT EXISTS event_participants (
