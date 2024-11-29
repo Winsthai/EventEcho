@@ -5,20 +5,20 @@ const userRouter = express.Router();
 
 // Create a new user
 userRouter.post("/", async (request, response, next) => {
-  const { username, email, phonenum, salt, password, admin } = request.body;
+  const { username, email, phonenum, password, status } = request.body;
 
   // Validate required fields
-  if (!username || !phonenum || !salt || !password) {
+  if (!username || !phonenum || !password) {
     return response.status(400).json({ error: "Missing required fields" });
   }
 
   try {
     // Insert the user into the database
     const result = await client.query(
-      `INSERT INTO users (username, email, phonenum, salt, password, admin) 
-       VALUES ($1, $2, $3, $4, $5, $6) 
-       RETURNING id, username, email, phonenum, admin`,
-      [username, email, phonenum, salt, password, admin || false] // Default admin to false if not provided
+      `INSERT INTO users (username, email, phonenum, password, status) 
+       VALUES ($1, $2, $3, $4, $5) 
+       RETURNING id, username, email, phonenum, password, status`,
+      [username, email, phonenum, password, status || 1] // Default admin to false if not provided
     );
 
     // Return the created user (excluding sensitive fields like salt and password)

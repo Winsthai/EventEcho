@@ -1,21 +1,14 @@
 import dotenv from "dotenv";
 dotenv.config();
-import express from "express";
-import pkg from 'pg';
+import pkg from "pg";
 const { Client } = pkg;
-import eventRouter from "./controllers/events.js";
-import userRouter from "./controllers/users.js";
 import cors from 'cors';
+import createServer from "./utils/server.js";
 
-const app = express();
+const app = createServer();
 
 app.use(cors());
 const PORT = process.env.PORT || 3001;
-
-app.use(express.json())
-
-app.use('/api/events', eventRouter);
-app.use('/api/users', userRouter);
 
 const client = new Client({
   connectionString: process.env.DATABASE_URL,

@@ -79,7 +79,6 @@ const SignUpPage = () => {
                 username,
                 email,
                 phonenum,
-                salt: "randomsaltvalue", // Generate a proper salt value in production
                 password,
               }),
             });

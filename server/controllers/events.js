@@ -1,5 +1,6 @@
 import express from "express";
 import client from "../index.js";
+import { deleteConfirmation, userConfirmation } from "../utils/middleware.js";
 
 const eventRouter = express.Router();
 const eventTypes = new Set([
@@ -129,13 +130,13 @@ eventRouter.get("/:id", async (request, response, next) => {
 });
 
 // Create a new event
-eventRouter.post("/", async (request, response, next) => {
+// Requires a token to identify who the user is making this event
+eventRouter.post("/", userConfirmation, async (request, response, next) => {
   const {
     title,
     eventtype,
     description,
     address,
-    coordinates,
     startdate,
     starttime,
     enddate,
@@ -143,30 +144,34 @@ eventRouter.post("/", async (request, response, next) => {
     visibility,
   } = request.body;
 
+  const userId = request.userId; // Access the user ID from the token
+
   if (
     !title ||
     !eventtype ||
     !description ||
     !address ||
-    !coordinates ||
     !startdate ||
     !starttime
   ) {
     return response.status(400).json({ error: "Missing required fields" });
   }
 
+  if (!userId) {
+    return response.status(400).json({ error: "Invalid token" });
+  }
+
   try {
     const result = await client.query(
       `INSERT INTO events 
-       (title, eventtype, description, address, coordinates, startdate, starttime, enddate, endtime, visibility) 
-       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10) 
+       (title, eventtype, description, address, startdate, starttime, enddate, endtime, visibility) 
+       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9) 
        RETURNING *`,
       [
         title,
         eventtype,
         description,
         address,
-        coordinates,
         startdate,
         starttime,
         enddate,
@@ -175,10 +180,43 @@ eventRouter.post("/", async (request, response, next) => {
       ]
     );
 
-    response.status(201).json({ event: result.rows[0] });
+    await client.query(
+      `INSERT INTO event_creator (event_id, user_id) VALUES ($1, $2)`,
+      [result.rows[0].id, userId]
+    );
+
+    response
+      .status(201)
+      .json({ event: result.rows[0], eventCreatorId: userId });
   } catch (error) {
     next(error);
   }
 });
+
+// Delete an event
+// Requires a token to ensure that the user deleting the event is the one who made it, or is an admin
+eventRouter.delete(
+  "/:id",
+  deleteConfirmation,
+  async (request, response, next) => {
+    const id = request.params.id;
+
+    try {
+      const result = await client.query(`DELETE FROM events WHERE id = $1;`, [
+        id,
+      ]);
+
+      if (result.rowCount === 0) {
+        // No rows were deleted (event not found)
+        return response.status(404).json({ error: "Event not found" });
+      }
+
+      // Send a success response with no content
+      response.status(204).send(); // No content response after successful deletion
+    } catch (error) {
+      next(error);
+    }
+  }
+);
 
 export default eventRouter;

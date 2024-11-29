@@ -1,12 +1,17 @@
 import { Box, TextField, Button, Stack, useMediaQuery } from "@mui/material";
 import PasswordBox from "../PasswordBox";
 import { useNavigate } from "react-router-dom";
+import React, { useState } from 'react';
 
 import "./LoginPageStyles.css";
 
 import logo from "../../images/logo.png";
 
 const LoginPage = () => {
+
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
+
   const navigate = useNavigate();
 
   const handleClick = (url) => {
