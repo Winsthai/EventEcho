@@ -1,9 +1,9 @@
-INSERT INTO users (username, email, phonenum, password, status) VALUES
-('john_doe', 'john.doe@example.com', '123-456-7890', '$2a$10$J02x6x6/XejiQlLFSgbmmOkX3y/OeNacb4F6whorzmCk/RxpmsrLG', 1),
-('jane_smith', 'jane.smith@example.com', '123-555-6789', '$2a$10$wRaaYN0FCbshCatdJcCVQeje5sClGtAz.ZfOecVW/clY0NfvdPp0S', 1),
-('mark_brown', 'mark.brown@example.com', '123-789-0123', '$2a$10$rFXtHa5StF2tbVEbKikOfu15R/dtnco4Lk4ZzqbSx7ajlT/hriaa6', 2),
-('lucy_liu', 'lucy.liu@example.com', '123-123-1234', '$2a$10$G8wp/upkZfhdPstSgHH/resG5ves0zbdfKZ0oBTNGqAja2dFdyGYG', 1),
-('mike_tyson', 'mike.tyson@example.com', '123-234-3456', '$2a$10$BwLogBGlE1rvPP1dROJiMe7nXWszk.iSJBx2NoW61aE24HOeNkZ1W', 1);
+INSERT INTO users (username, name, email, phonenum, password, status) VALUES
+('john_doe', 'John Doe', 'john.doe@example.com', '123-456-7890', '$2a$10$J02x6x6/XejiQlLFSgbmmOkX3y/OeNacb4F6whorzmCk/RxpmsrLG', 1),
+('jane_smith', 'Jane Smith', 'jane.smith@example.com', '123-555-6789', '$2a$10$wRaaYN0FCbshCatdJcCVQeje5sClGtAz.ZfOecVW/clY0NfvdPp0S', 1),
+('mark_brown', 'Mark Brown', 'mark.brown@example.com', '123-789-0123', '$2a$10$rFXtHa5StF2tbVEbKikOfu15R/dtnco4Lk4ZzqbSx7ajlT/hriaa6', 2),
+('lucy_liu', 'Lucy Liu', 'lucy.liu@example.com', '123-123-1234', '$2a$10$G8wp/upkZfhdPstSgHH/resG5ves0zbdfKZ0oBTNGqAja2dFdyGYG', 1),
+('mike_tyson', 'Mike Tyson', 'mike.tyson@example.com', '123-234-3456', '$2a$10$BwLogBGlE1rvPP1dROJiMe7nXWszk.iSJBx2NoW61aE24HOeNkZ1W', 1);
 
 INSERT INTO events (
     title, 
