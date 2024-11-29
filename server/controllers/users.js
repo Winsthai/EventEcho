@@ -3,6 +3,9 @@ import bcrypt from "bcryptjs"; // Import bcrypt for hashing passwords
 import client from "../index.js";
 
 const userRouter = express.Router();
+const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\W).{8,}$/;
+const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+const phoneRegex = /^\+\d{1,3}\d{10}$/;
 
 // Create a new user
 userRouter.post("/", async (request, response, next) => {
@@ -12,6 +15,29 @@ userRouter.post("/", async (request, response, next) => {
   if (!username || !phonenum || !password) {
     return response.status(400).json({ error: "Missing required fields" });
   }
+
+  // Validate username
+  if (!username || /\s/.test(username) || username.length > 16) {
+    return response.status(400).json({ error: "Username must not contain spaces and must be 16 characters or less." });
+    }
+  // Validate password
+  if (!passwordRegex.test(password)) {
+    return response.status(400).json({ error: "Password must be at least 8 characters long and include at least one uppercase letter, one lowercase letter, and one special character." });
+  }
+
+  // Validate email only if provided
+  if (email && !emailRegex.test(email)) {
+    return response.status(400).json({ error: "Invalid email format." });
+    }
+
+  // Validate phone number
+  if (!phonenum) {
+    return response.status(400).json({ error: "Phone number is required." });
+    }
+  if (!phoneRegex.test(phonenum)) {
+    return response.status(400).json({ error: "Phone number must be in the format +<country code><10 digits>." });
+    }
+
 
   try {
     // Hash the password
