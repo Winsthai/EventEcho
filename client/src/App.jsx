@@ -10,6 +10,7 @@ import NavBar from "./Components/NavBar";
 import UserPage from "./Components/UserPage/UserPage";
 import CreatePagesRoutes from "./CreatePagesRoutes";
 import EditPagesRoutes from "./EditPagesRoutes";
+import FriendsPage from "./Components/FriendsPage/FriendsPage";
 
 function App() {
   // Use media query to check if screen width is less than 600px (mobile view)
@@ -33,6 +34,7 @@ function App() {
 
           {/* <Route path="/createEvent/reviewEvent" element={<ReviewEventPage></ReviewEventPage>}></Route> */}
           <Route path="/user/:id" element={<UserPage></UserPage>}></Route>
+          <Route path="/user/:id/friends" element={<FriendsPage></FriendsPage>}></Route>
           <Route path="/login" element={<LoginPage></LoginPage>}></Route>
           <Route path="/signUp" element={<SignUpPage></SignUpPage>}></Route>
           <Route path="/admin" element={<AdminPage></AdminPage>}></Route>

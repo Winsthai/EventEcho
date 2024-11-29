@@ -1,10 +1,11 @@
 import { useParams } from "react-router-dom";
-import { Box, Typography, Tabs, Tab, useMediaQuery } from "@mui/material";
+import { Box, Typography, Tabs, Tab, useMediaQuery, Button } from "@mui/material";
 import { useEffect, useState } from "react";
 import NoCreatedEvents from "./Components/NoCreatedEvents";
 import NoUpcomingEvents from "./Components/NoUpcomingEvents";
 import EventCard from "../EventCard/EventCard";
 import SearchBar from "../SearchBar";
+import { useNavigate } from "react-router-dom";
 
 // Test data for now, getting users not implemented in backend yet so params could change
 const testUsers = [
@@ -79,6 +80,7 @@ const UserPage = () => {
   const [selectedTab, setSelectedTab] = useState(0); // State to manage selected tab
 
   const isMobile = useMediaQuery("(max-width:600px)");
+  const navigate = useNavigate();
 
   useEffect(() => {
     if (id) {
@@ -105,10 +107,33 @@ const UserPage = () => {
         textAlign: "left",
       }}
     >
-      {/* Header */}
-      <Typography variant="h4" sx={{ fontWeight: "bold", mb: 2 }}>
-        Hello {user.username}!
-      </Typography>
+      {/* Header with button */}
+      <Box
+        sx={{
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "space-between",
+          mb: 2,
+        }}
+      >
+        <Typography variant="h4" sx={{ fontWeight: "bold" }}>
+          Hello {user.username}!
+        </Typography>
+        <Button
+          id="FriendsPageButton"
+          variant="contained"
+          color="primary"
+          sx={{
+            textTransform: "none",
+          }}
+          onClick={(e) => {
+            e.stopPropagation();
+            navigate(`/user/${id}/friends`);
+          }} // Probably change this later
+        >
+          Friends Page
+        </Button>
+      </Box>
 
       {/* Search bar */}
       {(user.createdEvents.length !== 0 && selectedTab == 0) ||

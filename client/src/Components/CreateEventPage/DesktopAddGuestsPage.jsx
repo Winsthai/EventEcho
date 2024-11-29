@@ -21,6 +21,7 @@ import RadioButtonUncheckedIcon from "@mui/icons-material/RadioButtonUnchecked";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import { useParams, useNavigate } from "react-router-dom";
 import SearchIcon from "@mui/icons-material/Search";
+import { useLocation } from "react-router-dom";
 
 const contacts = [
   { id: 1, name: "Steven Nguyen", phone: "(403)-000-0000" },
@@ -30,20 +31,24 @@ const contacts = [
   { id: 5, name: "Desmond Lau", phone: "(403)-444-4444" },
 ];
 
-export default function DesktopAddGuestsPage() {
+export default function DesktopAddGuestsPage({ invitedGuests, setInvitedGuests }) {
+  const location = useLocation();
   const onEditPage = location.pathname.includes("edit");
   const { id } = useParams();
   const navigate = useNavigate();
+
+  const { message } = location.state || {};
 
   const [selectedContacts, setSelectedContacts] = useState([]);
   const isMobile = useMediaQuery("(max-width:600px)");
 
   const handleSelect = (id) => {
-    setSelectedContacts((prev) =>
+    setInvitedGuests((prev) =>
       prev.includes(id)
         ? prev.filter((contactId) => contactId !== id)
         : [...prev, id]
     );
+    console.log(invitedGuests);
   };
 
   const handleReview = () => {
@@ -181,7 +186,7 @@ export default function DesktopAddGuestsPage() {
                     </div>
                   </div>
                   <Checkbox
-                    checked={selectedContacts.includes(contact.id)}
+                    checked={invitedGuests.includes(contact.id)}
                     inputProps={{ "aria-label": `Select ${contact.name}` }}
                     icon={<RadioButtonUncheckedIcon />} // Circular unchecked icon
                     checkedIcon={<CheckCircleIcon />} // Circular checked icon
@@ -263,6 +268,7 @@ export default function DesktopAddGuestsPage() {
         </div>
 
         <h2 className="your-friends-text">Your Friends</h2>
+        {/* {message && <p>{message}</p>} */}
 
         <div className="desktop-contactGrid">
           {contacts.map((contact) => (
@@ -272,7 +278,7 @@ export default function DesktopAddGuestsPage() {
               onClick={() => handleSelect(contact.id)}
             >
               <Checkbox
-                checked={selectedContacts.includes(contact.id)}
+                checked={invitedGuests.includes(contact.id)}
                 inputProps={{ "aria-label": `Select ${contact.name}` }}
                 icon={<RadioButtonUncheckedIcon />} // Circular unchecked icon
                 checkedIcon={<CheckCircleIcon />} // Circular checked icon

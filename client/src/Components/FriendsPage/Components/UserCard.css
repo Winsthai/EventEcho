@@ -1,0 +1,49 @@
+#UserCardProfilePicture {
+  min-width: 50px;
+  min-height: 50px;
+  background-color: #fde4e4;
+  color: #f0534f;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  margin-right: 1em;
+}
+
+#UserCardUserName {
+  color: #1d1d1d;
+  font-size: 16px;
+  margin-bottom: 4px;
+  margin-top: 4px;
+  font-weight: 500;
+}
+
+#UserCardButton {
+  border-radius: 20px;
+  height: 80%;
+  background-color: #ff7474;
+  text-transform: none;
+}
+
+#UserCardProfilePictureDesktop {
+  min-width: 80px;
+  min-height: 80px;
+  background-color: #fde4e4;
+  color: #f0534f;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  margin-bottom: 1em;
+}
+
+#UserCardUserNameDesktop {
+  color: #1d1d1d;
+  font-size: 16px;
+  margin-bottom: 4px;
+  margin-top: 4px;
+  font-weight: 500;
+  margin-bottom: 1em;
+}

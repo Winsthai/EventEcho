@@ -19,7 +19,9 @@ import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { TimePicker } from '@mui/x-date-pickers/TimePicker';
 import { useMediaQuery } from "@mui/material";
 import { useParams, useNavigate } from 'react-router-dom';
+import { format } from 'date-fns';
 
+// remove later
 const events = [
   {
     "id": "1",
@@ -71,18 +73,30 @@ const events = [
   },
 ];
 
-export default function CreateEventPage() {
+export default function CreateEventPage({ eventDetails, setEventDetails, detailsCompleted, setDetailsCompleted }) {
   const { id } = useParams();
   const navigate = useNavigate();
+  console.log(eventDetails);
 
   const isMobile = useMediaQuery("(max-width:600px)");
   const onEditPage = location.pathname.includes("edit");
 
-  const [eventType, setEventType] = React.useState('');
   const [eventPhotoName, setEventPhotoName] = React.useState('');
 
   // in db, public=true and private=false 
   let vis, startTimeTrimmed, endTimeTrimmed;
+  let formattedDate;
+  let goodTimings = true;
+
+  const [requiredFieldsErrors, setRequiredFieldErrors] = React.useState({
+    title: false,
+    eventtype: false,
+    description: false,
+    address: false,
+    startdate: false,
+    starttime: false
+  });
+
 
   if (onEditPage) {
     vis = events[id - 1].visibility;
@@ -95,24 +109,130 @@ export default function CreateEventPage() {
 
   const [eventPublic, setEventPublic] = React.useState(vis);
 
-  const handleEventTypeChange = (event) => {
-    setEventType(event.target.value);
+  const updateDetails = (event) => {
+    const { name, value } = event.target;
+    setEventDetails((prevDetails) => {
+      const updatedDetails = { ...eventDetails, [name]: value };
+      console.log(updatedDetails);
+      return updatedDetails;
+    });
   };
 
+  const handleStartDateChange = (date) => {
+    const jsonDate = JSON.stringify(date);
+    console.log(`json stringify: ${jsonDate}`);
+
+    formattedDate = format(date, 'yyyy-MM-dd');
+    setEventDetails({ ...eventDetails, startdate: formattedDate, startdateraw: jsonDate });
+
+  }
+
+  const handleStartTimeChange = (time) => {
+    const jsonTime = JSON.stringify(time);
+    console.log(`json stringify: ${jsonTime}`);
+
+    const formattedTime = format(time, "HH:mm:ss'+00'");
+    console.log(time);
+    setEventDetails({ ...eventDetails, starttime: formattedTime, starttimeraw: jsonTime });
+  }
+
+  const handleEndDateChange = (date) => {
+    const jsonDate = JSON.stringify(date);
+    console.log(`json stringify: ${jsonDate}`);
+
+    formattedDate = format(date, 'yyyy-MM-dd');
+    setEventDetails({ ...eventDetails, enddate: formattedDate, enddateraw: jsonDate });
+  }
+
+  const handleEndTimeChange = (time) => {
+    const jsonTime = JSON.stringify(time);
+    console.log(`json stringify: ${jsonTime}`);
+
+    const formattedTime = format(time, "HH:mm:ss'+00'");
+    console.log(time);
+    setEventDetails({ ...eventDetails, endtime: formattedTime, endtimeraw: jsonTime });
+  }
+
+  const handleVisibilityChange = (event) => {
+    setEventPublic(event.target.checked);
+    const { checked } = event.target;
+    console.log(checked);
+    setEventDetails({ ...eventDetails, visibility: checked });
+  }
+
+  // need to see whats going on here
   const handleFileChange = (event) => {
     if (event.target.files && event.target.files.length > 0) {
       setEventPhotoName(event.target.files[0].name);
     }
   }
 
-  const handleVisibilityChange = (event) => {
-    setEventPublic(event.target.checked);
-  }
-
   // just clears the text field for now, will have to actually delete uploaded file later
   const handleDeleteFile = (event) => {
     setEventPhotoName('');
   }
+
+  // call field checking here
+  const handleNavigate = (url) => {
+    if (checkFields()) {
+      console.log("Hey hey hey");
+      alert("missing shit");
+      console.log(detailsCompleted);
+    }
+    else if (goodTimings === false) {
+      alert("bad timings!");
+    }
+    else {
+      setDetailsCompleted(true);
+      console.log(detailsCompleted);
+      navigate(url, { state: { message: 'testing testing' } });
+    }
+  };
+
+  const checkFields = () => {
+    goodTimings = true;
+    // both start date and time missing
+    if (eventDetails.startdate === null && eventDetails.starttime === null) {
+      setEventDetails({ ...eventDetails, startdateraw: JSON.stringify(''), starttimeraw: JSON.stringify('') });
+      console.log("no event timings!");
+    }
+    // just start time missing
+    else if (eventDetails.starttime === null) {
+      setEventDetails({ ...eventDetails, starttimeraw: JSON.stringify('') });
+    }
+    // just start date missing
+    else if (eventDetails.startdate === null) {
+      setEventDetails({ ...eventDetails, startdateraw: JSON.stringify('') });
+    }
+    else {
+      // start date is after end date
+      if (dayjs(JSON.parse(eventDetails.startdateraw)).isAfter(dayjs(JSON.parse(eventDetails.enddateraw)))) {
+        console.log("bad times");
+        goodTimings = false;
+        setEventDetails({ ...eventDetails, enddateraw: JSON.stringify('') });
+      }
+      // same day but start time is after end time
+      else if (dayjs(JSON.parse(eventDetails.startdateraw)).isSame(dayjs(JSON.parse(eventDetails.enddateraw))) &&
+        dayjs(JSON.parse(eventDetails.starttimeraw)).isAfter(dayjs(JSON.parse(eventDetails.endtimeraw)))) {
+        console.log("same day bad times");
+        goodTimings = false;
+        setEventDetails({ ...eventDetails, endtimeraw: JSON.stringify('') });
+      }
+
+    }
+
+    const newErrors = {
+      title: !eventDetails.title,
+      eventtype: !eventDetails.eventtype,
+      description: !eventDetails.description,
+      address: !eventDetails.address,
+      startdate: !eventDetails.startdate,
+      starttime: !eventDetails.starttime
+    };
+
+    setRequiredFieldErrors(newErrors);
+    return Object.values(newErrors).includes(true);
+  };
 
   // MOBILE VERSION
   if (isMobile) {
@@ -134,7 +254,6 @@ export default function CreateEventPage() {
         <Box component="section"
           sx={{
             width: "100%",
-            height: "20%",
             position: "fixed",
             top: 0,
             left: 0,
@@ -172,29 +291,35 @@ export default function CreateEventPage() {
         </Box>
 
         {/* forms */}
-        <Box component="form" sx={{ width: "85%", height: "100%", pt: 8, pb: 8 }}>
+        <Box component="form" noValidate sx={{ width: "85%", height: "100%", pt: 8, pb: 8 }}>
           <Stack
             direction="column"
             spacing={2}
             sx={{ height: "100%", padding: 2 }}
           >
             {/* Event title */}
-            <TextField required
+            <TextField required fullWidth
+              name="title"
               id="event-title"
               label="Event Title"
               variant="outlined"
               sx={{ pb: 2 }}
-              defaultValue={onEditPage ? events[id - 1].title : ""}
+              value={eventDetails.title}
+              onChange={updateDetails}
+              error={requiredFieldsErrors.title}
             />
 
             {/* Event Type */}
             <FormControl fullWidth sx={{ pb: 2 }}>
               <InputLabel id="event-type">Event Type *</InputLabel>
               <Select labelId="select-event-type"
-                defaultValue={onEditPage ? events[id - 1].eventtype : eventType}
+                name='eventtype'
+                // defaultValue={onEditPage ? events[id - 1].eventtype : eventType}
                 label="Event Types"
-                onChange={handleEventTypeChange}
+                value={eventDetails.eventtype}
+                onChange={updateDetails}
                 sx={{ textAlign: 'left' }}
+                error={requiredFieldsErrors.eventtype}
               >
                 <MenuItem value="Sports">Sports</MenuItem>
                 <MenuItem value="Music">Music</MenuItem>
@@ -206,17 +331,24 @@ export default function CreateEventPage() {
 
             {/* Event Description */}
             <TextField required
+              name="description"
               id="event-description"
               label="Event Description"
               variant="outlined"
               multiline={true}
               minRows={3}
               sx={{ pb: 2 }}
-              defaultValue={onEditPage ? events[id - 1].description : ""}
+              value={eventDetails.description}
+              onChange={updateDetails}
+              error={requiredFieldsErrors.description}
             />
 
-            {/* Location */}
-            <TextField required id="event-location" label="Location" variant="outlined"
+            {/* Location (THERE'S NO WAY WE'RE DOING GOOGLE MAPS API AUTOFILL) */}
+            <TextField required
+              id="event-location"
+              name="address"
+              label="Location"
+              variant="outlined"
               slotProps={{
                 input: {
                   startAdornment: (
@@ -228,7 +360,9 @@ export default function CreateEventPage() {
                   )
                 }
               }}
-              defaultValue={onEditPage ? events[id - 1].address : ""}
+              value={eventDetails.address}
+              onChange={updateDetails}
+              error={requiredFieldsErrors.address}
             />
 
             {/* Event Timing Title */}
@@ -242,8 +376,9 @@ export default function CreateEventPage() {
               {/* Start Date -> Set as required with form submit error checking */}
               <Grid size={6}>
                 <LocalizationProvider dateAdapter={AdapterDayjs}>
-                  <DatePicker label="Start Date *"
-                    defaultValue={onEditPage ? dayjs(events[id - 1].startdate) : null}
+                  <DatePicker name="startdate" label="Start Date *"
+                    value={eventDetails.startdateraw === null ? null : dayjs(JSON.parse(eventDetails.startdateraw))}
+                    onChange={handleStartDateChange}
                   />
                 </LocalizationProvider>
               </Grid>
@@ -251,8 +386,9 @@ export default function CreateEventPage() {
               {/* Start Time -> Set as required with form submit error checking */}
               <Grid size={6}>
                 <LocalizationProvider dateAdapter={AdapterDayjs}>
-                  <TimePicker label="Start Time *"
-                    defaultValue={onEditPage ? dayjs(events[id - 1].startdate.concat("T", startTimeTrimmed)) : null}
+                  <TimePicker name="starttime" label="Start Time *"
+                    value={eventDetails.starttimeraw === null ? null : dayjs(JSON.parse(eventDetails.starttimeraw))}
+                    onChange={handleStartTimeChange}
                   />
                 </LocalizationProvider>
               </Grid>
@@ -260,8 +396,9 @@ export default function CreateEventPage() {
               {/* End Date */}
               <Grid size={6}>
                 <LocalizationProvider dateAdapter={AdapterDayjs}>
-                  <DatePicker label="End Date"
-                    defaultValue={onEditPage ? dayjs(events[id - 1].enddate) : null}
+                  <DatePicker name="enddate" label="End Date"
+                    value={eventDetails.enddateraw === null ? null : dayjs(JSON.parse(eventDetails.enddateraw))}
+                    onChange={handleEndDateChange}
                   />
                 </LocalizationProvider>
               </Grid>
@@ -269,8 +406,9 @@ export default function CreateEventPage() {
               {/* End Time */}
               <Grid size={6}>
                 <LocalizationProvider dateAdapter={AdapterDayjs}>
-                  <TimePicker label="End Time"
-                    defaultValue={onEditPage ? dayjs(events[id - 1].enddate.concat("T", endTimeTrimmed)) : null}
+                  <TimePicker name="endtime" label="End Time"
+                    value={eventDetails.endtimeraw === null ? null : dayjs(JSON.parse(eventDetails.endtimeraw))}
+                    onChange={handleEndTimeChange}
                   />
                 </LocalizationProvider>
               </Grid>
@@ -282,7 +420,7 @@ export default function CreateEventPage() {
                 <FormControlLabel
                   control={
                     <Switch
-                      checked={eventPublic}
+                      checked={eventDetails.visibility}
                       onChange={handleVisibilityChange}
                       inputProps={{ 'aria-label': 'controlled' }}
                     />
@@ -317,7 +455,7 @@ export default function CreateEventPage() {
 
                 }}>
                 <Button variant='contained'
-                  onClick={() => navigate(`/editEvent/${id}/reviewEvent`)}
+                  onClick={() => handleNavigate(`/editEvent/${id}/reviewEvent`)}
                   sx={{
                     borderRadius: '10px',
                     backgroundColor: "#F68F8D",
@@ -329,7 +467,7 @@ export default function CreateEventPage() {
                   Confirm Changes
                 </Button>
                 <Button variant='contained'
-                  onClick={() => navigate(`/editEvent/${id}/changeGuests`)}
+                  onClick={() => handleNavigate(`/editEvent/${id}/changeGuests`)}
                   sx={{
                     borderRadius: '10px',
                     backgroundColor: "#F68F8D",
@@ -342,7 +480,7 @@ export default function CreateEventPage() {
                 </Button>
               </Stack> :
               <Button variant='contained'
-                onClick={() => navigate('/createEvent/addGuests')}
+                onClick={() => handleNavigate('/createEvent/addGuests')}
                 sx={{
                   borderRadius: '10px',
                   backgroundColor: "#F68F8D",
@@ -397,21 +535,26 @@ export default function CreateEventPage() {
 
             {/* Event title */}
             <TextField fullWidth required
+              name='title'
               id="event-title"
               label="Event Title"
               variant="outlined"
               sx={{ width: "100%" }}
-              defaultValue={onEditPage ? events[id - 1].title : ""}
+              value={eventDetails.title}
+              onChange={updateDetails}
+              error={requiredFieldsErrors.title}
             />
 
             {/* Event Type */}
             <FormControl fullWidth sx={{ width: "80%" }}>
               <InputLabel id="event-type">Event Type *</InputLabel>
               <Select labelId="select-event-type"
-                defaultValue={onEditPage ? events[id - 1].eventtype : eventType}
+                name='eventtype'
                 label="Event Types"
-                onChange={handleEventTypeChange}
+                value={eventDetails.eventtype}
+                onChange={updateDetails}
                 sx={{ textAlign: 'left' }}
+                error={requiredFieldsErrors.eventtype}
               >
                 <MenuItem value="Sports">Sports</MenuItem>
                 <MenuItem value="Music">Music</MenuItem>
@@ -424,20 +567,27 @@ export default function CreateEventPage() {
 
           {/* Event Description */}
           <TextField fullWidth required
+            name='description'
             id="event-description"
             label="Event Description"
             variant="outlined"
             multiline={true}
             minRows={3}
             sx={{ pb: 2, width: "80%" }}
-            defaultValue={onEditPage ? events[id - 1].description : ""}
+            value={eventDetails.description}
+            onChange={updateDetails}
+            error={requiredFieldsErrors.description}
           />
 
           {/* Location and Private Toggle Horizontal Stack */}
           <Stack direction="row" spacing={6} sx={{ width: "80%", display: "flex", justifyContent: "left" }}>
 
             {/* Location */}
-            <TextField fullWidth required id="event-location" label="Location" variant="outlined"
+            <TextField fullWidth required
+              id="event-location"
+              name="address"
+              label="Location"
+              variant="outlined"
               slotProps={{
                 input: {
                   startAdornment: (
@@ -450,7 +600,9 @@ export default function CreateEventPage() {
                 }
               }}
               sx={{ width: "50%" }}
-              defaultValue={onEditPage ? events[id - 1].address : ""}
+              value={eventDetails.address}
+              onChange={updateDetails}
+              error={requiredFieldsErrors.address}
             />
 
             {/* Set Event Public */}
@@ -459,7 +611,7 @@ export default function CreateEventPage() {
                 <FormControlLabel
                   control={
                     <Switch
-                      checked={eventPublic}
+                      checked={eventDetails.visibility}
                       onChange={handleVisibilityChange}
                       inputProps={{ 'aria-label': 'controlled' }}
                     />
@@ -481,15 +633,17 @@ export default function CreateEventPage() {
           <Stack direction="row" spacing={4} sx={{ width: "80%", display: "flex", justifyContent: "left" }}>
             {/* Start Date -> Set as required with form submit error checking */}
             <LocalizationProvider dateAdapter={AdapterDayjs}>
-              <DatePicker label="Start Date *"
-                defaultValue={onEditPage ? dayjs(events[id - 1].startdate) : null}
+              <DatePicker name="startdate" label="Start Date *"
+                value={eventDetails.startdateraw === null ? null : dayjs(JSON.parse(eventDetails.startdateraw))}
+                onChange={handleStartDateChange}
               />
             </LocalizationProvider>
 
             {/* Start Time -> Set as required with form submit error checking */}
             <LocalizationProvider dateAdapter={AdapterDayjs}>
-              <TimePicker label="Start Time *"
-                defaultValue={onEditPage ? dayjs(events[id - 1].startdate.concat("T", startTimeTrimmed)) : null}
+              <TimePicker name="starttime" label="Start Time *"
+                value={eventDetails.starttimeraw === null ? null : dayjs(JSON.parse(eventDetails.starttimeraw))}
+                onChange={handleStartTimeChange}
               />
             </LocalizationProvider>
           </Stack>
@@ -497,20 +651,22 @@ export default function CreateEventPage() {
           <Stack direction="row" spacing={4} sx={{ width: "80%", display: "flex", justifyContent: "left" }}>
             {/* End Date */}
             <LocalizationProvider dateAdapter={AdapterDayjs}>
-              <DatePicker label="End Date"
-                defaultValue={onEditPage ? dayjs(events[id - 1].enddate) : null}
+              <DatePicker name="enddate" label="End Date"
+                value={eventDetails.enddateraw === null ? null : dayjs(JSON.parse(eventDetails.enddateraw))}
+                onChange={handleEndDateChange}
               />
             </LocalizationProvider>
 
             {/* End Time */}
             <LocalizationProvider dateAdapter={AdapterDayjs}>
-              <TimePicker label="End Time"
-                defaultValue={onEditPage ? dayjs(events[id - 1].enddate.concat("T", endTimeTrimmed)) : null}
+              <TimePicker name="endtime" label="End Time"
+                value={eventDetails.endtimeraw === null ? null : dayjs(JSON.parse(eventDetails.endtimeraw))}
+                onChange={handleEndTimeChange}
               />
             </LocalizationProvider>
           </Stack>
 
-          {/* Upload Event Photo Title */}
+          {/* Upload Event Photo Title*/}
           <Stack direction="row" spacing={6} sx={{ width: "80%", display: "flex", justifyContent: "left" }}>
             <Typography variant='h6' sx={{ pt: 1 }}>
               Upload Event Posting Photo
@@ -518,7 +674,7 @@ export default function CreateEventPage() {
             <Box />
           </Stack>
 
-          {/* Upload Photo */}
+          {/* Upload Photo  - FIX FIX FIX*/}
           <Stack direction="row" spacing={6} sx={{ width: "80%", display: "flex", justifyContent: "left", mb: 4 }}>
             <TextField fullWidth label="Upload File" variant='outlined'
               value={eventPhotoName}
@@ -550,8 +706,8 @@ export default function CreateEventPage() {
             <Button
               variant='contained'
               onClick={onEditPage ?
-                () => navigate(`/editEvent/${id}/changeGuests`) :
-                () => navigate('/createEvent/addGuests')
+                () => handleNavigate(`/editEvent/${id}/changeGuests`) :
+                () => handleNavigate('/createEvent/addGuests')
               } // should also complete the step in desktopProgressBar
               sx={{
                 borderRadius: '10px',
