@@ -8,7 +8,7 @@ import FormControl from '@mui/material/FormControl';
 import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
 
-export default function PasswordBox({ label = 'Password', id = 'password' }) {
+export default function PasswordBox({ label = 'Password', id = 'password', onChange }) {
   const [showPassword, setShowPassword] = React.useState(false);
 
   const handleClickShowPassword = () => setShowPassword((show) => !show);
@@ -28,6 +28,7 @@ export default function PasswordBox({ label = 'Password', id = 'password' }) {
         <Input
           id={`standard-adornment-${id}`}
           type={showPassword ? 'text' : 'password'}
+          onChange={onChange}
           endAdornment={
             <InputAdornment position="end">
               <IconButton
