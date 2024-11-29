@@ -9,7 +9,7 @@ import {
   Menu,
   MenuItem,
 } from "@mui/material";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import SportsBasketballIcon from "@mui/icons-material/SportsBasketball";
@@ -19,72 +19,29 @@ import ColorLensIcon from "@mui/icons-material/ColorLens";
 import GroupsIcon from "@mui/icons-material/Groups";
 import SportsEsportsIcon from "@mui/icons-material/SportsEsports";
 import FilterAltIcon from "@mui/icons-material/FilterAlt";
+import NavigateBeforeIcon from "@mui/icons-material/NavigateBefore";
+import NavigateNextIcon from "@mui/icons-material/NavigateNext";
 
 import { useParams, useNavigate } from "react-router-dom";
 
 import "./HomePageStyles.css";
 
-const events = [
-  {
-    id: "1",
-    title: "Football Game",
-    eventtype: "Sports",
-    description: "A friendly neighborhood football game.",
-    address: "123 Stadium Rd, City",
-    coordinates: {
-      x: 40.7128,
-      y: -74.006,
-    },
-    startdate: "2024-11-15T00:00:00.000Z",
-    starttime: "15:00:00+00",
-    enddate: "2024-11-15T00:00:00.000Z",
-    endtime: "17:00:00+00",
-    visibility: true,
-    image:
-      "https://m.media-amazon.com/images/M/MV5BOWZiNzZkZGEtMWEwOS00NjZkLWFmYTctZmQyMDY3NGU0OWZjXkEyXkFqcGc@._V1_.jpg", // temporary
-  },
-  {
-    id: "2",
-    title: "Jazz Concert",
-    eventtype: "Music",
-    description: "Live jazz performance.",
-    address: "456 Music Hall Ave, City",
-    coordinates: {
-      x: 40.7306,
-      y: -73.9352,
-    },
-    startdate: "2024-12-01T00:00:00.000Z",
-    starttime: "19:00:00+00",
-    enddate: "2024-12-01T00:00:00.000Z",
-    endtime: "21:00:00+00",
-    visibility: true,
-    image:
-      "https://www.horizonsmusic.co.uk/cdn/shop/articles/image1_1600x1600.jpg?v=1621417277", // temporary
-  },
-];
-
 const HomePage = () => {
-  const [searchQuery, setSearchQuery] = useState(""); // State to manage search queries
-  const [activeFilters, setActiveFilters] = useState([]); // State to track active filters
-
   const isMobile = useMediaQuery("(max-width:600px)");
   const { id } = useParams();
   const navigate = useNavigate();
 
+  const [events, setEvents] = useState([]);
+  const [searchQuery, setSearchQuery] = useState(""); // State to manage search queries
+  const [activeFilters, setActiveFilters] = useState([]); // State to track active filters
+  const [pageNum, setPageNum] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const [error, setError] = useState("");
+
   const handleSearchChange = (query) => {
     setSearchQuery(query); // Update search query
+    setPageNum(1);
   };
-
-  const searchedEvents = events.filter((event) =>
-    event.title.toLowerCase().includes(searchQuery.toLowerCase())
-  );
-
-  // Finds all events with currently active filters
-  const filteredEvents = events.filter((event) =>
-    activeFilters.some((filter) =>
-      event.eventtype.toLowerCase().includes(filter.toLowerCase())
-    )
-  );
 
   // Handle filter button clicks
   const handleFilterClick = (clickedFilter) => {
@@ -93,25 +50,8 @@ const HomePage = () => {
         ? prevFilters.filter((filters) => filters !== clickedFilter)
         : [...prevFilters, clickedFilter]
     );
+    setPageNum(1);
   };
-
-  // Checks if searchedEvents and filteredEvents have events in common
-  const getCommonEvents = () => {
-    // If no filters active, return searched events
-    if (activeFilters.length === 0) {
-      return searchedEvents;
-
-      // Find common events between searched events and filtered events
-    } else {
-      return searchedEvents.filter((searchedEvent) =>
-        filteredEvents.some(
-          (filteredEvent) => filteredEvent.id === searchedEvent.id
-        )
-      );
-    }
-  };
-
-  const commonEvents = getCommonEvents();
 
   // Filter menu const
   const [anchorE1, setAnchorE1] = useState(null);
@@ -123,6 +63,64 @@ const HomePage = () => {
   const handleDropdownClose = () => {
     setAnchorE1(null);
   };
+
+  const handlePrevPage = () => {
+    setPageNum((prevPageNum) => {
+      return prevPageNum - 1;
+    });
+  };
+
+  const handleNextPage = () => {
+    setPageNum((prevPageNum) => {
+      return prevPageNum + 1;
+    });
+  };
+
+  async function queryEvents(
+    eventType = "",
+    search = "",
+    page = "1",
+    limit = ""
+  ) {
+    // Generate API Url
+    const APIUrl = `http://localhost:3001/api/events?eventType=${eventType}&search=${search}&page=${page}&limit=${limit}`;
+
+    try {
+      // Fetch and store results from API URL
+      const response = await fetch(APIUrl);
+      const data = await response.json();
+
+      // Error message
+      if (!response.ok) {
+        throw new Error(data.error || "An unexpected error occurred");
+      }
+
+      return data;
+    } catch (e) {
+      setError(e.message);
+    }
+  }
+
+  // Fetch events on startup, then update events each time filters or search change.
+  useEffect(() => {
+    const fetchEvents = async () => {
+      try {
+        setError(null);
+
+        const result = await queryEvents(
+          activeFilters[0],
+          searchQuery,
+          pageNum
+        );
+        setEvents(result.events);
+        setTotalPages(result.totalPages);
+      } catch (e) {
+        setError(e.message);
+      }
+    };
+
+    fetchEvents();
+  }, [activeFilters, searchQuery, pageNum]); // Call each time activeFilters or searchQuery changes.
 
   if (isMobile) {
     // Mobile Component
@@ -149,7 +147,10 @@ const HomePage = () => {
         {/* Main body for events */}
         <Stack id="homeEventsStack">
           {/* Search bar */}
-          <SearchBar onSearchChange={handleSearchChange} placeholder="Search for events..."/>
+          <SearchBar
+            onSearchChange={handleSearchChange}
+            placeholder="Search for events..."
+          />
 
           {/* Filter buttons */}
           <Stack direction="row" id="homeFiltersStack">
@@ -248,15 +249,51 @@ const HomePage = () => {
           {/* Upcoming events section */}
           <Box id="homeUpcomingHeader"> Upcoming Events </Box>
 
-          {commonEvents.length !== 0 ? (
+          {error && (
+            <p style={{ color: "red", textAlign: "center" }}>{error}</p>
+          )}
+
+          {events.length !== 0 ? (
             <>
-              {commonEvents.map((event) => (
+              {events.map((event) => (
                 <EventCard key={event.id} event={event} variant="" />
               ))}
             </>
           ) : (
             <NoUpcomingEvents />
           )}
+          <Stack
+            direction="row"
+            sx={{ justifyContent: "center", alignItems: "center", mt: "1.5vh" }}
+          >
+            <Button
+              variant="contained"
+              sx={{
+                borderRadius: "20px",
+                backgroundColor: "#ff7474",
+              }}
+              startIcon={<NavigateBeforeIcon />}
+              disabled={pageNum <= 1}
+              onClick={() => handlePrevPage()}
+            >
+              Prev
+            </Button>
+            <Box sx={{ ml: "4vw", mr: "4vw", fontSize: "14px" }}>
+              Page {pageNum} of {totalPages}
+            </Box>
+            <Button
+              variant="contained"
+              sx={{
+                borderRadius: "20px",
+                backgroundColor: "#ff7474",
+              }}
+              endIcon={<NavigateNextIcon />}
+              disabled={pageNum >= totalPages}
+              onClick={() => handleNextPage()}
+            >
+              Next
+            </Button>
+          </Stack>
         </Stack>
       </Box>
     );
@@ -265,7 +302,10 @@ const HomePage = () => {
     return (
       <Stack direction="column" id="homeDesktopStack">
         <Stack direction="row" sx={{ alignItems: "center" }}>
-          <SearchBar onSearchChange={handleSearchChange} placeholder="Search for events..."></SearchBar>
+          <SearchBar
+            onSearchChange={handleSearchChange}
+            placeholder="Search for events..."
+          ></SearchBar>
 
           <Button
             id="desktopFiltersButton"
@@ -386,15 +426,49 @@ const HomePage = () => {
 
         <h1>Upcoming Events</h1>
 
-        {commonEvents.length !== 0 ? (
+        {error && <p style={{ color: "red", textAlign: "center" }}>{error}</p>}
+
+        {events.length !== 0 ? (
           <>
-            {commonEvents.map((event) => (
+            {events.map((event) => (
               <EventCard key={event.id} event={event} variant="" />
             ))}
           </>
         ) : (
           <NoUpcomingEvents />
         )}
+        <Stack
+          direction="row"
+          sx={{ justifyContent: "center", alignItems: "center", mt: "1.5vh" }}
+        >
+          <Button
+            variant="contained"
+            sx={{
+              borderRadius: "20px",
+              backgroundColor: "#ff7474",
+            }}
+            startIcon={<NavigateBeforeIcon />}
+            disabled={pageNum <= 1}
+            onClick={() => handlePrevPage()}
+          >
+            Prev
+          </Button>
+          <Box sx={{ ml: "4vw", mr: "4vw", fontSize: "1.2vw" }}>
+            Page {pageNum} of {totalPages}
+          </Box>
+          <Button
+            variant="contained"
+            sx={{
+              borderRadius: "20px",
+              backgroundColor: "#ff7474",
+            }}
+            endIcon={<NavigateNextIcon />}
+            disabled={pageNum >= totalPages}
+            onClick={() => handleNextPage()}
+          >
+            Next
+          </Button>
+        </Stack>
       </Stack>
     );
   }
