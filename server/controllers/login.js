@@ -9,6 +9,8 @@ const loginRouter = express.Router();
 // Login with username and password
 loginRouter.post("/", async (request, response, next) => {
   try {
+
+    console.log("SECRET:", process.env.SECRET);
     const { username, password } = request.body;
 
     // Query user
