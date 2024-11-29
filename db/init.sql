@@ -1,6 +1,8 @@
 CREATE TABLE IF not EXISTS users (
     id BIGSERIAL PRIMARY KEY,
     username VARCHAR(50) NOT NULL UNIQUE, -- Added UNIQUE so we can't have duplicate usernames.
+    firstname VARCHAR(255) NOT NULL,
+    lastname VARCHAR(255) NOT NULL,
     email VARCHAR(255),
     phonenum VARCHAR(255) NOT NULL UNIQUE,
     password VARCHAR(255) NOT NULL,
@@ -43,6 +45,13 @@ CREATE TABLE IF NOT EXISTS friends_list (
     friend_id INT REFERENCES users(id) ON DELETE CASCADE,
     PRIMARY KEY (user_id, friend_id)
 );
+
+CREATE TABLE IF NOT EXISTS friend_requests (
+    outgoing_request INT REFERENCES users(id) ON DELETE CASCADE,
+    incoming_request INT REFERENCES users(id) ON DELETE CASCADE,
+    PRIMARY KEY (outgoing_request, incoming_request)
+);
+
 
 CREATE TABLE IF NOT EXISTS guest_users (
     id BIGSERIAL PRIMARY KEY,
