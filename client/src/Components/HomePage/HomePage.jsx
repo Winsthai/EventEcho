@@ -19,6 +19,8 @@ import ColorLensIcon from "@mui/icons-material/ColorLens";
 import GroupsIcon from "@mui/icons-material/Groups";
 import SportsEsportsIcon from "@mui/icons-material/SportsEsports";
 import FilterAltIcon from "@mui/icons-material/FilterAlt";
+import NavigateBeforeIcon from "@mui/icons-material/NavigateBefore";
+import NavigateNextIcon from "@mui/icons-material/NavigateNext";
 
 import { useParams, useNavigate } from "react-router-dom";
 
@@ -32,10 +34,13 @@ const HomePage = () => {
   const [events, setEvents] = useState([]);
   const [searchQuery, setSearchQuery] = useState(""); // State to manage search queries
   const [activeFilters, setActiveFilters] = useState([]); // State to track active filters
+  const [pageNum, setPageNum] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
   const [error, setError] = useState("");
 
   const handleSearchChange = (query) => {
     setSearchQuery(query); // Update search query
+    setPageNum(1);
   };
 
   // Handle filter button clicks
@@ -45,6 +50,7 @@ const HomePage = () => {
         ? prevFilters.filter((filters) => filters !== clickedFilter)
         : [...prevFilters, clickedFilter]
     );
+    setPageNum(1);
   };
 
   // Filter menu const
@@ -58,9 +64,26 @@ const HomePage = () => {
     setAnchorE1(null);
   };
 
-  async function queryEvents(eventType = "", search = "", page = "1") {
+  const handlePrevPage = () => {
+    setPageNum((prevPageNum) => {
+      return prevPageNum - 1;
+    });
+  };
+
+  const handleNextPage = () => {
+    setPageNum((prevPageNum) => {
+      return prevPageNum + 1;
+    });
+  };
+
+  async function queryEvents(
+    eventType = "",
+    search = "",
+    page = "1",
+    limit = ""
+  ) {
     // Generate API Url
-    const APIUrl = `http://localhost:3001/api/events?eventType=${eventType}&search=${search}&page=${page}`;
+    const APIUrl = `http://localhost:3001/api/events?eventType=${eventType}&search=${search}&page=${page}&limit=${limit}`;
 
     try {
       // Fetch and store results from API URL
@@ -72,7 +95,7 @@ const HomePage = () => {
         throw new Error(data.error || "An unexpected error occurred");
       }
 
-      return data.events;
+      return data;
     } catch (e) {
       setError(e.message);
     }
@@ -84,15 +107,20 @@ const HomePage = () => {
       try {
         setError(null);
 
-        const result = await queryEvents(activeFilters[0], searchQuery, "1");
-        setEvents(result);
+        const result = await queryEvents(
+          activeFilters[0],
+          searchQuery,
+          pageNum
+        );
+        setEvents(result.events);
+        setTotalPages(result.totalPages);
       } catch (e) {
         setError(e.message);
       }
     };
 
     fetchEvents();
-  }, [activeFilters, searchQuery]); // Call each time activeFilters or searchQuery changes.
+  }, [activeFilters, searchQuery, pageNum]); // Call each time activeFilters or searchQuery changes.
 
   if (isMobile) {
     // Mobile Component
@@ -234,6 +262,38 @@ const HomePage = () => {
           ) : (
             <NoUpcomingEvents />
           )}
+          <Stack
+            direction="row"
+            sx={{ justifyContent: "center", alignItems: "center", mt: "1.5vh" }}
+          >
+            <Button
+              variant="contained"
+              sx={{
+                borderRadius: "20px",
+                backgroundColor: "#ff7474",
+              }}
+              startIcon={<NavigateBeforeIcon />}
+              disabled={pageNum <= 1}
+              onClick={() => handlePrevPage()}
+            >
+              Prev
+            </Button>
+            <Box sx={{ ml: "4vw", mr: "4vw", fontSize: "14px" }}>
+              Page {pageNum} of {totalPages}
+            </Box>
+            <Button
+              variant="contained"
+              sx={{
+                borderRadius: "20px",
+                backgroundColor: "#ff7474",
+              }}
+              endIcon={<NavigateNextIcon />}
+              disabled={pageNum >= totalPages}
+              onClick={() => handleNextPage()}
+            >
+              Next
+            </Button>
+          </Stack>
         </Stack>
       </Box>
     );
@@ -366,9 +426,7 @@ const HomePage = () => {
 
         <h1>Upcoming Events</h1>
 
-        {error && (
-            <p style={{ color: "red", textAlign: "center" }}>{error}</p>
-          )}
+        {error && <p style={{ color: "red", textAlign: "center" }}>{error}</p>}
 
         {events.length !== 0 ? (
           <>
@@ -379,6 +437,38 @@ const HomePage = () => {
         ) : (
           <NoUpcomingEvents />
         )}
+        <Stack
+          direction="row"
+          sx={{ justifyContent: "center", alignItems: "center" }}
+        >
+          <Button
+            variant="contained"
+            sx={{
+              borderRadius: "20px",
+              backgroundColor: "#ff7474",
+            }}
+            startIcon={<NavigateBeforeIcon />}
+            disabled={pageNum <= 1}
+            onClick={() => handlePrevPage()}
+          >
+            Prev
+          </Button>
+          <Box sx={{ ml: "4vw", mr: "4vw", fontSize: "1.2vw" }}>
+            Page {pageNum} of {totalPages}
+          </Box>
+          <Button
+            variant="contained"
+            sx={{
+              borderRadius: "20px",
+              backgroundColor: "#ff7474",
+            }}
+            endIcon={<NavigateNextIcon />}
+            disabled={pageNum >= totalPages}
+            onClick={() => handleNextPage()}
+          >
+            Next
+          </Button>
+        </Stack>
       </Stack>
     );
   }
