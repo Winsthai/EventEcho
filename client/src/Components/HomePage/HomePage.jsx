@@ -31,6 +31,7 @@ const HomePage = () => {
   const { id } = useParams();
   const navigate = useNavigate();
 
+  // React states
   const [events, setEvents] = useState([]);
   const [searchQuery, setSearchQuery] = useState(""); // State to manage search queries
   const [activeFilters, setActiveFilters] = useState([]); // State to track active filters
@@ -38,6 +39,7 @@ const HomePage = () => {
   const [totalPages, setTotalPages] = useState(1);
   const [error, setError] = useState("");
 
+  // Update search query state
   const handleSearchChange = (query) => {
     setSearchQuery(query); // Update search query
     setPageNum(1);
@@ -53,7 +55,7 @@ const HomePage = () => {
     setPageNum(1);
   };
 
-  // Filter menu const
+  // Filter menu constants
   const [anchorE1, setAnchorE1] = useState(null);
   const open = Boolean(anchorE1);
   const handleDropdownClick = (event) => {
@@ -64,6 +66,7 @@ const HomePage = () => {
     setAnchorE1(null);
   };
 
+  // Page navigation
   const handlePrevPage = () => {
     setPageNum((prevPageNum) => {
       return prevPageNum - 1;
@@ -76,6 +79,7 @@ const HomePage = () => {
     });
   };
 
+  // Query events from the API
   async function queryEvents(
     eventType = "",
     search = "",
@@ -262,6 +266,7 @@ const HomePage = () => {
           ) : (
             <NoUpcomingEvents />
           )}
+          {/* Page Navigation */}
           <Stack
             direction="row"
             sx={{ justifyContent: "center", alignItems: "center", mt: "1.5vh" }}
@@ -307,6 +312,7 @@ const HomePage = () => {
             placeholder="Search for events..."
           ></SearchBar>
 
+          {/* Filter Buttons */}
           <Button
             id="desktopFiltersButton"
             variant="contained"
@@ -424,6 +430,7 @@ const HomePage = () => {
           </Menu>
         </Stack>
 
+        {/* Upcoming Events */}
         <h1>Upcoming Events</h1>
 
         {error && <p style={{ color: "red", textAlign: "center" }}>{error}</p>}
@@ -437,6 +444,8 @@ const HomePage = () => {
         ) : (
           <NoUpcomingEvents />
         )}
+
+        {/* Page Navigation */}
         <Stack
           direction="row"
           sx={{ justifyContent: "center", alignItems: "center", mt: "1.5vh" }}
