@@ -439,7 +439,7 @@ const HomePage = () => {
         )}
         <Stack
           direction="row"
-          sx={{ justifyContent: "center", alignItems: "center" }}
+          sx={{ justifyContent: "center", alignItems: "center", mt: "1.5vh" }}
         >
           <Button
             variant="contained"
