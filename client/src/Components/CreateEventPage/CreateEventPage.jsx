@@ -73,7 +73,7 @@ const events = [
   },
 ];
 
-export default function CreateEventPage({ eventDetails, setEventDetails }) {
+export default function CreateEventPage({ eventDetails, setEventDetails, detailsCompleted, setDetailsCompleted }) {
   const { id } = useParams();
   const navigate = useNavigate();
   console.log(eventDetails);
@@ -86,6 +86,7 @@ export default function CreateEventPage({ eventDetails, setEventDetails }) {
   // in db, public=true and private=false 
   let vis, startTimeTrimmed, endTimeTrimmed;
   let formattedDate;
+  let goodTimings = true;
 
   const [requiredFieldsErrors, setRequiredFieldErrors] = React.useState({
     title: false,
@@ -176,22 +177,48 @@ export default function CreateEventPage({ eventDetails, setEventDetails }) {
     if (checkFields()) {
       console.log("Hey hey hey");
       alert("missing shit");
+      console.log(detailsCompleted);
+    }
+    else if (goodTimings === false) {
+      alert("bad timings!");
     }
     else {
+      setDetailsCompleted(true);
+      console.log(detailsCompleted);
       navigate(url, { state: { message: 'testing testing' } });
     }
   };
 
   const checkFields = () => {
+    goodTimings = true;
+    // both start date and time missing
     if (eventDetails.startdate === null && eventDetails.starttime === null) {
       setEventDetails({ ...eventDetails, startdateraw: JSON.stringify(''), starttimeraw: JSON.stringify('') });
       console.log("no event timings!");
     }
+    // just start time missing
     else if (eventDetails.starttime === null) {
       setEventDetails({ ...eventDetails, starttimeraw: JSON.stringify('') });
     }
+    // just start date missing
     else if (eventDetails.startdate === null) {
       setEventDetails({ ...eventDetails, startdateraw: JSON.stringify('') });
+    }
+    else {
+      // start date is after end date
+      if (dayjs(JSON.parse(eventDetails.startdateraw)).isAfter(dayjs(JSON.parse(eventDetails.enddateraw)))) {
+        console.log("bad times");
+        goodTimings = false;
+        setEventDetails({ ...eventDetails, enddateraw: JSON.stringify('') });
+      }
+      // same day but start time is after end time
+      else if (dayjs(JSON.parse(eventDetails.startdateraw)).isSame(dayjs(JSON.parse(eventDetails.enddateraw))) &&
+        dayjs(JSON.parse(eventDetails.starttimeraw)).isAfter(dayjs(JSON.parse(eventDetails.endtimeraw)))) {
+        console.log("same day bad times");
+        goodTimings = false;
+        setEventDetails({ ...eventDetails, endtimeraw: JSON.stringify('') });
+      }
+
     }
 
     const newErrors = {
@@ -202,6 +229,7 @@ export default function CreateEventPage({ eventDetails, setEventDetails }) {
       startdate: !eventDetails.startdate,
       starttime: !eventDetails.starttime
     };
+
     setRequiredFieldErrors(newErrors);
     return Object.values(newErrors).includes(true);
   };

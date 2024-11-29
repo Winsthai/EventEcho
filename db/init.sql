@@ -46,6 +46,7 @@ CREATE TABLE IF NOT EXISTS friends_list (
 
 CREATE TABLE IF NOT EXISTS guest_users (
     id BIGSERIAL PRIMARY KEY,
+    name VARCHAR(255),
     email VARCHAR(255),
     phonenum VARCHAR(255) NOT NULL UNIQUE
 );

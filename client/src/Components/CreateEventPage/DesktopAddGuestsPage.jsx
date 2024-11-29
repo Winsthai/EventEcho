@@ -31,12 +31,11 @@ const contacts = [
   { id: 5, name: "Desmond Lau", phone: "(403)-444-4444" },
 ];
 
-export default function DesktopAddGuestsPage({ eventDetails }) {
+export default function DesktopAddGuestsPage({ invitedGuests, setInvitedGuests }) {
   const location = useLocation();
   const onEditPage = location.pathname.includes("edit");
   const { id } = useParams();
   const navigate = useNavigate();
-  console.log(eventDetails);
 
   const { message } = location.state || {};
 
@@ -44,11 +43,12 @@ export default function DesktopAddGuestsPage({ eventDetails }) {
   const isMobile = useMediaQuery("(max-width:600px)");
 
   const handleSelect = (id) => {
-    setSelectedContacts((prev) =>
+    setInvitedGuests((prev) =>
       prev.includes(id)
         ? prev.filter((contactId) => contactId !== id)
         : [...prev, id]
     );
+    console.log(invitedGuests);
   };
 
   const handleReview = () => {
@@ -186,7 +186,7 @@ export default function DesktopAddGuestsPage({ eventDetails }) {
                     </div>
                   </div>
                   <Checkbox
-                    checked={selectedContacts.includes(contact.id)}
+                    checked={invitedGuests.includes(contact.id)}
                     inputProps={{ "aria-label": `Select ${contact.name}` }}
                     icon={<RadioButtonUncheckedIcon />} // Circular unchecked icon
                     checkedIcon={<CheckCircleIcon />} // Circular checked icon
@@ -278,7 +278,7 @@ export default function DesktopAddGuestsPage({ eventDetails }) {
               onClick={() => handleSelect(contact.id)}
             >
               <Checkbox
-                checked={selectedContacts.includes(contact.id)}
+                checked={invitedGuests.includes(contact.id)}
                 inputProps={{ "aria-label": `Select ${contact.name}` }}
                 icon={<RadioButtonUncheckedIcon />} // Circular unchecked icon
                 checkedIcon={<CheckCircleIcon />} // Circular checked icon

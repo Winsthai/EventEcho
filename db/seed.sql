@@ -63,11 +63,11 @@ INSERT INTO friends_list (user_id, friend_id) VALUES
 (3, 2),
 (4, 5);
 
-INSERT INTO guest_users (email, phonenum) VALUES
-('pablo_escobar@example.com', '789-123-4567'),
-('charlie_brown@example.com', '789-123-1234'),
-('peter_parker@example.com', '789-234-5678'),
-('david_davidson@example.com', '789-345-6789');
+INSERT INTO guest_users (name, email, phonenum) VALUES
+('Pablo Escobar', 'pablo_escobar@example.com', '789-123-4567'),
+('Charlie Brown', 'charlie_brown@example.com', '789-123-1234'),
+('Peter Parker', 'peter_parker@example.com', '789-234-5678'),
+('David Davidson', 'david_davidson@example.com', '789-345-6789');
 
 INSERT INTO guest_user_connections (guest_id, user_id) VALUES
 (1, 1),
