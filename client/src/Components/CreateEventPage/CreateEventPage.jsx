@@ -145,29 +145,39 @@ export default function CreateEventPage({ eventDetails, setEventDetails }) {
   };
 
   const handleStartDateChange = (date) => {
+    const jsonDate = JSON.stringify(date);
+    console.log(`json stringify: ${jsonDate}`);
     setStartDate(date);
     formattedDate = format(date, 'yyyy-MM-dd');
-    setEventDetails({ ...eventDetails, startdate: formattedDate, startdateraw: date });
+    setEventDetails({ ...eventDetails, startdate: formattedDate, startdateraw: jsonDate });
+
   }
 
   const handleStartTimeChange = (time) => {
+    const jsonTime = JSON.stringify(time);
+    console.log(`json stringify: ${jsonTime}`);
+
     setStartTime(time);
     const formattedTime = format(time, "HH:mm:ss'+00'");
     console.log(time);
-    setEventDetails({ ...eventDetails, starttime: formattedTime, starttimeraw: time });
+    setEventDetails({ ...eventDetails, starttime: formattedTime, starttimeraw: jsonTime });
   }
 
   const handleEndDateChange = (date) => {
+    const jsonDate = JSON.stringify(date);
+    console.log(`json stringify: ${jsonDate}`);
     setEndDate(date);
     formattedDate = format(date, 'yyyy-MM-dd');
-    setEventDetails({ ...eventDetails, enddate: formattedDate, enddateraw: date });
+    setEventDetails({ ...eventDetails, enddate: formattedDate, enddateraw: jsonDate });
   }
 
   const handleEndTimeChange = (time) => {
+    const jsonTime = JSON.stringify(time);
+    console.log(`json stringify: ${jsonTime}`);
     setEndTime(time);
     const formattedTime = format(time, "HH:mm:ss'+00'");
     console.log(time);
-    setEventDetails({ ...eventDetails, endtime: formattedTime, endtimeraw: time });
+    setEventDetails({ ...eventDetails, endtime: formattedTime, endtimeraw: jsonTime });
   }
 
   const handleVisibilityChange = (event) => {
@@ -367,7 +377,7 @@ export default function CreateEventPage({ eventDetails, setEventDetails }) {
               <Grid size={6}>
                 <LocalizationProvider dateAdapter={AdapterDayjs}>
                   <DatePicker name="startdate" label="Start Date *"
-                    value={eventDetails.startdateraw}
+                    value={eventDetails.startdateraw === null ? null : dayjs(JSON.parse(eventDetails.startdateraw))}
                     onChange={handleStartDateChange}
                   />
                 </LocalizationProvider>
@@ -377,7 +387,7 @@ export default function CreateEventPage({ eventDetails, setEventDetails }) {
               <Grid size={6}>
                 <LocalizationProvider dateAdapter={AdapterDayjs}>
                   <TimePicker name="starttime" label="Start Time *"
-                    value={eventDetails.starttimeraw}
+                    value={eventDetails.starttimeraw === null ? null : dayjs(JSON.parse(eventDetails.starttimeraw))}
                     onChange={handleStartTimeChange}
                   />
                 </LocalizationProvider>
@@ -387,7 +397,7 @@ export default function CreateEventPage({ eventDetails, setEventDetails }) {
               <Grid size={6}>
                 <LocalizationProvider dateAdapter={AdapterDayjs}>
                   <DatePicker name="enddate" label="End Date"
-                    value={eventDetails.enddateraw}
+                    value={eventDetails.enddateraw === null ? null : dayjs(JSON.parse(eventDetails.enddateraw))}
                     onChange={handleEndDateChange}
                   />
                 </LocalizationProvider>
@@ -397,7 +407,7 @@ export default function CreateEventPage({ eventDetails, setEventDetails }) {
               <Grid size={6}>
                 <LocalizationProvider dateAdapter={AdapterDayjs}>
                   <TimePicker name="endtime" label="End Time"
-                    value={eventDetails.endtimeraw}
+                    value={eventDetails.endtimeraw === null ? null : dayjs(JSON.parse(eventDetails.endtimeraw))}
                     onChange={handleEndTimeChange}
                   />
                 </LocalizationProvider>
@@ -624,7 +634,7 @@ export default function CreateEventPage({ eventDetails, setEventDetails }) {
             {/* Start Date -> Set as required with form submit error checking */}
             <LocalizationProvider dateAdapter={AdapterDayjs}>
               <DatePicker name="startdate" label="Start Date *"
-                value={eventDetails.startdateraw}
+                value={eventDetails.startdateraw === null ? null : dayjs(JSON.parse(eventDetails.startdateraw))}
                 onChange={handleStartDateChange}
               />
             </LocalizationProvider>
@@ -632,7 +642,7 @@ export default function CreateEventPage({ eventDetails, setEventDetails }) {
             {/* Start Time -> Set as required with form submit error checking */}
             <LocalizationProvider dateAdapter={AdapterDayjs}>
               <TimePicker name="starttime" label="Start Time *"
-                value={eventDetails.starttimeraw}
+                value={eventDetails.starttimeraw === null ? null : dayjs(JSON.parse(eventDetails.starttimeraw))}
                 onChange={handleStartTimeChange}
               />
             </LocalizationProvider>
@@ -642,7 +652,7 @@ export default function CreateEventPage({ eventDetails, setEventDetails }) {
             {/* End Date */}
             <LocalizationProvider dateAdapter={AdapterDayjs}>
               <DatePicker name="enddate" label="End Date"
-                value={eventDetails.enddateraw}
+                value={eventDetails.enddateraw === null ? null : dayjs(JSON.parse(eventDetails.enddateraw))}
                 onChange={handleEndDateChange}
               />
             </LocalizationProvider>
@@ -650,7 +660,7 @@ export default function CreateEventPage({ eventDetails, setEventDetails }) {
             {/* End Time */}
             <LocalizationProvider dateAdapter={AdapterDayjs}>
               <TimePicker name="endtime" label="End Time"
-                value={eventDetails.endtimeraw}
+                value={eventDetails.endtimeraw === null ? null : dayjs(JSON.parse(eventDetails.endtimeraw))}
                 onChange={handleEndTimeChange}
               />
             </LocalizationProvider>
