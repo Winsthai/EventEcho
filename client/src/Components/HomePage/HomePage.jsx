@@ -66,6 +66,21 @@ const HomePage = () => {
     setAnchorE1(null);
   };
 
+  // Convert active filters into queryable string (UNNEEDED?)
+
+  // function filtersToString(filters) {
+  //   let filtersString = "";
+  //   if (filters.length > 0) {
+  //     for (let i = 0; i < filters.length; i++) {
+  //       filtersString = filtersString + filters[i];
+  //       if (i < filters.length - 1) {
+  //         filtersString = filtersString + ',';
+  //       }
+  //     }
+  //   }
+  //   return filtersString;
+  // }
+
   // Page navigation
   const handlePrevPage = () => {
     setPageNum((prevPageNum) => {
@@ -112,7 +127,7 @@ const HomePage = () => {
         setError(null);
 
         const result = await queryEvents(
-          activeFilters[0],
+          activeFilters,
           searchQuery,
           pageNum
         );
