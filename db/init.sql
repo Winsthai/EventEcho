@@ -25,7 +25,8 @@ CREATE TABLE IF not EXISTS events (
     startdateraw text NOT NULL,
     starttimeraw text NOT NULL,
     enddateraw text,
-    endtimeraw text
+    endtimeraw text,
+    eventimage text
 );
 
 CREATE TABLE IF NOT EXISTS event_participants (

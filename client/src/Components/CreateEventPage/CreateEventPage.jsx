@@ -161,10 +161,31 @@ export default function CreateEventPage({ eventDetails, setEventDetails, details
   }
 
   // need to see whats going on here
-  const handleFileChange = (event) => {
+  const handleFileChange = async (event) => {
+    const file = event.target.files[0];
+    console.log(file);
+    if (!file) return;
+
     if (event.target.files && event.target.files.length > 0) {
-      setEventPhotoName(event.target.files[0].name);
+      setEventPhotoName(file.name);
     }
+
+    const data = new FormData();
+    data.append("file", file);
+    data.append("upload_preset", "eventEcho");
+    data.append("cloud_name", "dk7v80lgt");
+    data.append("c_crop", "h_600,w_800");
+
+    const fileURL = URL.createObjectURL(file);
+    setEventDetails({ ...eventDetails, eventimage: fileURL, imagename: file.name, imageform: data });
+
+    // const res = await fetch(`https://api.cloudinary.com/v1_1/dk7v80lgt/image/upload`, {
+    //   method: "POST",
+    //   body: data
+    // });
+
+    // const uploadedImageURL = await res.json();
+    // console.log(uploadedImageURL.url);
   }
 
   // just clears the text field for now, will have to actually delete uploaded file later
@@ -677,7 +698,7 @@ export default function CreateEventPage({ eventDetails, setEventDetails, details
           {/* Upload Photo  - FIX FIX FIX*/}
           <Stack direction="row" spacing={6} sx={{ width: "80%", display: "flex", justifyContent: "left", mb: 4 }}>
             <TextField fullWidth label="Upload File" variant='outlined'
-              value={eventPhotoName}
+              value={eventDetails.imagename}
               slotProps={{
                 input: {
                   startAdornment: (

@@ -15,6 +15,7 @@ import LocationOnIcon from "@mui/icons-material/LocationOn";
 import { useParams, useNavigate } from "react-router-dom";
 import { useEffect } from "react";
 import dayjs from 'dayjs';
+import logo from '../../images/logo.png';
 
 import "./ReviewEventPageStyles.css";
 
@@ -83,12 +84,13 @@ const contacts = [
   { id: 5, name: "Desmond Lau", phone: "(403)-444-4444" },
 ];
 
-const ReviewEventPage = ({ eventDetails, detailsCompleted, invitedGuests }) => {
+const ReviewEventPage = ({ eventDetails, setEventDetails, detailsCompleted, invitedGuests }) => {
   const { id } = useParams();
   const navigate = useNavigate();
   const isMobile = useMediaQuery("(max-width:600px)");
   const onEditPage = location.pathname.includes("edit");
   console.log(invitedGuests);
+  console.log(eventDetails);
 
   // if user forcefully enters in createEvent/reviewEvent before details finished need to redirect or something
   useEffect(() => {
@@ -115,7 +117,7 @@ const ReviewEventPage = ({ eventDetails, detailsCompleted, invitedGuests }) => {
         console.log("end time exists");
       }
       else {
-        reviewTime = startTimeTrimmed;
+        reviewTime = startTimeTrimmed.concat(" - TBD");
       }
 
       // if there is end date
@@ -131,6 +133,23 @@ const ReviewEventPage = ({ eventDetails, detailsCompleted, invitedGuests }) => {
       console.log(eventDetails.endtime);
     }
   }
+
+  const handlePostEvent = async (url) => {
+    // upload to cloud
+    if (eventDetails.imageform !== null) {
+      const res = await fetch(`https://api.cloudinary.com/v1_1/dk7v80lgt/image/upload`, {
+        method: "POST",
+        body: eventDetails.imageform
+      });
+
+      const uploadedImageURL = await res.json();
+      console.log(uploadedImageURL.url);
+      setEventDetails({ ...eventDetails, eventimage: uploadedImageURL.url });
+      console.log(eventDetails);
+    }
+    // make api call to push to db here
+    navigate(url);
+  };
 
   if (isMobile) {
     return (
@@ -268,13 +287,13 @@ const ReviewEventPage = ({ eventDetails, detailsCompleted, invitedGuests }) => {
                 <Box
                   component="img"
                   id="EventReviewPhotoDesktop"
-                  src={databaseImage}
+                  src={eventDetails.eventimage}
                 ></Box>
               ) : (
                 <Box
                   component="img"
                   id="EventReviewPhotoDesktop"
-                  src="https://s1.ticketm.net/dam/a/8b3/7896254c-063b-4815-b3a3-04cc7b6b68b3_RETINA_PORTRAIT_3_2.jpg"
+                  src={eventDetails.imageform === null ? logo : eventDetails.eventimage}
                 ></Box>
               )}
             </Box>
@@ -459,13 +478,13 @@ const ReviewEventPage = ({ eventDetails, detailsCompleted, invitedGuests }) => {
                     <Box
                       component="img"
                       id="EventReviewPhotoDesktop"
-                      src={databaseImage}
+                      src={eventDetails.eventimage}
                     ></Box>
                   ) : (
                     <Box
                       component="img"
                       id="EventReviewPhotoDesktop"
-                      src="https://s1.ticketm.net/dam/a/8b3/7896254c-063b-4815-b3a3-04cc7b6b68b3_RETINA_PORTRAIT_3_2.jpg"
+                      src={eventDetails.imageform === null ? logo : eventDetails.eventimage}
                     ></Box>
                   )}
                 </Box>
@@ -527,7 +546,7 @@ const ReviewEventPage = ({ eventDetails, detailsCompleted, invitedGuests }) => {
           </Box>
           <Button
             variant="contained"
-            onClick={() => navigate("/user/1")}
+            onClick={() => handlePostEvent("/user/1")}
             sx={{
               borderRadius: "10px",
               // width: "25%", // button width

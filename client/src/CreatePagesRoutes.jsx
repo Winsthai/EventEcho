@@ -23,7 +23,10 @@ function CreatePagesRoutes() {
     startdateraw: null,
     starttimeraw: null,
     enddateraw: null,
-    endtimeraw: null
+    endtimeraw: null,
+    eventimage: null,
+    imagename: '',
+    imageform: null
   });
 
   const [detailsCompleted, setDetailsCompleted] = useState(false);
@@ -37,7 +40,7 @@ function CreatePagesRoutes() {
         <Route path="/" element={<CreateEventPage eventDetails={eventDetails} setEventDetails={setEventDetails} detailsCompleted={detailsCompleted} setDetailsCompleted={setDetailsCompleted}></CreateEventPage>}></Route>
         <Route path="/addGuests" element={<DesktopAddGuestsPage invitedGuests={invitedGuests} setInvitedGuests={setInvitedGuests} ></DesktopAddGuestsPage>}></Route>
         <Route path="/newGuests" element={<AddGuestsNewPage></AddGuestsNewPage>}></Route>
-        <Route path="/reviewEvent" element={<ReviewEventPage eventDetails={eventDetails} detailsCompleted={detailsCompleted} invitedGuests={invitedGuests}></ReviewEventPage>}></Route>
+        <Route path="/reviewEvent" element={<ReviewEventPage eventDetails={eventDetails} setEventDetails={setEventDetails} detailsCompleted={detailsCompleted} invitedGuests={invitedGuests}></ReviewEventPage>}></Route>
       </Routes>
     </>
   );
