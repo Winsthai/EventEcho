@@ -6,8 +6,6 @@
 #EventReviewTitle {
   color: #1d1d1d;
   font-size: 24px;
-  margin-top: 4px;
-  margin-bottom: 4px;
 }
 
 #EventReviewHeader {
@@ -23,18 +21,14 @@
   font-weight: 500;
 }
 
-#EventReviewRVSP {
-  margin: 0;
-  color: #039be5;
-  font-size: 16px;
-}
-
 #EventReviewPhoto {
   background-color: gray;
-  height: 130px;
-  min-width: 100px;
-  margin-left: 10px;
+  height: 300px;
   border-radius: 15px;
+  min-width: 50%;
+  margin-left: 24px;
+  margin-right: 24px;
+  max-width: 80%;
 }
 
 #EventReviewPDesktop {
