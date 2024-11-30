@@ -18,49 +18,11 @@ import SportsEsportsIcon from "@mui/icons-material/SportsEsports";
 
 import "./EventPage.css";
 
-const events = [
-  {
-    id: "1",
-    title: "Football Game",
-    eventtype: "Sports",
-    description: "A friendly neighborhood football game.",
-    address: "123 Stadium Rd, City",
-    coordinates: {
-      x: 40.7128,
-      y: -74.006,
-    },
-    startdate: "2024-11-15",
-    starttime: "15:00:00+00",
-    enddate: "2024-11-15",
-    endtime: "17:00:00+00",
-    visibility: true,
-    image:
-      "https://m.media-amazon.com/images/M/MV5BOWZiNzZkZGEtMWEwOS00NjZkLWFmYTctZmQyMDY3NGU0OWZjXkEyXkFqcGc@._V1_.jpg", // temporary
-  },
-  {
-    id: "2",
-    title: "Jazz Concert",
-    eventtype: "Music",
-    description: "Live jazz performance.",
-    address: "456 Music Hall Ave, City",
-    coordinates: {
-      x: 40.7306,
-      y: -73.9352,
-    },
-    startdate: "2024-12-01",
-    starttime: "19:00:00+00",
-    enddate: "2024-12-01",
-    endtime: "21:00:00+00",
-    visibility: true,
-    image:
-      "https://www.horizonsmusic.co.uk/cdn/shop/articles/image1_1600x1600.jpg?v=1621417277", // temporary
-  },
-];
-
 const EventPage = () => {
   const { id } = useParams();
   const navigate = useNavigate();
-  const [event, setEvent] = useState(null);
+  const [event, setEvent] = useState(null); // []
+  const [error, setError] = useState("");
 
   const handleClick = (url) => {
     navigate(url);
@@ -70,11 +32,38 @@ const EventPage = () => {
   const isMobile = useMediaQuery("(max-width:600px)");
   const onEditPage = location.pathname.includes("edit");
 
-  // check which id is in test data. useEffect. Tell it to get event based on ID. useEffect runs when the page is loaded
+  // Query event from the API
+  async function fetchEvent(eventId) {
+    // Generate API Url
+    const APIUrl = `http://localhost:3001/api/events/${eventId}`;
+
+    try {
+      // Fetch and store results from API URL
+      setError("");
+      const response = await fetch(APIUrl);
+      const data = await response.json();
+      console.log("API Response:", data); // Debugging output
+      // Error message
+      if (!response.ok) {
+        throw new Error(data.error || "An unexpected error occurred");
+      }
+
+      setEvent(data.event);
+      return data;
+    } catch (e) {
+      setError(e.message);
+    }
+  }
+
   useEffect(() => {
-    const result = events.find((element) => element.id === id);
-    setEvent(result);
-  }, []); // empty array, means it doesn't rerun
+    if (id) {
+      fetchEvent(id);
+    }
+  }, [id]);
+
+  if (error) {
+    return <div>Error: {error}</div>;
+  }
 
   // Happens if component first renders, and event state is initially null, and we try accessing fields before it has data
   if (!event) {
@@ -86,9 +75,13 @@ const EventPage = () => {
   const startDateTime = new Date(
     `${event.startdate.slice(0, 10)}T${event.starttime.slice(0, 8)}+00:00`
   );
-  const endDateTime = new Date(
-    `${event.enddate.slice(0, 10)}T${event.endtime.slice(0, 8)}+00:00`
-  );
+
+  const endDateTime =
+    event.enddate && event.endtime
+      ? new Date(
+          `${event.enddate.slice(0, 10)}T${event.endtime.slice(0, 8)}+00:00`
+        )
+      : null;
 
   if (isMobile) {
     // Mobile component
@@ -149,11 +142,16 @@ const EventPage = () => {
             pt: "4.5rem",
           }}
         >
-          <Box
-            component="img"
-            id="EventPagePhotoBackground"
-            src={event.image}
-          ></Box>
+          {event.image ? (
+            <Box
+              component="img"
+              id="EventPagePhotoBackground"
+              src={event.image}
+              alt="Event background"
+            />
+          ) : (
+            <Box id="EventPagePhotoBackground">temp</Box>
+          )}
         </Box>
 
         {/* Event Details */}
@@ -199,12 +197,14 @@ const EventPage = () => {
                   hour12: true,
                 })}{" "}
                 -{" "}
-                {/* This comment apparently helps for whitespace. dont delete LOL. not a joke */}
-                {endDateTime.toLocaleTimeString("en-US", {
-                  hour: "numeric",
-                  minute: "numeric",
-                  hour12: true,
-                })}
+                {endDateTime
+                  ? endDateTime.toLocaleTimeString("en-US", {
+                      hour: "numeric",
+                      minute: "numeric",
+                      hour12: true,
+                    })
+                    // If null, display nothing
+                  : "TBD"}
               </p>
             </Stack>
             {/* Address */}
@@ -276,10 +276,9 @@ const EventPage = () => {
           marginBottom="2.5rem"
           borderRadius="20px"
           sx={{
-            padding: "2rem 20rem", // Padding for all items inside the white box
+            padding: "2vh 3vw", // Padding for all items inside the white box
           }}
         >
-          {/* Put picture on the left, and Event Details to its right */}
           <Box
             sx={{
               alignItems: "center", // Center vertically
@@ -287,8 +286,6 @@ const EventPage = () => {
             }}
           >
             {/* Event Picture */}
-            {/* TODO: implement this when possible */}
-
             <Box
               sx={{
                 position: "relative", // Allow pseudo-element positioning
@@ -305,25 +302,31 @@ const EventPage = () => {
                   left: 0,
                   width: "100%",
                   height: "100%",
+                  // Note: No blur exists if the event doesn't have an image
                   backgroundImage: `url(${event.image})`,
                   backgroundSize: "cover",
                   backgroundPosition: "center",
                   filter: "blur(20px)", // Adjust blur intensity
-                  transform: "scale(1.1)", // Slightly zoom out for better blur
+                  transform: "scale(1.1)", // Slightly zoom out
                   zIndex: 1, // Place behind the image
                 }}
               ></Box>
 
               {/* Event Image */}
-              <Box
-                component="img"
-                id="EventPagePhotoBackgroundDesktop"
-                src={event.image}
-                sx={{
-                  position: "relative",
-                  zIndex: 2, // Place above the blur
-                }}
-              />
+              {event.image ? (
+                <Box
+                  component="img"
+                  id="EventPagePhotoBackgroundDesktop"
+                  src={event.image}
+                  alt="Event background"
+                  sx={{
+                    position: "relative",
+                    zIndex: 2, // Place above the blur
+                  }}
+                />
+              ) : (
+                <Box id="EventPageNoPhotoDesktop">temp</Box>
+              )}
             </Box>
             {/* Event Title */}
           </Box>
@@ -349,7 +352,7 @@ const EventPage = () => {
                   spacing={1}
                   color="text.secondary"
                 >
-                  <CalendarMonthIcon id="EventPageIconsDesktop"/>
+                  <CalendarMonthIcon id="EventPageIconsDesktop" />
                   <p id="EventPagePDesktop">
                     {new Date(event.startdate).toLocaleDateString("en-US", {
                       weekday: "long",
@@ -365,19 +368,22 @@ const EventPage = () => {
                   spacing={1.2}
                   color="text.secondary"
                 >
-                  <AccessTimeIcon id="EventPageIconsDesktop"/>
+                  <AccessTimeIcon id="EventPageIconsDesktop" />
                   <p id="EventPagePDesktop">
                     {startDateTime.toLocaleTimeString("en-US", {
                       hour: "numeric",
                       minute: "numeric",
                       hour12: true,
                     })}{" "}
-                    -{" "} {/* Add spaces to the left and right of - */}
-                    {endDateTime.toLocaleTimeString("en-US", {
-                      hour: "numeric",
-                      minute: "numeric",
-                      hour12: true,
-                    })}
+                    - {/* Add spaces to the left and right of - */}
+                    {endDateTime
+                      ? endDateTime.toLocaleTimeString("en-US", {
+                          hour: "numeric",
+                          minute: "numeric",
+                          hour12: true,
+                        })
+                        // If null, display nothing
+                      : "TBD"}
                   </p>
                 </Stack>
                 {/* Address */}
@@ -387,7 +393,7 @@ const EventPage = () => {
                   spacing={1.2}
                   color="text.secondary"
                 >
-                  <LocationOnIcon id="EventPageIconsDesktop"/>
+                  <LocationOnIcon id="EventPageIconsDesktop" />
                   <p id="EventPagePDesktop">{event.address}</p>
                 </Stack>
               </Stack>
