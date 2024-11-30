@@ -276,10 +276,9 @@ const EventPage = () => {
           marginBottom="2.5rem"
           borderRadius="20px"
           sx={{
-            padding: "2rem 20rem", // Padding for all items inside the white box
+            padding: "2vh 3vw", // Padding for all items inside the white box
           }}
         >
-          {/* Put picture on the left, and Event Details to its right */}
           <Box
             sx={{
               alignItems: "center", // Center vertically
@@ -287,8 +286,6 @@ const EventPage = () => {
             }}
           >
             {/* Event Picture */}
-            {/* TODO: implement this when possible */}
-
             <Box
               sx={{
                 position: "relative", // Allow pseudo-element positioning
