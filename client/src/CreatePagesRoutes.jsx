@@ -26,6 +26,7 @@ function CreatePagesRoutes() {
     endtimeraw: null,
     eventimage: null,
     imagename: '',
+    imagenamemobile: '',
     imageform: null
   });
 

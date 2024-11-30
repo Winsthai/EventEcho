@@ -1,15 +1,15 @@
 import * as React from 'react';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import PlaceIcon from '@mui/icons-material/Place';
-import PhotoCameraIcon from '@mui/icons-material/PhotoCamera';
-import CollectionsIcon from '@mui/icons-material/Collections';
+import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import UploadIcon from '@mui/icons-material/Upload';
 import DeleteIcon from '@mui/icons-material/Delete';
 import {
   AppBar, Toolbar, IconButton, Typography,
   FormControl, FormGroup, FormControlLabel, InputLabel,
   Select, MenuItem, InputAdornment, Switch,
-  Box, TextField, Stack, Button
+  Box, TextField, Stack, Button,
+  Icon
 } from '@mui/material';
 import Grid from '@mui/material/Grid2';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
@@ -160,14 +160,25 @@ export default function CreateEventPage({ eventDetails, setEventDetails, details
     setEventDetails({ ...eventDetails, visibility: checked });
   }
 
-  // need to see whats going on here
+  // save image to push later
   const handleFileChange = async (event) => {
     const file = event.target.files[0];
     console.log(file);
-    if (!file) return;
+    if (!file || !file.name.match(/\.(jpg|jpeg|png|gif|webp)$/i)) {
+      console.log("BAD!");
+      alert("File type is not an image format");
+      return;
+    }
 
-    if (event.target.files && event.target.files.length > 0) {
-      setEventPhotoName(file.name);
+    let mobileFileName = '';
+    if (file.name.length > 25) {
+      const beginning = file.name.slice(0, 8);
+      const filetype = file.name.slice(-8);
+      mobileFileName = beginning.concat("...", filetype);
+      console.log(mobileFileName);
+    }
+    else {
+      mobileFileName = file.name;
     }
 
     const data = new FormData();
@@ -177,20 +188,19 @@ export default function CreateEventPage({ eventDetails, setEventDetails, details
     data.append("c_crop", "h_600,w_800");
 
     const fileURL = URL.createObjectURL(file);
-    setEventDetails({ ...eventDetails, eventimage: fileURL, imagename: file.name, imageform: data });
+    setEventDetails({
+      ...eventDetails,
+      eventimage: fileURL,
+      imagename: file.name,
+      imagenamemobile: mobileFileName,
+      imageform: data
+    });
 
-    // const res = await fetch(`https://api.cloudinary.com/v1_1/dk7v80lgt/image/upload`, {
-    //   method: "POST",
-    //   body: data
-    // });
-
-    // const uploadedImageURL = await res.json();
-    // console.log(uploadedImageURL.url);
   }
 
   // just clears the text field for now, will have to actually delete uploaded file later
-  const handleDeleteFile = (event) => {
-    setEventPhotoName('');
+  const handleDeleteFile = () => {
+    setEventDetails({ ...eventDetails, eventimage: null, imagename: '', imageform: null });
   }
 
   // call field checking here
@@ -388,7 +398,7 @@ export default function CreateEventPage({ eventDetails, setEventDetails, details
 
             {/* Event Timing Title */}
             <Box sx={{ display: "flex", justifyContent: "left" }}>
-              Event Timing
+              <Typography sx={{ fontSize: "20px" }}>Event Timing</Typography>
             </Box>
 
             {/* Time and Date Grid */}
@@ -450,16 +460,37 @@ export default function CreateEventPage({ eventDetails, setEventDetails, details
               </FormGroup>
             </Box>
 
+            {/* Upload Image Title */}
+            <Box sx={{ display: "flex", justifyContent: "left" }}>
+              <Typography sx={{ fontSize: "20px" }}>Event Posting Photo</Typography>
+            </Box>
+
             {/* Upload Image */}
-            <Box sx={{ border: '1px solid #aaaaa9', borderRadius: '5px', padding: 1 }}>
-              Select Event Posting Photo
-              <Stack direction="row" spacing={2} sx={{ display: "flex", justifyContent: "center" }}>
-                <IconButton aria-label='open camera' size='large'>
-                  <PhotoCameraIcon sx={{ fontSize: '48px' }} />
-                </IconButton>
-                <IconButton aria-label='open gallery' size='large'>
-                  <CollectionsIcon sx={{ fontSize: '48px' }} />
-                </IconButton>
+            <Box sx={{ border: '1px solid #aaaaa9', borderRadius: '5px', pt: 1 }}>
+              <Stack direction="column" spacing={2} sx={{ display: "flex", justifyContent: "center", padding: 2 }}>
+                <Button
+                  component="label"
+                  variant='contained'
+                  startIcon={<CloudUploadIcon />}
+                  sx={{
+                    borderRadius: '10px'
+                  }}
+                >
+                  Upload Image
+                  <input type="file" hidden onChange={handleFileChange} />
+                </Button>
+                <Stack direction="row" spacing={1} sx={{ display: "flex", justifyContent: "center" }}>
+                  <Typography sx={{ fontSize: "14px", alignContent: "center" }}>
+                    {eventDetails.imageform ? eventDetails.imagenamemobile : "No image selected"}
+                  </Typography>
+                  {eventDetails.imageform ?
+                    <IconButton onClick={handleDeleteFile} sx={{ alignSelf: "center" }}>
+                      <DeleteIcon />
+                    </IconButton> : null
+                  }
+
+                </Stack>
+
               </Stack>
             </Box>
 
@@ -473,7 +504,6 @@ export default function CreateEventPage({ eventDetails, setEventDetails, details
                   '& > *': {
                     flex: 1
                   }
-
                 }}>
                 <Button variant='contained'
                   onClick={() => handleNavigate(`/editEvent/${id}/reviewEvent`)}
@@ -695,7 +725,7 @@ export default function CreateEventPage({ eventDetails, setEventDetails, details
             <Box />
           </Stack>
 
-          {/* Upload Photo  - FIX FIX FIX*/}
+          {/* Upload Photo */}
           <Stack direction="row" spacing={6} sx={{ width: "80%", display: "flex", justifyContent: "left", mb: 4 }}>
             <TextField fullWidth label="Upload File" variant='outlined'
               value={eventDetails.imagename}
@@ -729,7 +759,7 @@ export default function CreateEventPage({ eventDetails, setEventDetails, details
               onClick={onEditPage ?
                 () => handleNavigate(`/editEvent/${id}/changeGuests`) :
                 () => handleNavigate('/createEvent/addGuests')
-              } // should also complete the step in desktopProgressBar
+              }
               sx={{
                 borderRadius: '10px',
                 mb: 2,
