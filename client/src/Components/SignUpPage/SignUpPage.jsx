@@ -92,8 +92,8 @@ const SignUpPage = () => {
             const data = await response.json();
             console.log("Account created:", data);
       
-            // Navigate to the login page or a success page
-            navigate("/login");
+            // Navigate to the login page with a state flag
+        navigate("/login", { state: { accountCreated: true } });
           } catch (error) {
             console.log(`in the error: username: ${username}, password: ${password}, phonenum: ${phonenum}, confirm: ${confirmPassword}`);
             console.error("Error creating account:", error);
@@ -115,7 +115,7 @@ const SignUpPage = () => {
             >
                 <Box sx={{ width: "85%"}}>
                     <Stack spacing={5.5} sx={{ marginTop: "10vh", marginBottom:"10vh" }}>
-                    <h1 id='signupHeader'>EventEcho</h1>
+                    <h1 id='signupHeader'style={{ marginTop: "20px" }}>EventEcho</h1>
                         <Box>
                             <img src={logo} alt="EventEcho Logo" style={{ width: '150px', margin: '-3vh' }} />
                         </Box>
