@@ -353,7 +353,9 @@ export default function CreateEventPage({ eventDetails, setEventDetails, details
                 <MenuItem value="Music">Music</MenuItem>
                 <MenuItem value="Food">Food</MenuItem>
                 <MenuItem value="Art">Art</MenuItem>
+                <MenuItem value="Hangout">Hangout</MenuItem>
                 <MenuItem value="Gaming">Gaming</MenuItem>
+                <MenuItem value="Convention">Convention</MenuItem>
               </Select>
             </FormControl>
 
@@ -608,7 +610,9 @@ export default function CreateEventPage({ eventDetails, setEventDetails, details
                 <MenuItem value="Music">Music</MenuItem>
                 <MenuItem value="Food">Food</MenuItem>
                 <MenuItem value="Art">Art</MenuItem>
+                <MenuItem value="Hangout">Hangout</MenuItem>
                 <MenuItem value="Gaming">Gaming</MenuItem>
+                <MenuItem value="Convention">Convention</MenuItem>
               </Select>
             </FormControl>
           </Stack>
