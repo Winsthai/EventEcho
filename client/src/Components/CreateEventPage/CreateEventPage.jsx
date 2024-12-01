@@ -8,8 +8,7 @@ import {
   AppBar, Toolbar, IconButton, Typography,
   FormControl, FormGroup, FormControlLabel, InputLabel,
   Select, MenuItem, InputAdornment, Switch,
-  Box, TextField, Stack, Button,
-  Icon
+  Box, TextField, Stack, Button
 } from '@mui/material';
 import Grid from '@mui/material/Grid2';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
@@ -76,12 +75,10 @@ const events = [
 export default function CreateEventPage({ eventDetails, setEventDetails, detailsCompleted, setDetailsCompleted }) {
   const { id } = useParams();
   const navigate = useNavigate();
-  console.log(eventDetails);
+  // console.log(eventDetails);
 
   const isMobile = useMediaQuery("(max-width:600px)");
   const onEditPage = location.pathname.includes("edit");
-
-  const [eventPhotoName, setEventPhotoName] = React.useState('');
 
   // in db, public=true and private=false 
   let vis, startTimeTrimmed, endTimeTrimmed;
@@ -113,7 +110,7 @@ export default function CreateEventPage({ eventDetails, setEventDetails, details
     const { name, value } = event.target;
     setEventDetails((prevDetails) => {
       const updatedDetails = { ...eventDetails, [name]: value };
-      console.log(updatedDetails);
+      // console.log(updatedDetails);
       return updatedDetails;
     });
   };
@@ -198,7 +195,7 @@ export default function CreateEventPage({ eventDetails, setEventDetails, details
 
   }
 
-  // just clears the text field for now, will have to actually delete uploaded file later
+  // deletes files
   const handleDeleteFile = () => {
     setEventDetails({ ...eventDetails, eventimage: null, imagename: '', imageform: null });
   }
@@ -208,18 +205,18 @@ export default function CreateEventPage({ eventDetails, setEventDetails, details
     if (checkFields()) {
       console.log("Hey hey hey");
       alert("missing shit");
-      console.log(detailsCompleted);
     }
     else if (goodTimings === false) {
       alert("bad timings!");
     }
     else {
       setDetailsCompleted(true);
-      console.log(detailsCompleted);
+      console.log(eventDetails);
       navigate(url, { state: { message: 'testing testing' } });
     }
   };
 
+  // !! add another field to make sure you can't make an event before today's date and time !!
   const checkFields = () => {
     goodTimings = true;
     // both start date and time missing
@@ -356,7 +353,9 @@ export default function CreateEventPage({ eventDetails, setEventDetails, details
                 <MenuItem value="Music">Music</MenuItem>
                 <MenuItem value="Food">Food</MenuItem>
                 <MenuItem value="Art">Art</MenuItem>
+                <MenuItem value="Hangout">Hangout</MenuItem>
                 <MenuItem value="Gaming">Gaming</MenuItem>
+                <MenuItem value="Convention">Convention</MenuItem>
               </Select>
             </FormControl>
 
@@ -611,7 +610,9 @@ export default function CreateEventPage({ eventDetails, setEventDetails, details
                 <MenuItem value="Music">Music</MenuItem>
                 <MenuItem value="Food">Food</MenuItem>
                 <MenuItem value="Art">Art</MenuItem>
+                <MenuItem value="Hangout">Hangout</MenuItem>
                 <MenuItem value="Gaming">Gaming</MenuItem>
+                <MenuItem value="Convention">Convention</MenuItem>
               </Select>
             </FormControl>
           </Stack>

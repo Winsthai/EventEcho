@@ -35,6 +35,12 @@ CREATE TABLE IF NOT EXISTS event_participants (
     PRIMARY KEY (event_id, user_id)
 );
 
+CREATE TABLE IF NOT EXISTS event_invites (
+    event_id INT REFERENCES events(id) ON DELETE CASCADE,
+    user_id INT REFERENCES users(id) ON DELETE CASCADE,
+    PRIMARY KEY (event_id, user_id)
+);
+
 CREATE TABLE IF NOT EXISTS event_creator (
     event_id INT REFERENCES events(id) ON DELETE CASCADE,
     user_id INT REFERENCES users(id) ON DELETE CASCADE,
@@ -52,7 +58,6 @@ CREATE TABLE IF NOT EXISTS friend_requests (
     incoming_request INT REFERENCES users(id) ON DELETE CASCADE,
     PRIMARY KEY (outgoing_request, incoming_request)
 );
-
 
 CREATE TABLE IF NOT EXISTS guest_users (
     id BIGSERIAL PRIMARY KEY,
