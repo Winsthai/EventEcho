@@ -9,7 +9,7 @@ const phoneRegex = /^\+\d{1,3}\d{10}$/;
 
 // Create a new user
 userRouter.post("/", async (request, response, next) => {
-  const { username, email, phonenum, password, status } = request.body;
+  const { username, firstname, lastname, email, phonenum, password, status } = request.body;
 
   // Validate required fields
   if (!username || !phonenum || !password) {
@@ -38,6 +38,16 @@ userRouter.post("/", async (request, response, next) => {
     return response.status(400).json({ error: "Phone number must be in the format +<country code><10 digits>." });
     }
 
+  // Validate first name
+  if (firstname.length > 16) {
+    return response.status(400).json({ error: "First name must be 16 characters or less." });
+    }
+
+  // Validate last name
+  if (lastname.length > 16) {
+    return response.status(400).json({ error: "Last name must be 16 characters or less." });
+    }
+
 
   try {
     // Hash the password
@@ -46,10 +56,10 @@ userRouter.post("/", async (request, response, next) => {
 
     // Insert the user into the database
     const result = await client.query(
-      `INSERT INTO users (username, email, phonenum, password, status) 
-       VALUES ($1, $2, $3, $4, $5) 
-       RETURNING id, username, email, phonenum, status`,
-      [username, email, phonenum, hashedPassword, status || 1] // Default status to 1 if not provided
+      `INSERT INTO users (username, firstname, lastname, email, phonenum, password, status) 
+       VALUES ($1, $2, $3, $4, $5, $6, $7) 
+       RETURNING id, username, firstname, lastname, email, phonenum, status`,
+      [username, firstname, lastname, email, phonenum, hashedPassword, status || 1] // Default status to 1 if not provided
     );
 
     // Return the created user (excluding sensitive fields like password)
