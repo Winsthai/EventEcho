@@ -1,7 +1,7 @@
 import { Box, TextField, Button, Stack, useMediaQuery } from "@mui/material";
 import PasswordBox from "../PasswordBox";
-import { useNavigate } from "react-router-dom";
-import React, { useState } from 'react';
+import { useNavigate, useLocation } from "react-router-dom";
+import React, { useState, useEffect } from 'react';
 
 import "./LoginPageStyles.css";
 
@@ -12,6 +12,23 @@ const LoginPage = () => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState(""); // To display errors
+  const [showPopup, setShowPopup] = useState(false); // Popup state
+  const location = useLocation(); // Get location to access navigation state
+
+  useEffect(() => {
+    // Check if accountCreated flag is present in state
+    if (location.state?.accountCreated) {
+        setShowPopup(true);
+
+        // Hide popup after 3 seconds
+        const timer = setTimeout(() => {
+            setShowPopup(false);
+        }, 3000);
+
+        // Cleanup timeout on unmount
+        return () => clearTimeout(timer);
+    }
+  }, [location.state]);
 
   const handleLogin = async () => {
     try {
@@ -61,9 +78,31 @@ const LoginPage = () => {
         alignItems: "center",
         textAlign: "center",
     }}>
+
+    {showPopup && (
+                    <Box
+                        sx={{
+                            position: "fixed",
+                            top: "5%",
+                            left: "50%",
+                            transform: "translateX(-50%)",
+                            backgroundColor: "darkred",
+                            color: "white",
+                            padding: "10px 20px",
+                            borderRadius: "8px",
+                            zIndex: 1000,
+                            boxShadow: "0px 4px 6px rgba(0, 0, 0, 0.1)",
+                            width: "80%", // Makes it responsive on mobile
+                            maxWidth: "400px", // Ensures it doesn’t get too wide on large screens
+                            minWidth: "250px", // Ensures it’s not too narrow
+                        }}
+                    >
+                        Account created successfully! Please log in.
+                    </Box>
+                )}
         <Box component="form" id="loginFormBox">
           <Stack direction="column" spacing={6.5} id="loginFormStack">
-            <h1 id="loginHeader">EventEcho</h1>
+            <h1 id="loginHeader" style={{ marginTop: "20px"  }}>EventEcho</h1>
 
             <Box>
               <img
@@ -102,7 +141,7 @@ const LoginPage = () => {
             </Stack>
 
             <Box>
-              <Button variant="text">Stay on Guest Mode</Button>
+              <Button variant="text" onClick={() => handleClick("/")}>Stay on Guest Mode</Button>
             </Box>   
           </Stack>
         </Box>
@@ -112,6 +151,24 @@ const LoginPage = () => {
     // Desktop Component
     return (
       <Box component="section" id="loginBox">
+        {showPopup && (
+                    <Box
+                        sx={{
+                            position: "fixed",
+                            top: "10%",
+                            left: "50%",
+                            transform: "translateX(-50%)",
+                            backgroundColor: "darkred",
+                            color: "white",
+                            padding: "10px 20px",
+                            borderRadius: "8px",
+                            zIndex: 1000,
+                            boxShadow: "0px 4px 6px rgba(0, 0, 0, 0.1)",
+                        }}
+                    >
+                        Account created successfully! Please log in.
+                    </Box>
+                )}
         <Box component="form" id="loginFormBox">
           <Stack direction="column" spacing={10} id="loginFormStack">
             <Stack direction="row" id="loginHeaderStack">
@@ -137,7 +194,7 @@ const LoginPage = () => {
               direction="row"
               id="loginButtonStack"
             >
-              <Button variant="text">Stay on Guest Mode</Button>
+              <Button variant="text" onClick={() => handleClick("/")}>Stay on Guest Mode</Button>
               <Box>
                 <Button variant="text" onClick={() => handleClick("/signUp")}>Create Account</Button>
                 <Button

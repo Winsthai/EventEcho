@@ -71,17 +71,47 @@ const EventPage = () => {
     return;
   }
 
-  // Have to do some weird stuff because "startdate" "starttime" "enddate" "endtime" are not formatted properly?
-  const startDateTime = new Date(
-    `${event.startdate.slice(0, 10)}T${event.starttime.slice(0, 8)}+00:00`
-  );
+  let reviewTime, reviewDate, startTimeTrimmed, endTimeTrimmed;
+  
 
-  const endDateTime =
-    event.enddate && event.endtime
-      ? new Date(
-          `${event.enddate.slice(0, 10)}T${event.endtime.slice(0, 8)}+00:00`
-        )
-      : null;
+  startTimeTrimmed = event.starttime.slice(0, -6);
+  // End time exists
+  if (event.endtime !== null) {
+    endTimeTrimmed = event.endtime.slice(0, -6);
+    reviewTime = startTimeTrimmed.concat(" - ", endTimeTrimmed);
+  }
+  else {
+    reviewTime = startTimeTrimmed.concat(" - TBD");
+  }
+
+  // end date exists
+  if (event.enddate !== null) {
+      reviewDate = event.startdate.slice(0, 10).concat(" - ", event.enddate.slice(0, 10));
+  } else {
+    reviewDate = event.startdate.slice(0, 10);
+  }
+
+  const getIcon = (type) => {
+    switch (type) {
+      case "Sports":
+        return <SportsBasketballIcon />;
+      case "Music":
+        return <MusicNoteIcon />;
+      case "Food":
+        return <LocalDiningIcon />;
+      case "Art":
+        return <ColorLensIcon />;
+      case "Hangout":
+        return <GroupsIcon />;
+      case "Gaming":
+        return <SportsEsportsIcon />;
+      default:
+        return null;
+    }
+  };
+
+  const eventIcon = getIcon(event.eventtype);
+
 
   if (isMobile) {
     // Mobile component
@@ -142,11 +172,11 @@ const EventPage = () => {
             pt: "4.5rem",
           }}
         >
-          {event.image ? (
+          {event.eventimage ? (
             <Box
               component="img"
               id="EventPagePhotoBackground"
-              src={event.image}
+              src={event.eventimage}
               alt="Event background"
             />
           ) : (
@@ -175,11 +205,7 @@ const EventPage = () => {
             >
               <CalendarMonthIcon />
               <p id="EventPageP">
-                {new Date(event.startdate).toLocaleDateString("en-US", {
-                  weekday: "long",
-                  month: "long",
-                  day: "numeric",
-                })}
+                {reviewDate}
               </p>
             </Stack>
             {/* Time */}
@@ -191,20 +217,7 @@ const EventPage = () => {
             >
               <AccessTimeIcon />
               <p id="EventPageP">
-                {startDateTime.toLocaleTimeString("en-US", {
-                  hour: "numeric",
-                  minute: "numeric",
-                  hour12: true,
-                })}{" "}
-                -{" "}
-                {endDateTime
-                  ? endDateTime.toLocaleTimeString("en-US", {
-                      hour: "numeric",
-                      minute: "numeric",
-                      hour12: true,
-                    })
-                    // If null, display nothing
-                  : "TBD"}
+                {reviewTime}
               </p>
             </Stack>
             {/* Address */}
@@ -218,6 +231,37 @@ const EventPage = () => {
               <p id="EventPageP">{event.address}</p>
             </Stack>
           </Stack>
+
+          {/* Event type */}
+          <h1
+            id="EventReviewHeader"
+            style={{
+              marginBottom: 0,
+              paddingBottom: 0,
+            }}
+          >
+            Event Type
+          </h1>
+          {/* Event Type Tag */}
+          <Box
+            sx={{
+              display: "inline-flex", // Tag doesn't take up full container width, only its content
+              alignItems: "center",
+              gap: "0.5rem", // Space between mui icon / tag
+              marginTop: "0.5rem",
+              marginBottom: "0.5rem",
+              backgroundColor: "#ff7474", // color
+              borderRadius: "20px",
+              padding: "0.5rem 1rem", // make button bigger
+              color: "white", // font color
+              fontWeight: "bold",
+              textTransform: "uppercase", // Make text all caps (to match the filters box on homepage)
+            }}
+          >
+            {eventIcon}
+            {event.eventtype}
+          </Box>
+
           {/* Event Description */}
           <Box
             sx={{
@@ -303,7 +347,7 @@ const EventPage = () => {
                   width: "100%",
                   height: "100%",
                   // Note: No blur exists if the event doesn't have an image
-                  backgroundImage: `url(${event.image})`,
+                  backgroundImage: `url(${event.eventimage})`,
                   backgroundSize: "cover",
                   backgroundPosition: "center",
                   filter: "blur(20px)", // Adjust blur intensity
@@ -313,11 +357,11 @@ const EventPage = () => {
               ></Box>
 
               {/* Event Image */}
-              {event.image ? (
+              {event.eventimage ? (
                 <Box
                   component="img"
                   id="EventPagePhotoBackgroundDesktop"
-                  src={event.image}
+                  src={event.eventimage}
                   alt="Event background"
                   sx={{
                     position: "relative",
@@ -354,11 +398,7 @@ const EventPage = () => {
                 >
                   <CalendarMonthIcon id="EventPageIconsDesktop" />
                   <p id="EventPagePDesktop">
-                    {new Date(event.startdate).toLocaleDateString("en-US", {
-                      weekday: "long",
-                      month: "long",
-                      day: "numeric",
-                    })}
+                    {reviewDate}
                   </p>
                 </Stack>
                 {/* Time */}
@@ -370,20 +410,7 @@ const EventPage = () => {
                 >
                   <AccessTimeIcon id="EventPageIconsDesktop" />
                   <p id="EventPagePDesktop">
-                    {startDateTime.toLocaleTimeString("en-US", {
-                      hour: "numeric",
-                      minute: "numeric",
-                      hour12: true,
-                    })}{" "}
-                    - {/* Add spaces to the left and right of - */}
-                    {endDateTime
-                      ? endDateTime.toLocaleTimeString("en-US", {
-                          hour: "numeric",
-                          minute: "numeric",
-                          hour12: true,
-                        })
-                        // If null, display nothing
-                      : "TBD"}
+                  {reviewTime}
                   </p>
                 </Stack>
                 {/* Address */}
@@ -424,16 +451,9 @@ const EventPage = () => {
                 textTransform: "uppercase", // Make text all caps (to match the filters box on homepage)
               }}
             >
-              {/* Event Type Icon */}
-              {event.eventtype === "Sports" && <SportsBasketballIcon />}
-              {event.eventtype === "Music" && <MusicNoteIcon />}
-              {event.eventtype === "Food" && <LocalDiningIcon />}
-              {event.eventtype === "Art" && <ColorLensIcon />}
-              {event.eventtype === "Hangout" && <GroupsIcon />}
-              {event.eventtype === "Gaming" && <SportsEsportsIcon />}
-
-              {/* Event Type Text */}
+              {eventIcon}
               {event.eventtype}
+
             </Box>
 
             {/* Event Description */}
