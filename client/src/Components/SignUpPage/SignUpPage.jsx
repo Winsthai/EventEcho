@@ -172,7 +172,7 @@ const SignUpPage = () => {
                         </div>
 
                         <Box>
-                          <Button variant="text">Stay on Guest Mode</Button>
+                          <Button variant="text" onClick={() => handleClick("/")}>Stay on Guest Mode</Button>
                         </Box>
                     </Stack>
                 </Box>
@@ -243,7 +243,7 @@ const SignUpPage = () => {
 
                             <Chip label="Create Account" sx={chipStyle} onClick={handleCreateAccount} />                        </Stack>
                         <Box>
-                          <Button variant="text">Stay on Guest Mode</Button>
+                          <Button variant="text" onClick={() => handleClick("/")}>Stay on Guest Mode</Button>
                         </Box>
                         
                     </Stack>

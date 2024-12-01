@@ -141,7 +141,7 @@ const LoginPage = () => {
             </Stack>
 
             <Box>
-              <Button variant="text">Stay on Guest Mode</Button>
+              <Button variant="text" onClick={() => handleClick("/")}>Stay on Guest Mode</Button>
             </Box>   
           </Stack>
         </Box>
@@ -194,7 +194,7 @@ const LoginPage = () => {
               direction="row"
               id="loginButtonStack"
             >
-              <Button variant="text">Stay on Guest Mode</Button>
+              <Button variant="text" onClick={() => handleClick("/")}>Stay on Guest Mode</Button>
               <Box>
                 <Button variant="text" onClick={() => handleClick("/signUp")}>Create Account</Button>
                 <Button
