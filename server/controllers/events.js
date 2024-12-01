@@ -166,6 +166,7 @@ eventRouter.post("/", userConfirmation, async (request, response, next) => {
     endtime,
     endtimeraw,
     visibility,
+    eventimage,
   } = request.body;
 
   const userId = request.userId; // Access the user ID from the token
@@ -190,8 +191,8 @@ eventRouter.post("/", userConfirmation, async (request, response, next) => {
   try {
     const result = await client.query(
       `INSERT INTO events 
-       (title, eventtype, description, address, startdate, starttime, enddate, endtime, visibility, startdateraw, starttimeraw, enddateraw, endtimeraw) 
-       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13) 
+       (title, eventtype, description, address, startdate, starttime, enddate, endtime, visibility, startdateraw, starttimeraw, enddateraw, endtimeraw, eventimage) 
+       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14) 
        RETURNING *`,
       [
         title,
@@ -207,6 +208,7 @@ eventRouter.post("/", userConfirmation, async (request, response, next) => {
         starttimeraw,
         enddateraw,
         endtimeraw,
+        eventimage,
       ]
     );
 
@@ -306,6 +308,7 @@ eventRouter.put(
       endtime,
       endtimeraw,
       visibility,
+      eventimage,
     } = request.body;
 
     // Check if the event exists
@@ -333,6 +336,7 @@ eventRouter.put(
       starttimeraw || eventExists.rows[0].starttimeraw,
       enddateraw || eventExists.rows[0].enddateraw,
       endtimeraw || eventExists.rows[0].endtimeraw,
+      eventimage || eventExists.rows[0].eventimage,
       id,
     ];
 
@@ -353,8 +357,9 @@ eventRouter.put(
           startdateraw = $10,
           starttimeraw = $11,
           enddateraw = $12,
-          endtimeraw = $13
-        WHERE id = $14
+          endtimeraw = $13,
+          eventimage = $14
+        WHERE id = $15
         RETURNING *;
       `;
 
