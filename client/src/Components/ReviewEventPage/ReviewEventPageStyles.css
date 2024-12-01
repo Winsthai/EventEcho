@@ -33,17 +33,18 @@
 
 #EventReviewPDesktop {
   color: #333333;
-  font-size: 16px;
+  font-size: 30px;
 }
 
 #EventReviewTitleDesktop {
   color: #1d1d1d;
-  font-size: 32px;
+  font-size: 48px;
+  margin-bottom: 0.5rem;
 }
 
 #EventReviewHeaderDesktop {
   color: #1d1d1d;
-  font-size: 28px;
+  font-size: 40px;
 }
 
 #EventReviewNamesDesktop {
@@ -62,10 +63,8 @@
 
 #EventReviewPhotoDesktop {
   background-color: gray;
-  height: 130px;
-  min-width: 100px;
-  max-width: 200px;
-  margin-left: 10px;
+  height: 550px;
+  max-width: 60vw;
   border-radius: 15px;
 }
 
@@ -96,4 +95,8 @@
   justify-content: center;
   font-weight: bold;
   margin-right: 1em;
+}
+
+#EventReviewIconsDesktop {
+  font-size: 32px;
 }
