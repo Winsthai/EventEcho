@@ -49,7 +49,9 @@ INSERT INTO event_participants (event_id, user_id) VALUES
 (5, 3),
 (5, 4);
 
-INSERT INTO private_event_invites (event_id, user_id) VALUES
+INSERT INTO event_invites (event_id, user_id) VALUES
+(1, 2),
+(1, 3),
 (3, 1),
 (3, 3),
 (5, 4);

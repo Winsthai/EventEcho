@@ -35,7 +35,7 @@ CREATE TABLE IF NOT EXISTS event_participants (
     PRIMARY KEY (event_id, user_id)
 );
 
-CREATE TABLE IF NOT EXISTS private_event_invites (
+CREATE TABLE IF NOT EXISTS event_invites (
     event_id INT REFERENCES events(id) ON DELETE CASCADE,
     user_id INT REFERENCES users(id) ON DELETE CASCADE,
     PRIMARY KEY (event_id, user_id)
