@@ -1,6 +1,7 @@
 import express from "express";
 import bcrypt from "bcryptjs"; // Import bcrypt for hashing passwords
 import client from "../index.js";
+import { userConfirmation } from "../utils/middleware.js";
 
 const userRouter = express.Router();
 const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\W).{8,}$/;
@@ -18,26 +19,33 @@ userRouter.post("/", async (request, response, next) => {
 
   // Validate username
   if (!username || /\s/.test(username) || username.length > 16) {
-    return response.status(400).json({ error: "Username must not contain spaces and must be 16 characters or less." });
-    }
+    return response.status(400).json({
+      error:
+        "Username must not contain spaces and must be 16 characters or less.",
+    });
+  }
   // Validate password
   if (!passwordRegex.test(password)) {
-    return response.status(400).json({ error: "Password must be at least 8 characters long and include at least one uppercase letter, one lowercase letter, and one special character." });
+    return response.status(400).json({
+      error:
+        "Password must be at least 8 characters long and include at least one uppercase letter, one lowercase letter, and one special character.",
+    });
   }
 
   // Validate email only if provided
   if (email && !emailRegex.test(email)) {
     return response.status(400).json({ error: "Invalid email format." });
-    }
+  }
 
   // Validate phone number
   if (!phonenum) {
     return response.status(400).json({ error: "Phone number is required." });
-    }
+  }
   if (!phoneRegex.test(phonenum)) {
-    return response.status(400).json({ error: "Phone number must be in the format +<country code><10 digits>." });
-    }
-
+    return response.status(400).json({
+      error: "Phone number must be in the format +<country code><10 digits>.",
+    });
+  }
 
   try {
     // Hash the password
@@ -57,11 +65,63 @@ userRouter.post("/", async (request, response, next) => {
   } catch (error) {
     if (error.code === "23505") {
       // Handle unique constraint violations (e.g., duplicate username or phone number)
-      response.status(409).json({ error: "Username or phone number already exists" });
+      response
+        .status(409)
+        .json({ error: "Username or phone number already exists" });
     } else {
       next(error); // Pass other errors to the error handler
     }
   }
 });
+
+// Get a user's currently created events
+// Requires a token to be provided representing the user which has created these events
+userRouter.get(
+  "/createdEvents",
+  userConfirmation,
+  async (request, response, next) => {
+    try {
+      const userId = request.userId;
+
+      // Select parameters needed for event cards
+      const result = await client.query(
+        `SELECT e.title, e.id, e.address, e.starttime, e.startdate, e.eventimage FROM events e JOIN event_creator ec ON e.id = ec.event_id WHERE ec.user_id = $1`,
+        [userId]
+      );
+
+      // Return the events
+      response.status(200).json({
+        events: result.rows,
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
+);
+
+// Get a user's currently registered events
+// Requires a token to be provided representing the user which has registered for these events
+userRouter.get(
+  "/registeredEvents",
+  userConfirmation,
+  async (request, response, next) => {
+    try {
+      const userId = request.userId;
+
+      // Select parameters needed for event cards
+      const result = await client.query(
+        `SELECT e.title, e.id, e.address, e.starttime, e.startdate, e.eventimage FROM events e JOIN event_participants ec ON e.id = ec.event_id WHERE ec.user_id = $1`,
+        [userId]
+      );
+
+      // Return the events
+      response.status(200).json({
+        events: result.rows,
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
+);
 
 export default userRouter;
