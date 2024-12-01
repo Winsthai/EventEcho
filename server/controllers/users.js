@@ -124,4 +124,107 @@ userRouter.get(
   }
 );
 
+// Get users, has optional search query to filter by search
+// search = <search Term>,
+userRouter.get("/allUsers", async (request, response, next) => {
+  try {
+    // Search query (optional)
+    const searchTerm = request.query.search || ""; // Default to empty string if no search term
+
+    let queryText = `SELECT u.id, u.username, u.firstname, u.lastname FROM users u WHERE 1=1`;
+    const queryParams = [];
+
+    // Apply search filter if search term is provided
+    if (searchTerm) {
+      queryText += ` AND (username ILIKE $1 OR firstname ILIKE $1 OR lastname ILIKE $1)`;
+      queryParams.push(`%${searchTerm}%`); // Ensure the search term is a string
+    }
+
+    // Select parameters needed for event cards
+    const result = await client.query(queryText, queryParams);
+
+    // Return the users
+    response.status(200).json({
+      users: result.rows,
+    });
+  } catch (error) {
+    next(error);
+  }
+});
+
+// Get a user's current friends
+// Requires a token to be provided representing the user who's friends will be retrieved
+userRouter.get(
+  "/friends",
+  userConfirmation,
+  async (request, response, next) => {
+    try {
+      const userId = request.userId;
+
+      // Select parameters needed for event cards
+      const result = await client.query(
+        `SELECT u.id, u.username, u.firstname, u.lastname, u.email, u.phonenum FROM users u JOIN friends_list fl ON u.id = fl.friend_id WHERE fl.user_id = $1`,
+        [userId]
+      );
+
+      // Return the users
+      response.status(200).json({
+        users: result.rows,
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
+);
+
+// Get a user's incoming friend requests
+// Requires a token to be provided representing the user who's friend requests will be retrieved
+userRouter.get(
+  "/incomingFriendRequests",
+  userConfirmation,
+  async (request, response, next) => {
+    try {
+      const userId = request.userId;
+
+      // Select parameters needed for event cards
+      const result = await client.query(
+        `SELECT u.id, u.username, u.firstname, u.lastname, u.email, u.phonenum FROM users u JOIN friend_requests fr ON u.id = fr.outgoing_request WHERE fr.incoming_request = $1`,
+        [userId]
+      );
+
+      // Return the users
+      response.status(200).json({
+        users: result.rows,
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
+);
+
+// Get a user's outgoing friend requests
+// Requires a token to be provided representing the user who's outgoing requests will be retrieved
+userRouter.get(
+  "/outgoingFriendRequests",
+  userConfirmation,
+  async (request, response, next) => {
+    try {
+      const userId = request.userId;
+
+      // Select parameters needed for event cards
+      const result = await client.query(
+        `SELECT u.id, u.username, u.firstname, u.lastname, u.email, u.phonenum FROM users u JOIN friend_requests fr ON u.id = fr.incoming_request WHERE fr.outgoing_request = $1`,
+        [userId]
+      );
+
+      // Return the users
+      response.status(200).json({
+        users: result.rows,
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
+);
+
 export default userRouter;
