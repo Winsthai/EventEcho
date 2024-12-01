@@ -13,7 +13,7 @@ import CalendarMonthIcon from "@mui/icons-material/CalendarMonth";
 import AccessTimeIcon from "@mui/icons-material/AccessTime";
 import LocationOnIcon from "@mui/icons-material/LocationOn";
 import { useParams, useNavigate } from "react-router-dom";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import dayjs from "dayjs";
 import logo from "../../images/logo.png";
 
@@ -148,7 +148,8 @@ const ReviewEventPage = ({
     }
   }
 
-  async function addEventTodb() {
+  async function addEventTodb(cloudinaryLink) {
+    // if (eventDetails.eventimage.includes("cloudinary")) {
     try {
       const response = await fetch("http://localhost:3001/api/events", {
         method: "POST",
@@ -170,7 +171,7 @@ const ReviewEventPage = ({
           endtime: eventDetails.endtime,
           endtimeraw: eventDetails.endtimeraw,
           visibility: eventDetails.visibility,
-          eventimage: eventDetails.eventimage
+          eventimage: cloudinaryLink
         })
       });
 
@@ -184,10 +185,12 @@ const ReviewEventPage = ({
     } catch (error) {
       console.log("some error here", error);
     }
+    // }
   };
 
   const handlePostEvent = async (url) => {
     // upload to cloud
+    let uploadedImageURL;
     if (eventDetails.imageform !== null) {
       const response = await fetch(
         `https://api.cloudinary.com/v1_1/dk7v80lgt/image/upload`,
@@ -197,14 +200,11 @@ const ReviewEventPage = ({
         }
       );
 
-      const uploadedImageURL = await response.json();
+      uploadedImageURL = await response.json();
       console.log(uploadedImageURL.url);
-      await setEventDetails({ ...eventDetails, eventimage: "uploadedImageURL.url" });
-      console.log(eventDetails);
     }
 
-    // make api call to push to db here
-    //await addEventTodb();
+    addEventTodb(uploadedImageURL.url);
 
     navigate(url);
   };
