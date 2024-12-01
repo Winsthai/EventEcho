@@ -148,10 +148,48 @@ const ReviewEventPage = ({
     }
   }
 
+  async function addEventTodb() {
+    try {
+      const response = await fetch("http://localhost:3001/api/events", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${localStorage.authToken}`
+        },
+        body: JSON.stringify({
+          title: eventDetails.title,
+          eventtype: eventDetails.eventtype,
+          description: eventDetails.description,
+          address: eventDetails.address,
+          startdate: eventDetails.startdate,
+          startdateraw: eventDetails.startdateraw,
+          starttime: eventDetails.starttime,
+          starttimeraw: eventDetails.starttimeraw,
+          enddate: eventDetails.enddate,
+          enddateraw: eventDetails.enddateraw,
+          endtime: eventDetails.endtime,
+          endtimeraw: eventDetails.endtimeraw,
+          visibility: eventDetails.visibility,
+          eventimage: eventDetails.eventimage
+        })
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        console.log(errorData);
+      }
+
+      const data = await response.json();
+      console.log("event created", data);
+    } catch (error) {
+      console.log("some error here", error);
+    }
+  };
+
   const handlePostEvent = async (url) => {
     // upload to cloud
     if (eventDetails.imageform !== null) {
-      const res = await fetch(
+      const response = await fetch(
         `https://api.cloudinary.com/v1_1/dk7v80lgt/image/upload`,
         {
           method: "POST",
@@ -159,12 +197,15 @@ const ReviewEventPage = ({
         }
       );
 
-      const uploadedImageURL = await res.json();
+      const uploadedImageURL = await response.json();
       console.log(uploadedImageURL.url);
-      setEventDetails({ ...eventDetails, eventimage: uploadedImageURL.url });
+      await setEventDetails({ ...eventDetails, eventimage: "uploadedImageURL.url" });
       console.log(eventDetails);
     }
+
     // make api call to push to db here
+    //await addEventTodb();
+
     navigate(url);
   };
 
@@ -621,26 +662,26 @@ const ReviewEventPage = ({
           {invitedGuests.length === 0
             ? "Consider inviting some guests!"
             : invitedGuests.map((id, index) => {
-                const contact = contacts.find((contact) => contact.id === id);
-                return (
-                  <Box
-                    sx={{
-                      display: "flex",
-                      alignItems: "center",
-                      marginBottom: 2,
-                    }}
-                    key={id}
-                  >
-                    <div className="ReviewEventPage-desktop-avatar">
-                      {contact.name[0].toUpperCase()}
-                      {contact.name.split(" ")[1][0].toUpperCase()}
-                    </div>
-                    <Box sx={{ display: "flex", flexDirection: "column" }}>
-                      <h1 id="EventReviewNamesDesktop">{contact.name}</h1>
-                    </Box>
+              const contact = contacts.find((contact) => contact.id === id);
+              return (
+                <Box
+                  sx={{
+                    display: "flex",
+                    alignItems: "center",
+                    marginBottom: 2,
+                  }}
+                  key={id}
+                >
+                  <div className="ReviewEventPage-desktop-avatar">
+                    {contact.name[0].toUpperCase()}
+                    {contact.name.split(" ")[1][0].toUpperCase()}
+                  </div>
+                  <Box sx={{ display: "flex", flexDirection: "column" }}>
+                    <h1 id="EventReviewNamesDesktop">{contact.name}</h1>
                   </Box>
-                );
-              })}
+                </Box>
+              );
+            })}
         </Box>
 
         {/* Post event / send invites button */}
