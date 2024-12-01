@@ -100,3 +100,32 @@ export const creatorConfirmation = async (request, _response, next) => {
     return next(jwt.JsonWebTokenError); // Wrong authorization header
   }
 };
+
+export const specificUserConfirmation = async (request, _response, next) => {
+  let token;
+
+  const id = request.params.id;
+
+  const authorization = request.get("authorization");
+  if (authorization && authorization.startsWith("Bearer ")) {
+    token = authorization.replace("Bearer ", "");
+
+    try {
+      const decodedToken = jwt.verify(token, SECRET);
+
+      // Ensure the token is the correct valid user ID or is of role admin
+      if (
+        !(decodedToken.id && decodedToken.id == id) &&
+        decodedToken.role !== "admin"
+      ) {
+        return next(jwt.JsonWebTokenError);
+      }
+
+      next();
+    } catch (error) {
+      return next(error);
+    }
+  } else {
+    return next(jwt.JsonWebTokenError); // Wrong authorization header
+  }
+};

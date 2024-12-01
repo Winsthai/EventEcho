@@ -1,7 +1,10 @@
 import express from "express";
 import bcrypt from "bcryptjs"; // Import bcrypt for hashing passwords
 import client from "../index.js";
-import { userConfirmation } from "../utils/middleware.js";
+import {
+  specificUserConfirmation,
+  userConfirmation,
+} from "../utils/middleware.js";
 
 const userRouter = express.Router();
 const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\W).{8,}$/;
@@ -249,5 +252,69 @@ userRouter.get(
     }
   }
 );
+
+// Accept a friend request
+// Url: (id in url should be the id of the user who is accepting the request)
+// Body contains the id of the user who sent them the request (outgoingRequestId: <person who sent id>)
+// Requires a token to be provided representing the user who is accepting the friend request
+userRouter.post(
+  "/incomingFriendRequests/:id",
+  specificUserConfirmation,
+  async (request, response, next) => {
+    const incomingRequestId = request.params.id;
+    const { outgoingRequestId } = request.body;
+
+    try {
+      // Start a transaction
+      await client.query("BEGIN");
+
+      // Check if the friend request exists before trying to delete
+      const checkRequestResult = await client.query(
+        `SELECT * FROM friend_requests WHERE outgoing_request = $1 AND incoming_request = $2`,
+        [outgoingRequestId, incomingRequestId]
+      );
+
+      // If no friend request exists
+      if (checkRequestResult.rowCount === 0) {
+        await client.query("ROLLBACK"); // Discard the transaction
+        return response.status(404).json({
+          error: "Friend request not found",
+        });
+      }
+
+      // Delete the friend request
+      await client.query(
+        `DELETE FROM friend_requests WHERE outgoing_request = $1 AND incoming_request = $2`,
+        [outgoingRequestId, incomingRequestId]
+      );
+
+      // Add both users to the friends list (mutual friendship)
+      await client.query(
+        `INSERT INTO friends_list (user_id, friend_id) VALUES ($1, $2), ($2, $1)`,
+        [outgoingRequestId, incomingRequestId]
+      );
+
+      // Commit the transaction
+      await client.query("COMMIT");
+
+      // Return the users
+      response.status(200).json({
+        message: `UserId ${incomingRequestId} accepted friend request from UserId ${outgoingRequestId}`,
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
+);
+
+// Send a friend request
+
+// Add admin endpoint
+
+// Get invited users for an event?
+
+// ADD THIS: for private event: only participants can view details/register
+
+// Banning user (only for admin)
 
 export default userRouter;
