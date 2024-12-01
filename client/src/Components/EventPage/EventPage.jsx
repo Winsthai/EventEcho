@@ -18,49 +18,11 @@ import SportsEsportsIcon from "@mui/icons-material/SportsEsports";
 
 import "./EventPage.css";
 
-const events = [
-  {
-    id: "1",
-    title: "Football Game",
-    eventtype: "Sports",
-    description: "A friendly neighborhood football game.",
-    address: "123 Stadium Rd, City",
-    coordinates: {
-      x: 40.7128,
-      y: -74.006,
-    },
-    startdate: "2024-11-15",
-    starttime: "15:00:00+00",
-    enddate: "2024-11-15",
-    endtime: "17:00:00+00",
-    visibility: true,
-    image:
-      "https://m.media-amazon.com/images/M/MV5BOWZiNzZkZGEtMWEwOS00NjZkLWFmYTctZmQyMDY3NGU0OWZjXkEyXkFqcGc@._V1_.jpg", // temporary
-  },
-  {
-    id: "2",
-    title: "Jazz Concert",
-    eventtype: "Music",
-    description: "Live jazz performance.",
-    address: "456 Music Hall Ave, City",
-    coordinates: {
-      x: 40.7306,
-      y: -73.9352,
-    },
-    startdate: "2024-12-01",
-    starttime: "19:00:00+00",
-    enddate: "2024-12-01",
-    endtime: "21:00:00+00",
-    visibility: true,
-    image:
-      "https://www.horizonsmusic.co.uk/cdn/shop/articles/image1_1600x1600.jpg?v=1621417277", // temporary
-  },
-];
-
 const EventPage = () => {
   const { id } = useParams();
   const navigate = useNavigate();
-  const [event, setEvent] = useState(null);
+  const [event, setEvent] = useState(null); // []
+  const [error, setError] = useState("");
 
   const handleClick = (url) => {
     navigate(url);
@@ -70,11 +32,38 @@ const EventPage = () => {
   const isMobile = useMediaQuery("(max-width:600px)");
   const onEditPage = location.pathname.includes("edit");
 
-  // check which id is in test data. useEffect. Tell it to get event based on ID. useEffect runs when the page is loaded
+  // Query event from the API
+  async function fetchEvent(eventId) {
+    // Generate API Url
+    const APIUrl = `http://localhost:3001/api/events/${eventId}`;
+
+    try {
+      // Fetch and store results from API URL
+      setError("");
+      const response = await fetch(APIUrl);
+      const data = await response.json();
+      console.log("API Response:", data); // Debugging output
+      // Error message
+      if (!response.ok) {
+        throw new Error(data.error || "An unexpected error occurred");
+      }
+
+      setEvent(data.event);
+      return data;
+    } catch (e) {
+      setError(e.message);
+    }
+  }
+
   useEffect(() => {
-    const result = events.find((element) => element.id === id);
-    setEvent(result);
-  }, []); // empty array, means it doesn't rerun
+    if (id) {
+      fetchEvent(id);
+    }
+  }, [id]);
+
+  if (error) {
+    return <div>Error: {error}</div>;
+  }
 
   // Happens if component first renders, and event state is initially null, and we try accessing fields before it has data
   if (!event) {
@@ -82,13 +71,47 @@ const EventPage = () => {
     return;
   }
 
-  // Have to do some weird stuff because "startdate" "starttime" "enddate" "endtime" are not formatted properly?
-  const startDateTime = new Date(
-    `${event.startdate.slice(0, 10)}T${event.starttime.slice(0, 8)}+00:00`
-  );
-  const endDateTime = new Date(
-    `${event.enddate.slice(0, 10)}T${event.endtime.slice(0, 8)}+00:00`
-  );
+  let reviewTime, reviewDate, startTimeTrimmed, endTimeTrimmed;
+  
+
+  startTimeTrimmed = event.starttime.slice(0, -6);
+  // End time exists
+  if (event.endtime !== null) {
+    endTimeTrimmed = event.endtime.slice(0, -6);
+    reviewTime = startTimeTrimmed.concat(" - ", endTimeTrimmed);
+  }
+  else {
+    reviewTime = startTimeTrimmed.concat(" - TBD");
+  }
+
+  // end date exists
+  if (event.enddate !== null) {
+      reviewDate = event.startdate.slice(0, 10).concat(" - ", event.enddate.slice(0, 10));
+  } else {
+    reviewDate = event.startdate.slice(0, 10);
+  }
+
+  const getIcon = (type) => {
+    switch (type) {
+      case "Sports":
+        return <SportsBasketballIcon />;
+      case "Music":
+        return <MusicNoteIcon />;
+      case "Food":
+        return <LocalDiningIcon />;
+      case "Art":
+        return <ColorLensIcon />;
+      case "Hangout":
+        return <GroupsIcon />;
+      case "Gaming":
+        return <SportsEsportsIcon />;
+      default:
+        return null;
+    }
+  };
+
+  const eventIcon = getIcon(event.eventtype);
+
 
   if (isMobile) {
     // Mobile component
@@ -149,11 +172,16 @@ const EventPage = () => {
             pt: "4.5rem",
           }}
         >
-          <Box
-            component="img"
-            id="EventPagePhotoBackground"
-            src={event.image}
-          ></Box>
+          {event.eventimage ? (
+            <Box
+              component="img"
+              id="EventPagePhotoBackground"
+              src={event.eventimage}
+              alt="Event background"
+            />
+          ) : (
+            <Box id="EventPagePhotoBackground">temp</Box>
+          )}
         </Box>
 
         {/* Event Details */}
@@ -177,11 +205,7 @@ const EventPage = () => {
             >
               <CalendarMonthIcon />
               <p id="EventPageP">
-                {new Date(event.startdate).toLocaleDateString("en-US", {
-                  weekday: "long",
-                  month: "long",
-                  day: "numeric",
-                })}
+                {reviewDate}
               </p>
             </Stack>
             {/* Time */}
@@ -193,18 +217,7 @@ const EventPage = () => {
             >
               <AccessTimeIcon />
               <p id="EventPageP">
-                {startDateTime.toLocaleTimeString("en-US", {
-                  hour: "numeric",
-                  minute: "numeric",
-                  hour12: true,
-                })}{" "}
-                -{" "}
-                {/* This comment apparently helps for whitespace. dont delete LOL. not a joke */}
-                {endDateTime.toLocaleTimeString("en-US", {
-                  hour: "numeric",
-                  minute: "numeric",
-                  hour12: true,
-                })}
+                {reviewTime}
               </p>
             </Stack>
             {/* Address */}
@@ -218,6 +231,37 @@ const EventPage = () => {
               <p id="EventPageP">{event.address}</p>
             </Stack>
           </Stack>
+
+          {/* Event type */}
+          <h1
+            id="EventReviewHeader"
+            style={{
+              marginBottom: 0,
+              paddingBottom: 0,
+            }}
+          >
+            Event Type
+          </h1>
+          {/* Event Type Tag */}
+          <Box
+            sx={{
+              display: "inline-flex", // Tag doesn't take up full container width, only its content
+              alignItems: "center",
+              gap: "0.5rem", // Space between mui icon / tag
+              marginTop: "0.5rem",
+              marginBottom: "0.5rem",
+              backgroundColor: "#ff7474", // color
+              borderRadius: "20px",
+              padding: "0.5rem 1rem", // make button bigger
+              color: "white", // font color
+              fontWeight: "bold",
+              textTransform: "uppercase", // Make text all caps (to match the filters box on homepage)
+            }}
+          >
+            {eventIcon}
+            {event.eventtype}
+          </Box>
+
           {/* Event Description */}
           <Box
             sx={{
@@ -276,10 +320,9 @@ const EventPage = () => {
           marginBottom="2.5rem"
           borderRadius="20px"
           sx={{
-            padding: "2rem 20rem", // Padding for all items inside the white box
+            padding: "2vh 3vw", // Padding for all items inside the white box
           }}
         >
-          {/* Put picture on the left, and Event Details to its right */}
           <Box
             sx={{
               alignItems: "center", // Center vertically
@@ -287,8 +330,6 @@ const EventPage = () => {
             }}
           >
             {/* Event Picture */}
-            {/* TODO: implement this when possible */}
-
             <Box
               sx={{
                 position: "relative", // Allow pseudo-element positioning
@@ -305,25 +346,31 @@ const EventPage = () => {
                   left: 0,
                   width: "100%",
                   height: "100%",
-                  backgroundImage: `url(${event.image})`,
+                  // Note: No blur exists if the event doesn't have an image
+                  backgroundImage: `url(${event.eventimage})`,
                   backgroundSize: "cover",
                   backgroundPosition: "center",
                   filter: "blur(20px)", // Adjust blur intensity
-                  transform: "scale(1.1)", // Slightly zoom out for better blur
+                  transform: "scale(1.1)", // Slightly zoom out
                   zIndex: 1, // Place behind the image
                 }}
               ></Box>
 
               {/* Event Image */}
-              <Box
-                component="img"
-                id="EventPagePhotoBackgroundDesktop"
-                src={event.image}
-                sx={{
-                  position: "relative",
-                  zIndex: 2, // Place above the blur
-                }}
-              />
+              {event.eventimage ? (
+                <Box
+                  component="img"
+                  id="EventPagePhotoBackgroundDesktop"
+                  src={event.eventimage}
+                  alt="Event background"
+                  sx={{
+                    position: "relative",
+                    zIndex: 2, // Place above the blur
+                  }}
+                />
+              ) : (
+                <Box id="EventPageNoPhotoDesktop">temp</Box>
+              )}
             </Box>
             {/* Event Title */}
           </Box>
@@ -349,13 +396,9 @@ const EventPage = () => {
                   spacing={1}
                   color="text.secondary"
                 >
-                  <CalendarMonthIcon id="EventPageIconsDesktop"/>
+                  <CalendarMonthIcon id="EventPageIconsDesktop" />
                   <p id="EventPagePDesktop">
-                    {new Date(event.startdate).toLocaleDateString("en-US", {
-                      weekday: "long",
-                      month: "long",
-                      day: "numeric",
-                    })}
+                    {reviewDate}
                   </p>
                 </Stack>
                 {/* Time */}
@@ -365,19 +408,9 @@ const EventPage = () => {
                   spacing={1.2}
                   color="text.secondary"
                 >
-                  <AccessTimeIcon id="EventPageIconsDesktop"/>
+                  <AccessTimeIcon id="EventPageIconsDesktop" />
                   <p id="EventPagePDesktop">
-                    {startDateTime.toLocaleTimeString("en-US", {
-                      hour: "numeric",
-                      minute: "numeric",
-                      hour12: true,
-                    })}{" "}
-                    -{" "} {/* Add spaces to the left and right of - */}
-                    {endDateTime.toLocaleTimeString("en-US", {
-                      hour: "numeric",
-                      minute: "numeric",
-                      hour12: true,
-                    })}
+                  {reviewTime}
                   </p>
                 </Stack>
                 {/* Address */}
@@ -387,7 +420,7 @@ const EventPage = () => {
                   spacing={1.2}
                   color="text.secondary"
                 >
-                  <LocationOnIcon id="EventPageIconsDesktop"/>
+                  <LocationOnIcon id="EventPageIconsDesktop" />
                   <p id="EventPagePDesktop">{event.address}</p>
                 </Stack>
               </Stack>
@@ -418,16 +451,9 @@ const EventPage = () => {
                 textTransform: "uppercase", // Make text all caps (to match the filters box on homepage)
               }}
             >
-              {/* Event Type Icon */}
-              {event.eventtype === "Sports" && <SportsBasketballIcon />}
-              {event.eventtype === "Music" && <MusicNoteIcon />}
-              {event.eventtype === "Food" && <LocalDiningIcon />}
-              {event.eventtype === "Art" && <ColorLensIcon />}
-              {event.eventtype === "Hangout" && <GroupsIcon />}
-              {event.eventtype === "Gaming" && <SportsEsportsIcon />}
-
-              {/* Event Type Text */}
+              {eventIcon}
               {event.eventtype}
+
             </Box>
 
             {/* Event Description */}

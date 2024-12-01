@@ -1,58 +1,73 @@
 #EventPageP {
-    color: #333333;
-    font-size: 14px;
+  color: #333333;
+  font-size: 14px;
 }
 
 #EventPageED {
-    color: #1D1D1D;
-    font-size: 18px;
-    margin-bottom: 0px;
+  color: #1d1d1d;
+  font-size: 18px;
+  margin-bottom: 0px;
 }
 
 #EventPageTitle {
-    color: #1D1D1D;
-    font-size: 24px;
+  color: #1d1d1d;
+  font-size: 24px;
 }
 
 #EventPageHeader {
-    color: #FFFFFF;
-    font-size: 24px;
+  color: #ffffff;
+  font-size: 24px;
 }
 
 #EventPagePDesktop {
-    color: #333333;
-    font-size: 30px;
+  color: #333333;
+  font-size: 30px;
 }
 
 #EventPageEDDesktop {
-    color: #1D1D1D;
-    font-size: 40px;
+  color: #1d1d1d;
+  font-size: 40px;
 }
 
 #EventPageTitleDesktop {
-    color: #1D1D1D;
-    font-size: 48px;
-    margin-bottom: 0.5rem;
+  color: #1d1d1d;
+  font-size: 48px;
+  margin-bottom: 0.5rem;
 }
 
 #EventPageHeaderDesktop {
-    color: #1D1D1D;
-    font-size: 40px;
+  color: #1d1d1d;
+  font-size: 40px;
 }
 
 #EventPagePhotoBackground {
-    background-color: gray;
-    height: 300px;
-    border-radius: 15px;
+  background-color: gray;
+  height: 300px;
+  border-radius: 15px;
+  min-width: 50%;
+  margin-left: 24px;
+  margin-right: 24px;
 }
 
 #EventPagePhotoBackgroundDesktop {
-    background-color: gray;
-    height: 550px;
-    max-width: 60vw;
-    border-radius: 15px;
+  background-color: gray;
+  height: 550px;
+  max-width: 60vw;
+  border-radius: 15px;
 }
 
 #EventPageIconsDesktop {
-    font-size: 32px;
+  font-size: 32px;
+}
+
+#EventPageNoPhotoDesktop {
+  background-color: gray;
+  height: 550px;
+  max-width: 60vw;
+  border-radius: 15px;
+
+  margin: 0 auto;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
