@@ -24,6 +24,8 @@ const SignUpPage = () => {
     const [phonenum, setPhonenum] = useState("");
     const [password, setPassword] = useState("");
     const [confirmPassword, setConfirmPassword] = useState("");
+    const [firstname, setFirstname] = useState("");
+    const [lastname, setLastname] = useState("");
     const [error, setError] = useState(false);
     const [formError, setFormError] = useState("");
 
@@ -56,7 +58,7 @@ const SignUpPage = () => {
     };
 
     const handleCreateAccount = async () => {
-        if (!username || !phonenum || !password || !confirmPassword) {
+        if (!username || !phonenum || !password || !confirmPassword || !firstname || !lastname) {
           console.log(`username: ${username}, password: ${password}, phonenum: ${phonenum}, confirm: ${confirmPassword}`);
           setFormError("Please fill out all required fields.");
           return;
@@ -77,6 +79,8 @@ const SignUpPage = () => {
               },
               body: JSON.stringify({
                 username,
+                firstname,
+                lastname,
                 email,
                 phonenum,
                 password,
@@ -125,6 +129,18 @@ const SignUpPage = () => {
                         variant="standard"
                         value={username}
                         onChange={(e) => setUsername(e.target.value)}  />
+
+                        <TextField 
+                        label="First Name*" 
+                        variant="standard"
+                        value={firstname}
+                        onChange={(e) => setFirstname(e.target.value)}  />
+
+                        <TextField 
+                        label="Last Name*" 
+                        variant="standard"
+                        value={lastname}
+                        onChange={(e) => setLastname(e.target.value)}  />
                         
                         <PasswordBox label="Password*" onChange={handlePasswordChange} />
                         <PasswordBox label="Confirm Password*" onChange={handleConfirmPasswordChange} />
@@ -186,6 +202,18 @@ const SignUpPage = () => {
                         variant="standard"
                         value={username}
                         onChange={(e) => setUsername(e.target.value)}  />
+
+                        <TextField 
+                        label="First Name*" 
+                        variant="standard"
+                        value={firstname}
+                        onChange={(e) => setFirstname(e.target.value)}  />
+
+                        <TextField 
+                        label="Last Name*" 
+                        variant="standard"
+                        value={lastname}
+                        onChange={(e) => setLastname(e.target.value)}  />
                         
                         <PasswordBox label="Password*" onChange={handlePasswordChange} />
                         <PasswordBox label="Confirm Password*" onChange={handleConfirmPasswordChange} />
