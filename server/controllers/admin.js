@@ -106,4 +106,31 @@ adminRouter.patch("/unbanUser/:id", async (request, result, next) => {
   }
 });
 
+// Get all banned users
+adminRouter.get("/bannedUsers", async (request, response, next) => {
+  try {
+    // Search query (optional)
+    const searchTerm = request.query.search || ""; // Default to empty string if no search term
+
+    let queryText = `SELECT u.id, u.username, u.firstname, u.lastname FROM users u WHERE u.status = 3`;
+    const queryParams = [];
+
+    // Apply search filter if search term is provided
+    if (searchTerm) {
+      queryText += ` AND (username ILIKE $1 OR firstname ILIKE $1 OR lastname ILIKE $1)`;
+      queryParams.push(`%${searchTerm}%`); // Ensure the search term is a string
+    }
+
+    // Select parameters needed for event cards
+    const result = await client.query(queryText, queryParams);
+
+    // Return the users
+    response.status(200).json({
+      users: result.rows,
+    });
+  } catch (error) {
+    next(error);
+  }
+});
+
 export default adminRouter;
