@@ -5,6 +5,7 @@ import LocationOnIcon from "@mui/icons-material/LocationOn";
 import CalendarMonthIcon from "@mui/icons-material/CalendarMonth";
 import "./EventCardStyles.css";
 import { useNavigate } from "react-router-dom";
+import logo from "../../images/logo.png";
 
 const EventCard = ({ event, variant = "" }) => {
   // Use media query to check if screen width is less than 600px (mobile view)
@@ -20,21 +21,19 @@ const EventCard = ({ event, variant = "" }) => {
     `${event.startdate.slice(0, 10)}T${event.starttime.slice(0, 8)}+00:00`
   );
 
+  let imageUrl = event.eventimage ? event.eventimage : logo;
+
   if (isMobile) {
     return (
       <Box
         className="homeUpcomingEventBox"
         onClick={() => navigate(`/event/${event.id}`)}
       >
-        {event.image ? (
-          <Box
-            component="img"
-            className="homeUpcomingEventPhoto"
-            src={event.image}
-          ></Box>
-        ) : (
-          <Box className="homeUpcomingEventPhoto">temp</Box>
-        )}
+        <Box
+          component="img"
+          className="homeUpcomingEventPhoto"
+          src={imageUrl}
+        ></Box>
 
         <Stack className="homeUpcomingEventDetails">
           {/* Date */}
@@ -146,15 +145,12 @@ const EventCard = ({ event, variant = "" }) => {
         className="homeUpcomingEventBoxDesktop"
         onClick={() => navigate(`/event/${event.id}`)}
       >
-        {event.image ? (
-          <Box
-            component="img"
-            className="homeUpcomingEventPhoto"
-            src={event.image}
-          ></Box>
-        ) : (
-          <Box className="homeUpcomingEventPhoto">temp</Box>
-        )}
+        <Box
+          component="img"
+          className="homeUpcomingEventPhoto"
+          src={imageUrl}
+        ></Box>
+
         <Stack className="homeUpcomingEventDetailsDesktop" direction="row">
           <Box className="homeEventNameDesktop"> {event.title} </Box>
 

@@ -8,6 +8,7 @@ import AccessTimeIcon from "@mui/icons-material/AccessTime";
 import LocationOnIcon from "@mui/icons-material/LocationOn";
 import { AppBar, Toolbar, IconButton, Typography } from "@mui/material";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
+import logo from "../../images/logo.png";
 
 import SportsBasketballIcon from "@mui/icons-material/SportsBasketball";
 import MusicNoteIcon from "@mui/icons-material/MusicNote";
@@ -72,21 +73,21 @@ const EventPage = () => {
   }
 
   let reviewTime, reviewDate, startTimeTrimmed, endTimeTrimmed;
-  
 
   startTimeTrimmed = event.starttime.slice(0, -6);
   // End time exists
   if (event.endtime !== null) {
     endTimeTrimmed = event.endtime.slice(0, -6);
     reviewTime = startTimeTrimmed.concat(" - ", endTimeTrimmed);
-  }
-  else {
+  } else {
     reviewTime = startTimeTrimmed.concat(" - TBD");
   }
 
   // end date exists
   if (event.enddate !== null) {
-      reviewDate = event.startdate.slice(0, 10).concat(" - ", event.enddate.slice(0, 10));
+    reviewDate = event.startdate
+      .slice(0, 10)
+      .concat(" - ", event.enddate.slice(0, 10));
   } else {
     reviewDate = event.startdate.slice(0, 10);
   }
@@ -112,6 +113,7 @@ const EventPage = () => {
 
   const eventIcon = getIcon(event.eventtype);
 
+  let imageUrl = event.eventimage ? event.eventimage : logo;
 
   if (isMobile) {
     // Mobile component
@@ -164,7 +166,6 @@ const EventPage = () => {
         </Box>
 
         {/* Event Picture */}
-        {/* TODO: implement this when possible */}
         <Box
           sx={{
             display: "flex",
@@ -172,16 +173,12 @@ const EventPage = () => {
             pt: "4.5rem",
           }}
         >
-          {event.eventimage ? (
-            <Box
-              component="img"
-              id="EventPagePhotoBackground"
-              src={event.eventimage}
-              alt="Event background"
-            />
-          ) : (
-            <Box id="EventPagePhotoBackground">temp</Box>
-          )}
+          <Box
+            component="img"
+            id="EventPagePhotoBackground"
+            src={event.eventimage}
+            alt="Event background"
+          />
         </Box>
 
         {/* Event Details */}
@@ -204,9 +201,7 @@ const EventPage = () => {
               color="text.secondary"
             >
               <CalendarMonthIcon />
-              <p id="EventPageP">
-                {reviewDate}
-              </p>
+              <p id="EventPageP">{reviewDate}</p>
             </Stack>
             {/* Time */}
             <Stack
@@ -216,9 +211,7 @@ const EventPage = () => {
               color="text.secondary"
             >
               <AccessTimeIcon />
-              <p id="EventPageP">
-                {reviewTime}
-              </p>
+              <p id="EventPageP">{reviewTime}</p>
             </Stack>
             {/* Address */}
             <Stack
@@ -346,8 +339,8 @@ const EventPage = () => {
                   left: 0,
                   width: "100%",
                   height: "100%",
-                  // Note: No blur exists if the event doesn't have an image
-                  backgroundImage: `url(${event.eventimage})`,
+                  backgroundColor: "gray", // just in case the event echo logo is used
+                  backgroundImage: `url(${imageUrl})`,
                   backgroundSize: "cover",
                   backgroundPosition: "center",
                   filter: "blur(20px)", // Adjust blur intensity
@@ -357,25 +350,22 @@ const EventPage = () => {
               ></Box>
 
               {/* Event Image */}
-              {event.eventimage ? (
-                <Box
-                  component="img"
-                  id="EventPagePhotoBackgroundDesktop"
-                  src={event.eventimage}
-                  alt="Event background"
-                  sx={{
-                    position: "relative",
-                    zIndex: 2, // Place above the blur
-                  }}
-                />
-              ) : (
-                <Box id="EventPageNoPhotoDesktop">temp</Box>
-              )}
+              <Box
+                component="img"
+                id="EventPagePhotoBackgroundDesktop"
+                src={imageUrl}
+                alt="Event background"
+                sx={{
+                  position: "relative",
+                  zIndex: 2, // Place above the blur
+                }}
+              />
             </Box>
-            {/* Event Title */}
           </Box>
+
           {/* Event Information (time, date, title, description, etc.)*/}
           <Box>
+            {/* Event Title + */}
             {/* Date, time, and address */}
             <Box
               sx={{
@@ -397,9 +387,7 @@ const EventPage = () => {
                   color="text.secondary"
                 >
                   <CalendarMonthIcon id="EventPageIconsDesktop" />
-                  <p id="EventPagePDesktop">
-                    {reviewDate}
-                  </p>
+                  <p id="EventPagePDesktop">{reviewDate}</p>
                 </Stack>
                 {/* Time */}
                 <Stack
@@ -409,9 +397,7 @@ const EventPage = () => {
                   color="text.secondary"
                 >
                   <AccessTimeIcon id="EventPageIconsDesktop" />
-                  <p id="EventPagePDesktop">
-                  {reviewTime}
-                  </p>
+                  <p id="EventPagePDesktop">{reviewTime}</p>
                 </Stack>
                 {/* Address */}
                 <Stack
@@ -453,7 +439,6 @@ const EventPage = () => {
             >
               {eventIcon}
               {event.eventtype}
-
             </Box>
 
             {/* Event Description */}

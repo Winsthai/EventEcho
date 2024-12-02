@@ -60,7 +60,7 @@ export const userConfirmation = (request, _response, next) => {
   }
 };
 
-export const creatorConfirmation = async (request, _response, next) => {
+export const creatorConfirmation = async (request, response, next) => {
   let token;
 
   const id = request.params.id;
@@ -79,7 +79,9 @@ export const creatorConfirmation = async (request, _response, next) => {
       );
 
       if (result.rowCount === 0) {
-        return response.status(404).json({ error: "Id not found" });
+        return response
+          .status(404)
+          .json({ error: `Event with id ${id} does not exist` });
       }
 
       const userId = result.rows[0].user_id;
@@ -87,6 +89,35 @@ export const creatorConfirmation = async (request, _response, next) => {
       // Ensure the token contains a valid user ID or is of role admin
       if (
         !(decodedToken.id && decodedToken.id == userId) &&
+        decodedToken.role !== "admin"
+      ) {
+        return next(jwt.JsonWebTokenError);
+      }
+
+      next();
+    } catch (error) {
+      return next(error);
+    }
+  } else {
+    return next(jwt.JsonWebTokenError); // Wrong authorization header
+  }
+};
+
+export const specificUserConfirmation = async (request, _response, next) => {
+  let token;
+
+  const id = request.params.id;
+
+  const authorization = request.get("authorization");
+  if (authorization && authorization.startsWith("Bearer ")) {
+    token = authorization.replace("Bearer ", "");
+
+    try {
+      const decodedToken = jwt.verify(token, SECRET);
+
+      // Ensure the token is the correct valid user ID or is of role admin
+      if (
+        !(decodedToken.id && decodedToken.id == id) &&
         decodedToken.role !== "admin"
       ) {
         return next(jwt.JsonWebTokenError);

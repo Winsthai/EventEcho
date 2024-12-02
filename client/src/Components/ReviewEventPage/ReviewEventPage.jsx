@@ -284,6 +284,21 @@ const ReviewEventPage = ({
               eventDetails.imageform === null ? logo : eventDetails.eventimage
             }
           ></Box>
+          {onEditPage ? (
+            <Box
+              component="img"
+              id="EventReviewPhoto"
+              src={imageUrl}
+            ></Box>
+          ) : (
+            <Box
+              component="img"
+              id="EventReviewPhoto"
+              src={
+                imageUrl
+              }
+            ></Box>
+          )}
         </Box>
 
         {/* Event Details */}
@@ -483,7 +498,7 @@ const ReviewEventPage = ({
                 left: 0,
                 width: "100%",
                 height: "100%",
-                // Note: No blur exists if the event doesn't have an image
+                backgroundColor: "gray",
                 backgroundImage: `url(${imageUrl})`,
                 backgroundSize: "cover",
                 backgroundPosition: "center",
@@ -507,6 +522,29 @@ const ReviewEventPage = ({
                 zIndex: 2, // Place above the blur
               }}
             ></Box>
+            {onEditPage ? (
+              <Box
+                component="img"
+                id="EventReviewPhotoDesktop"
+                src={imageUrl}
+                sx={{
+                  position: "relative",
+                  zIndex: 2, // Place above the blur
+                }}
+              ></Box>
+            ) : (
+              <Box
+                component="img"
+                id="EventReviewPhotoDesktop"
+                src={
+                  imageUrl
+                }
+                sx={{
+                  position: "relative",
+                  zIndex: 2, // Place above the blur
+                }}
+              ></Box>
+            )}
           </Box>
         </Box>
 
@@ -610,7 +648,7 @@ const ReviewEventPage = ({
         </Box>
 
         {/* Guest List */}
-        <h1 id="EventReviewHeaderDesktop">Guest List</h1>
+        <h1 id="EventReviewHeaderDesktop" style={{ marginBottom: "0.5rem" }}>Guest List</h1>
         <Box
           sx={{
             display: "flex",
@@ -620,7 +658,7 @@ const ReviewEventPage = ({
         >
           {/* Map Guests */}
           {invitedGuests.length === 0
-            ? "Consider inviting some guests!"
+            ? <p id="EventReviewPDesktop" style={{ marginTop: "0" }}>Consider inviting some guests!</p>
             : invitedGuests.map((id, index) => {
               const contact = contacts.find((contact) => contact.id === id);
               return (

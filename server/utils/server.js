@@ -3,7 +3,8 @@ import eventRouter from "../controllers/events.js";
 import loginRouter from "../controllers/login.js";
 import { errorHandler } from "./middleware.js";
 import userRouter from "../controllers/users.js";
-import cors from 'cors';
+import cors from "cors";
+import adminRouter from "../controllers/admin.js";
 
 const createServer = () => {
   const app = express();
@@ -17,6 +18,8 @@ const createServer = () => {
   app.use("/api/login", loginRouter);
 
   app.use("/api/users", userRouter);
+
+  app.use("/api/admin", adminRouter);
 
   app.use(errorHandler);
 
