@@ -25,15 +25,15 @@ const UserCard = ({ user }) => {
             alignItems="center"
             color="text.secondary"
           >
-            <span style={{fontWeight: "bold"}}>Name: </span> {user.name}
+            <span style={{fontWeight: "bold"}}>Name: </span> {user.firstname} {user.lastname}
           </Box>
 
-          {/* Phone Number */}
+          {/* Username */}
           <Box
             alignItems="center"
             color="text.secondary"
           >
-            <span style={{fontWeight: "bold"}}>Phone Number: </span> {user.phone}
+            <span style={{fontWeight: "bold"}}>Username: </span> {user.username}
           </Box>
 
             <Box>
@@ -48,7 +48,7 @@ const UserCard = ({ user }) => {
                 }}
                 //onClick=
               >
-                Remove
+                Ban
               </Button>
             </Box>
         </Stack>
@@ -75,7 +75,7 @@ const UserCard = ({ user }) => {
             <Typography component="span">{user.firstname} {user.lastname}</Typography>
           </Box>
 
-          {/* Phone Number */}
+          {/* Username */}
           <Box
             alignItems="center"
             color="text.secondary"
@@ -96,7 +96,7 @@ const UserCard = ({ user }) => {
                 }}
                 //onClick=
               >
-                Remove
+                Ban
               </Button>
             </Box>
         </Stack>
