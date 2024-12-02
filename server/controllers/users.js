@@ -157,7 +157,7 @@ userRouter.get("/allUsers", async (request, response, next) => {
     // Search query (optional)
     const searchTerm = request.query.search || ""; // Default to empty string if no search term
 
-    let queryText = `SELECT u.id, u.username, u.firstname, u.lastname FROM users u WHERE 1=1`;
+    let queryText = `SELECT u.id, u.username, u.firstname, u.lastname FROM users u WHERE u.status != 3`;
     const queryParams = [];
 
     // Apply search filter if search term is provided
