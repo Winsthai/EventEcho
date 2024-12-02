@@ -25,9 +25,19 @@ const EventPage = () => {
   const [event, setEvent] = useState(null); // []
   const [error, setError] = useState("");
 
+  const authToken = localStorage.getItem("authToken");
+
   const handleClick = (url) => {
     navigate(url);
   };
+
+  const handleRegisterButton = async (eventId) => {
+    try {
+      await registerEvent(eventId);
+    } catch (e) {
+      setError(e.message);
+    }
+  }
 
   // Determine whether to display mobile or desktop version of website
   const isMobile = useMediaQuery("(max-width:600px)");
@@ -61,6 +71,27 @@ const EventPage = () => {
       fetchEvent(id);
     }
   }, [id]);
+
+  async function registerEvent(eventId) {
+    const APIUrl = `http://localhost:3001/api/events/${eventId}/register`;
+    try {
+      // Fetch and store results from API URL
+      const response = await fetch(APIUrl, {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${authToken}`,
+        },
+      });
+      const data = await response.json();
+
+      // Error message
+      if (!response.ok) {
+        throw new Error(data.error || "An unexpected error occurred");
+      }
+    } catch (e) {
+      setError(e.message);
+    }
+  }
 
   if (error) {
     return <div>Error: {error}</div>;
@@ -283,6 +314,7 @@ const EventPage = () => {
                 backgroundColor: "#A50B07",
               },
             }}
+            onClick={() => handleRegisterButton(event.id)}
           >
             Register
           </Button>
@@ -463,6 +495,7 @@ const EventPage = () => {
                     backgroundColor: "#A50B07",
                   },
                 }}
+                onClick={() => handleRegisterButton(event.id)}
               >
                 Register
               </Button>
