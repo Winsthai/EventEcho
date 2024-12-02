@@ -1,6 +1,4 @@
 import { Box, TextField, Chip, InputAdornment } from "@mui/material";
-import SearchIcon from "@mui/icons-material/Search";
-import FilterAltIcon from "@mui/icons-material/FilterAlt";
 import AddIcon from "@mui/icons-material/Add";
 import PersonIcon from "@mui/icons-material/Person";
 import { useNavigate } from "react-router-dom"; // Import useNavigate from react-router-dom
@@ -24,6 +22,13 @@ const NavBar = () => {
     navigate(url);
   };
 
+  const handleUserProfile = (url) => {
+    navigate(url);
+  }
+
+  const authToken = localStorage.getItem("authToken");
+  const userId= localStorage.getItem("id");
+
   return (
     <Box
       sx={{
@@ -35,7 +40,7 @@ const NavBar = () => {
         borderBottom: "1px solid #ddd",
         gap: "16px",
         overflow: "hidden", // Prevents content from spilling out
-        zIndex: 1000
+        zIndex: 1000,
       }}
     >
       {/* Logo */}
@@ -63,15 +68,25 @@ const NavBar = () => {
         <Chip
           icon={<AddIcon />}
           label="Create event"
-          onClick={() => handleClick("/createEvent")}
+          onClick={() => handleClick(authToken ? "/createEvent" : "/login")}
+          
           sx={chipStyle}
         />
-        <Chip
-          icon={<PersonIcon />}
-          label="Login"
-          onClick={() => handleClick("/login")}
-          sx={chipStyle}
-        />
+        {authToken ? (
+          <Chip
+            icon={<PersonIcon />}
+            label="User Profile"
+            onClick={() => handleUserProfile(`/user/${userId}`)}
+            sx={chipStyle}
+          />
+        ) : (
+          <Chip
+            icon={<PersonIcon />}
+            label="Login"
+            onClick={() => handleClick("/login")}
+            sx={chipStyle}
+          />
+        )}
       </Box>
     </Box>
   );

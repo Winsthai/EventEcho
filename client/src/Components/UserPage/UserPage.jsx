@@ -1,5 +1,14 @@
 import { useParams } from "react-router-dom";
-import { Box, Typography, Tabs, Tab, useMediaQuery, Button } from "@mui/material";
+import {
+  Box,
+  Typography,
+  Tabs,
+  Tab,
+  useMediaQuery,
+  Button,
+  Menu,
+  MenuItem,
+} from "@mui/material";
 import { useEffect, useState } from "react";
 import NoCreatedEvents from "./Components/NoCreatedEvents";
 import NoUpcomingEvents from "./Components/NoUpcomingEvents";
@@ -7,96 +16,123 @@ import EventCard from "../EventCard/EventCard";
 import SearchBar from "../SearchBar";
 import { useNavigate } from "react-router-dom";
 
-// Test data for now, getting users not implemented in backend yet so params could change
-const testUsers = [
-  {
-    id: 1,
-    username: "Steven",
-    registeredEvents: [
-      {
-        id: "1",
-        title: "Football Game",
-        eventtype: "Sports",
-        description: "A friendly neighborhood football game.",
-        address: "123 Stadium Rd, City",
-        coordinates: {
-          x: 40.7128,
-          y: -74.006,
-        },
-        startdate: "2024-11-15T00:00:00.000Z",
-        starttime: "15:00:00+00",
-        enddate: "2024-11-15T00:00:00.000Z",
-        endtime: "17:00:00+00",
-        visibility: true,
-        image:
-          "https://m.media-amazon.com/images/M/MV5BOWZiNzZkZGEtMWEwOS00NjZkLWFmYTctZmQyMDY3NGU0OWZjXkEyXkFqcGc@._V1_.jpg", // temporary
-      },
-      {
-        id: "2",
-        title: "Jazz Concert",
-        eventtype: "Music",
-        description: "Live jazz performance.",
-        address: "456 Music Hall Ave, City",
-        coordinates: {
-          x: 40.7306,
-          y: -73.9352,
-        },
-        startdate: "2024-12-01T00:00:00.000Z",
-        starttime: "19:00:00+00",
-        enddate: "2024-12-01T00:00:00.000Z",
-        endtime: "21:00:00+00",
-        visibility: true,
-        image:
-          "https://www.horizonsmusic.co.uk/cdn/shop/articles/image1_1600x1600.jpg?v=1621417277", // temporary
-      },
-    ],
-    createdEvents: [
-      {
-        id: "3",
-        title: "Food Festival",
-        eventtype: "Food",
-        description: "A festival with foods from around the world.",
-        address: "789 Gourmet St, City",
-        coordinates: {
-          x: 40.7612,
-          y: -73.9822,
-        },
-        startdate: "2024-11-20T00:00:00.000Z",
-        starttime: "11:00:00+00",
-        enddate: "2024-11-20T00:00:00.000Z",
-        endtime: "16:00:00+00",
-        visibility: false,
-        image:
-          "https://i.ytimg.com/vi/BLsQyx604Yc/hq720.jpg?sqp=-oaymwEhCK4FEIIDSFryq4qpAxMIARUAAAAAGAElAADIQj0AgKJD&rs=AOn4CLAYWKCLjjwlIHVaM6MGC9bvpVLe_A", // temporary
-      },
-    ],
-  },
-  { id: 2, username: "Shaun", registeredEvents: [], createdEvents: [] },
-];
+import MenuIcon from "@mui/icons-material/Menu";
 
 const UserPage = () => {
   const { id } = useParams();
-  const [user, setUser] = useState(null);
+  const [hostedEvents, setHostedEvents] = useState([]);
+  const [upcomingEvents, setUpcomingEvents] = useState([]);
   const [selectedTab, setSelectedTab] = useState(0); // State to manage selected tab
+  const [searchQuery, setSearchQuery] = useState("");
+  const [error, setError] = useState("");
 
   const isMobile = useMediaQuery("(max-width:600px)");
   const navigate = useNavigate();
 
-  useEffect(() => {
-    if (id) {
-      const currUser = testUsers.find((elem) => elem.id == id);
-      setUser(currUser);
-    }
-  }, [id]);
+  const authToken = localStorage.getItem("authToken");
+  const username = localStorage.getItem("username");
+
+  // User menu constants
+  const [anchorE1, setAnchorE1] = useState(null);
+  const open = Boolean(anchorE1);
+  const handleDropdownClick = (event) => {
+    setAnchorE1(event.currentTarget);
+  };
+
+  const handleDropdownClose = () => {
+    setAnchorE1(null);
+  };
+
+  const handleSignout = (url) => {
+    localStorage.clear();
+    navigate(url);
+  };
 
   const handleTabChange = (event, newValue) => {
     setSelectedTab(newValue); // Update the selected tab
   };
 
-  // Temporarily add this so it waits for the user to be found, possibly change when implementing backend
-  if (!user) {
-    return <div>loading...</div>;
+  // Query users hosted events
+  async function queryHostedEvents() {
+    // Generate API Url
+    const APIUrl = `http://localhost:3001/api/users/createdEvents`;
+    try {
+      // Fetch and store results from API URL
+      const response = await fetch(APIUrl, {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${authToken}`,
+        },
+      });
+      const data = await response.json();
+
+      // Error message
+      if (!response.ok) {
+        throw new Error(data.error || "An unexpected error occurred");
+      }
+
+      return data;
+    } catch (e) {
+      setError(e.message);
+    }
   }
+
+  // Fetch hosted events on startup, then update hosted events on state change
+  useEffect(() => {
+    const fetchHostedEvents = async () => {
+      try {
+        setError(null);
+
+        const result = await queryHostedEvents();
+        setHostedEvents(result.events);
+      } catch (e) {
+        setError(e.message);
+      }
+    };
+
+    fetchHostedEvents();
+  }, [searchQuery, selectedTab]); // Call this useEffect each time one of these states change.
+
+  // Query users hosted events
+  async function queryUpcomingEvents() {
+    // Generate API Url
+    const APIUrl = `http://localhost:3001/api/users/registeredEvents`;
+    try {
+      // Fetch and store results from API URL
+      const response = await fetch(APIUrl, {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${authToken}`,
+        },
+      });
+      const data = await response.json();
+
+      // Error message
+      if (!response.ok) {
+        throw new Error(data.error || "An unexpected error occurred");
+      }
+
+      return data;
+    } catch (e) {
+      setError(e.message);
+    }
+  }
+
+  // Fetch hosted events on startup, then update hosted events on state change
+  useEffect(() => {
+    const fetchUpcomingEvents = async () => {
+      try {
+        setError(null);
+
+        const result = await queryUpcomingEvents();
+        setUpcomingEvents(result.events);
+      } catch (e) {
+        setError(e.message);
+      }
+    };
+
+    fetchUpcomingEvents();
+  }, [searchQuery, selectedTab]); // Call this useEffect each time one of these states change.
 
   return (
     <Box
@@ -117,33 +153,75 @@ const UserPage = () => {
         }}
       >
         <Typography variant="h4" sx={{ fontWeight: "bold" }}>
-          Hello {user.username}!
+          Hello {username}!
         </Typography>
         <Button
-          id="FriendsPageButton"
+          id="desktopUserButton"
           variant="contained"
-          color="primary"
           sx={{
-            textTransform: "none",
+            borderRadius: "20px",
+            backgroundColor: "#A50B07",
           }}
-          onClick={(e) => {
-            e.stopPropagation();
-            navigate(`/user/${id}/friends`);
-          }} // Probably change this later
+          startIcon={<MenuIcon />}
+          aria-controls={open ? "userMenu" : undefined}
+          aria-haspopup="true"
+          aria-expanded={open ? "true" : undefined}
+          onClick={handleDropdownClick}
         >
-          Friends Page
+          Menu
         </Button>
+        {/* User Menu */}
+        <Menu
+          id="userMenu"
+          anchorEl={anchorE1}
+          open={open}
+          onClose={handleDropdownClose}
+          MenuListProps={{
+            "aria-labelledby": "desktopUserButton",
+          }}
+        >
+          {/* Friends button */}
+          <MenuItem
+            onClick={(e) => {
+              e.stopPropagation();
+              navigate(`/user/${id}/friends`);
+            }}
+          >
+            <Button
+              id="FriendsPageButton"
+              variant="contained"
+              color="primary"
+              sx={{
+                textTransform: "none",
+              }}
+            >
+              Friends Page
+            </Button>
+          </MenuItem>
+          <MenuItem
+            onClick={(e) => {
+              e.stopPropagation();
+              handleSignout("/login");
+            }}
+          >
+            <Button
+              id="FriendsPageButton"
+              variant="contained"
+              color="primary"
+              sx={{
+                textTransform: "none",
+              }}
+            >
+              Signout
+            </Button>
+          </MenuItem>
+        </Menu>
       </Box>
 
       {/* Search bar */}
-      {(user.createdEvents.length !== 0 && selectedTab == 0) ||
-      (user.registeredEvents.length !== 0 && selectedTab == 1) ? (
-        <Box sx={{ display: "flex", paddingBottom: "2vh" }}>
-          <SearchBar noMargin={true} placeholder="Search for events..."/>
-        </Box>
-      ) : (
-        <></>
-      )}
+      <Box sx={{ display: "flex", paddingBottom: "2vh" }}>
+        <SearchBar noMargin={true} placeholder="Search for events..." />
+      </Box>
 
       {/* Tabs for switching between Hosted and Upcoming Events */}
       <Tabs
@@ -159,12 +237,12 @@ const UserPage = () => {
       {/* Hosted Events Section */}
       {selectedTab === 0 && (
         <>
-          {user.createdEvents.length !== 0 ? (
+          {hostedEvents !== 0 ? (
             <>
               <Typography variant="h5" sx={{ fontWeight: "bold", mb: 2 }}>
                 Your Hosted Events
               </Typography>
-              {user.createdEvents.map((event) => (
+              {hostedEvents.map((event) => (
                 <EventCard key={event.id} event={event} variant="hosted" />
               ))}
             </>
@@ -180,9 +258,9 @@ const UserPage = () => {
           <Typography variant="h5" sx={{ fontWeight: "bold", mb: 2 }}>
             Your Upcoming Events
           </Typography>
-          {user.registeredEvents.length !== 0 ? (
+          {upcomingEvents.length !== 0 ? (
             <>
-              {user.registeredEvents.map((event) => (
+              {upcomingEvents.map((event) => (
                 <EventCard key={event.id} event={event} variant="upcoming" />
               ))}
             </>
