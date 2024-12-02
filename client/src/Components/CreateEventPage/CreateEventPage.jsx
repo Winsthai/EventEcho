@@ -212,6 +212,9 @@ export default function CreateEventPage({
   }
 
   function mobileFileNameFormat(file) {
+    if (!file) {
+      return;
+    }
     let mobileFileName = '';
     if (file.length > 25) {
       const beginning = file.slice(0, 8);
