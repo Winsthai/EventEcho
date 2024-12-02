@@ -24,10 +24,16 @@ function EditPagesRoutes() {
     startdateraw: null,
     starttimeraw: null,
     enddateraw: null,
-    endtimeraw: null
+    endtimeraw: null,
+    eventimage: null,
+    imagename: '',
+    imagenamemobile: '',
+    imageform: null
   });
 
   const [detailsCompleted, setDetailsCompleted] = useState(false);
+
+  const [detailsChanged, setDetailsChanged] = useState(false);
 
   const [invitedGuests, setInvitedGuests] = useState([]);
 
@@ -35,10 +41,26 @@ function EditPagesRoutes() {
     <>
       {isMobile ? <></> : <DesktopProgressBar />}
       <Routes>
-        <Route path="/" element={<CreateEventPage eventDetails={eventDetails} setEventDetails={setEventDetails} detailsCompleted={detailsCompleted} setDetailsCompleted={setDetailsCompleted}></CreateEventPage>}></Route>
-        <Route path="/changeGuests" element={<DesktopAddGuestsPage invitedGuests={invitedGuests} setInvitedGuests={setInvitedGuests}></DesktopAddGuestsPage>}></Route>
+        <Route path="/" element={<CreateEventPage
+          eventDetails={eventDetails}
+          setEventDetails={setEventDetails}
+          setDetailsCompleted={setDetailsCompleted}
+          detailsChanged={detailsChanged}
+          setDetailsChanged={setDetailsChanged}
+        ></CreateEventPage>}></Route>
+
+        <Route path="/changeGuests" element={<DesktopAddGuestsPage
+          invitedGuests={invitedGuests}
+          setInvitedGuests={setInvitedGuests}
+        ></DesktopAddGuestsPage>}></Route>
+
         <Route path="/newGuests" element={<AddGuestsNewPage></AddGuestsNewPage>}></Route>
-        <Route path="/reviewEvent" element={<ReviewEventPage eventDetails={eventDetails} detailsCompleted={detailsCompleted} invitedGuests={invitedGuests}></ReviewEventPage>}></Route>
+
+        <Route path="/reviewEvent" element={<ReviewEventPage
+          eventDetails={eventDetails}
+          detailsCompleted={detailsCompleted}
+          invitedGuests={invitedGuests}
+        ></ReviewEventPage>}></Route>
       </Routes>
     </>
   );
