@@ -1,7 +1,9 @@
-import { Box, TextField, Chip, InputAdornment } from "@mui/material";
+import { Box, Chip } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
 import PersonIcon from "@mui/icons-material/Person";
+import AdminPanelSettingsIcon from "@mui/icons-material/AdminPanelSettings";
 import { useNavigate } from "react-router-dom"; // Import useNavigate from react-router-dom
+import { useState, useEffect } from "react";
 
 const chipStyle = {
   backgroundColor: "primary.main",
@@ -18,16 +20,67 @@ const chipStyle = {
 const NavBar = () => {
   const navigate = useNavigate();
 
+  const [isAdmin, setIsAdmin] = useState(false);
+  const [error, setError] = useState("");
+
+  const authToken = localStorage.getItem("authToken");
+  const userId = localStorage.getItem("id");
+
   const handleClick = (url) => {
     navigate(url);
   };
 
   const handleUserProfile = (url) => {
     navigate(url);
+  };
+
+  async function authenticateAdmin() {
+    {
+      // Generate API Url
+      const APIUrl = `http://localhost:3001/api/admin`;
+
+      try {
+        // Fetch and store results from API URL
+        const response = await fetch(APIUrl, {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${authToken}`,
+          },
+        });
+        const data = await response.json();
+
+        // Error message
+        if (!response.ok) {
+          throw new Error(data.error || "An unexpected error occurred");
+        }
+
+        return data;
+      } catch (e) {
+        setError(e.message);
+      }
+    }
   }
 
-  const authToken = localStorage.getItem("authToken");
-  const userId = localStorage.getItem("id");
+  // Fetch admin status on startup
+  useEffect(() => {
+    const fetchAuthenticateAdmin = async () => {
+      try {
+        setError(null);
+
+        const result = await authenticateAdmin();
+        if (result.message === "Admin authenticated") {
+          setIsAdmin(true);
+        } else {
+          setIsAdmin(false);
+        }
+      } catch (e) {
+        setIsAdmin(false);
+        setError(e.message);
+      }
+    };
+
+    fetchAuthenticateAdmin();
+  }, [authToken]);
 
   return (
     <Box
@@ -65,11 +118,21 @@ const NavBar = () => {
           flexShrink: 0, // Prevents chips from resizing or shrinking
         }}
       >
+        {isAdmin && authToken ? (
+          <Chip
+            icon={<AdminPanelSettingsIcon />}
+            label="Admin"
+            onClick={() => handleClick(authToken ? "/admin" : "/login")}
+            sx={chipStyle}
+          />
+        ) : (
+          <></>
+        )}
+
         <Chip
           icon={<AddIcon />}
           label="Create event"
           onClick={() => handleClick(authToken ? "/createEvent" : "/login")}
-          
           sx={chipStyle}
         />
         {authToken ? (
