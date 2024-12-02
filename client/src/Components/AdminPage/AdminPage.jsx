@@ -23,6 +23,7 @@ const AdminPage = () => {
   const [selectedTab, setSelectedTab] = useState(0); // State to manage selected tab
   const [events, setEvents] = useState([]);
   const [users, setUsers] = useState([]);
+  const [bannedUsers, setBannedUsers] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
   const [pageNum, setPageNum] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
@@ -118,7 +119,7 @@ const AdminPage = () => {
     }
   }
 
-  // Fetch events on startup, then update events each time filters or search change.
+  // Fetch events on startup, then update users each on search change.
   useEffect(() => {
     const fetchUsers = async () => {
       try {
@@ -132,7 +133,49 @@ const AdminPage = () => {
     };
 
     fetchUsers();
-  }, [searchQuery]); // Call each time activeFilters or searchQuery changes.
+  }, [searchQuery]); // Call each time searchQuery changes.
+
+  // Query banned users from the API
+  async function queryBannedUsers(search = "") {
+    // Generate API Url
+    const APIUrl = `http://localhost:3001/api/admin/bannedUsers?search=${search}`;
+    const authToken = localStorage.getItem("authToken");
+    try {
+      // Fetch and store results from API URL
+      const response = await fetch(APIUrl, {
+        method: 'GET',
+        headers: {
+          'Authorization': `Bearer ${authToken}`
+        }
+      });
+      const data = await response.json();
+
+      // Error message
+      if (!response.ok) {
+        throw new Error(data.error || "An unexpected error occurred");
+      }
+
+      return data;
+    } catch (e) {
+      setError(e.message);
+    }
+  }
+
+  // Fetch banned users on startup, then update banned users on search change.
+  useEffect(() => {
+    const fetchBannedUsers = async () => {
+      try {
+        setError(null);
+
+        const result = await queryBannedUsers(searchQuery);
+        setBannedUsers(result.users);
+      } catch (e) {
+        setError(e.message);
+      }
+    };
+
+    fetchBannedUsers();
+  }, [searchQuery]); // Call each time searchQuery changes.
 
   return (
     <Box
@@ -173,6 +216,18 @@ const AdminPage = () => {
         <></>
       )}
 
+      {selectedTab == 2 ? (
+        <Box sx={{ display: "flex", paddingBottom: "2vh" }}>
+          <SearchBar
+            onSearchChange={handleSearchChange}
+            noMargin={true}
+            placeholder="Search for banned users..."
+          />
+        </Box>
+      ) : (
+        <></>
+      )}
+
       {/* Tabs for switching between Events and Users */}
       <Tabs
         value={selectedTab}
@@ -182,6 +237,7 @@ const AdminPage = () => {
       >
         <Tab label="Events" />
         <Tab label="Users" />
+        <Tab label="Banned Users" />
       </Tabs>
 
       {/* Events Section */}
@@ -255,6 +311,24 @@ const AdminPage = () => {
               </Typography>
               {users.map((user) => (
                 <UserCard key={user.id} user={user} />
+              ))}
+            </>
+          ) : (
+            <NoUsers />
+          )}
+        </>
+      )}
+
+      {/* Banned Users Section*/}
+      {selectedTab === 2 && (
+        <>
+          {bannedUsers.length !== 0 ? (
+            <>
+              <Typography variant="h5" sx={{ fontWeight: "bold", mb: 2 }}>
+                Banned Users
+              </Typography>
+              {bannedUsers.map((user) => (
+                <UserCard variant="banned" key={user.id} user={user} />
               ))}
             </>
           ) : (
