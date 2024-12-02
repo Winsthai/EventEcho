@@ -20,57 +20,6 @@ import { useMediaQuery } from "@mui/material";
 import { useParams, useNavigate } from 'react-router-dom';
 import { format } from 'date-fns';
 
-// remove later
-const events = [
-  {
-    "id": "1",
-    "title": "Football Game",
-    "eventtype": "Sports",
-    "description": "A friendly neighborhood football game.",
-    "address": "123 Stadium Rd, City",
-    "coordinates": {
-      "x": 40.7128,
-      "y": -74.006
-    },
-    "startdate": "2024-11-15",
-    "starttime": "15:00:00+00",
-    "enddate": "2024-11-15",
-    "endtime": "17:00:00+00",
-    "visibility": true
-  },
-  {
-    "id": "2",
-    "title": "Jazz Concert",
-    "eventtype": "Music",
-    "description": "Live jazz performance.",
-    "address": "456 Music Hall Ave, City",
-    "coordinates": {
-      "x": 40.7306,
-      "y": -73.9352
-    },
-    "startdate": "2024-12-01",
-    "starttime": "19:00:00+00",
-    "enddate": "2024-12-01",
-    "endtime": "21:00:00+00",
-    "visibility": false
-  },
-  {
-    id: "3",
-    title: "Food Festival",
-    eventtype: "Food",
-    description: "A festival with foods from around the world.",
-    address: "789 Gourmet St, City",
-    coordinates: {
-      x: 40.7612,
-      y: -73.9822,
-    },
-    startdate: "2024-11-20",
-    starttime: "11:00:00+00",
-    enddate: "2024-11-20",
-    endtime: "16:00:00+00",
-    visibility: false,
-  },
-];
 
 export default function CreateEventPage({
   eventDetails,
@@ -87,7 +36,6 @@ export default function CreateEventPage({
   const onEditPage = location.pathname.includes("edit");
 
   // in db, public=true and private=false 
-  let vis, startTimeTrimmed, endTimeTrimmed;
   let formattedDate;
   let goodTimings = true;
 
@@ -97,9 +45,10 @@ export default function CreateEventPage({
     description: false,
     address: false,
     startdate: false,
-    starttime: false
+    starttime: false,
+    startdateraw: false,
+    starttimeraw: false
   });
-
 
   async function fetchEvent(eventId) {
     const APIUrl = `http://localhost:3001/api/events/${eventId}`;
@@ -119,8 +68,7 @@ export default function CreateEventPage({
     }
   }
 
-  // useeffect
-
+  // retrieve event info if on edit page
   React.useEffect(() => {
     if (onEditPage && !detailsChanged) {
       console.log("fetch useEffect called");
@@ -159,8 +107,6 @@ export default function CreateEventPage({
       };
       fetchEvents();
     }
-
-
   }, [id]);
 
   const updateDetails = (event) => {
@@ -268,7 +214,7 @@ export default function CreateEventPage({
   const handleNavigate = (url) => {
     if (checkFields()) {
       console.log("Hey hey hey");
-      alert("missing shit");
+      alert("Some required fields are missing or incorrect.");
     }
     else if (goodTimings === false) {
       alert("bad timings!");
@@ -283,34 +229,67 @@ export default function CreateEventPage({
   // !! add another field to make sure you can't make an event before today's date and time !!
   const checkFields = () => {
     goodTimings = true;
+
+    const currentdate = dayjs();
+    const startdateraw_conv = dayjs(JSON.parse(eventDetails.startdateraw));
+    const starttimeraw_conv = dayjs(JSON.parse(eventDetails.starttimeraw));
+    const enddateraw_conv = dayjs(JSON.parse(eventDetails.enddateraw));
+    const endtimeraw_conv = dayjs(JSON.parse(eventDetails.endtimeraw));
+
+    console.log("current time only: ", currentdate.format('HH:mm:ss'));
+    console.log("today: ", currentdate);
+    console.log("start date: ", startdateraw_conv);
+    console.log("today = start date? : ", (dayjs().startOf('day')).isSame(startdateraw_conv, 'day'));
+    console.log("current time > start time? ", dayjs(currentdate.format('HH:mm:ss'), 'HH:mm:ss').isAfter(starttimeraw_conv));
+
     // both start date and time missing
     if (eventDetails.startdate === null && eventDetails.starttime === null) {
-      setEventDetails({ ...eventDetails, startdateraw: JSON.stringify(''), starttimeraw: JSON.stringify('') });
+      setEventDetails({
+        ...eventDetails,
+        startdate: null,
+        starttime: null,
+        startdateraw: JSON.stringify(''),
+        starttimeraw: JSON.stringify('')
+      });
+      goodTimings = false;
       console.log("no event timings!");
     }
     // just start time missing
     else if (eventDetails.starttime === null) {
-      setEventDetails({ ...eventDetails, starttimeraw: JSON.stringify('') });
+      setEventDetails({ ...eventDetails, starttime: null, starttimeraw: JSON.stringify('') });
+      goodTimings = false;
     }
     // just start date missing
     else if (eventDetails.startdate === null) {
-      setEventDetails({ ...eventDetails, startdateraw: JSON.stringify('') });
+      setEventDetails({ ...eventDetails, startdate: null, startdateraw: JSON.stringify('') });
+      goodTimings = false;
     }
     else {
       // start date is after end date
-      if (dayjs(JSON.parse(eventDetails.startdateraw)).isAfter(dayjs(JSON.parse(eventDetails.enddateraw)))) {
-        console.log("bad times");
+      if (startdateraw_conv.isAfter(enddateraw_conv)) {
+        console.log("event is ending before it starts?");
         goodTimings = false;
-        setEventDetails({ ...eventDetails, enddateraw: JSON.stringify('') });
+        setEventDetails({ ...eventDetails, enddate: null, enddateraw: JSON.stringify('') });
       }
       // same day but start time is after end time
-      else if (dayjs(JSON.parse(eventDetails.startdateraw)).isSame(dayjs(JSON.parse(eventDetails.enddateraw))) &&
-        dayjs(JSON.parse(eventDetails.starttimeraw)).isAfter(dayjs(JSON.parse(eventDetails.endtimeraw)))) {
-        console.log("same day bad times");
+      else if (startdateraw_conv.isSame(enddateraw_conv) && starttimeraw_conv.isAfter(endtimeraw_conv)) {
+        console.log("same day but can't end before it starts");
         goodTimings = false;
-        setEventDetails({ ...eventDetails, endtimeraw: JSON.stringify('') });
+        setEventDetails({ ...eventDetails, endtime: null, endtimeraw: JSON.stringify('') });
       }
-
+      // check if today is start date and time is before current time
+      else if ((currentdate.startOf('day')).isSame(startdateraw_conv, 'day') &&
+        dayjs(currentdate.format('HH:mm:ss'), 'HH:mm:ss').isAfter(starttimeraw_conv)) {
+        console.log("why are you making an event in the past?");
+        goodTimings = false;
+        setEventDetails({
+          ...eventDetails,
+          startdate: null,
+          starttime: null,
+          startdateraw: JSON.stringify(''),
+          starttimeraw: JSON.stringify('')
+        });
+      }
     }
 
     const newErrors = {
@@ -319,7 +298,9 @@ export default function CreateEventPage({
       description: !eventDetails.description,
       address: !eventDetails.address,
       startdate: !eventDetails.startdate,
-      starttime: !eventDetails.starttime
+      starttime: !eventDetails.starttime,
+      startdateraw: !eventDetails.startdateraw,
+      starttimeraw: !eventDetails.starttimeraw
     };
 
     setRequiredFieldErrors(newErrors);
@@ -473,6 +454,7 @@ export default function CreateEventPage({
                   <DatePicker name="startdate" label="Start Date *"
                     value={eventDetails.startdateraw === null ? null : dayjs(JSON.parse(eventDetails.startdateraw))}
                     onChange={handleStartDateChange}
+                    minDate={dayjs()}
                   />
                 </LocalizationProvider>
               </Grid>
@@ -493,6 +475,7 @@ export default function CreateEventPage({
                   <DatePicker name="enddate" label="End Date"
                     value={eventDetails.enddateraw === null ? null : dayjs(JSON.parse(eventDetails.enddateraw))}
                     onChange={handleEndDateChange}
+                    minDate={dayjs()}
                   />
                 </LocalizationProvider>
               </Grid>
@@ -731,6 +714,7 @@ export default function CreateEventPage({
               <DatePicker name="startdate" label="Start Date *"
                 value={eventDetails.startdateraw === null ? null : dayjs(JSON.parse(eventDetails.startdateraw))}
                 onChange={handleStartDateChange}
+                minDate={dayjs()}
               />
             </LocalizationProvider>
 
@@ -749,6 +733,7 @@ export default function CreateEventPage({
               <DatePicker name="enddate" label="End Date"
                 value={eventDetails.enddateraw === null ? null : dayjs(JSON.parse(eventDetails.enddateraw))}
                 onChange={handleEndDateChange}
+                minDate={dayjs()}
               />
             </LocalizationProvider>
 
