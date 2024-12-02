@@ -140,6 +140,37 @@ eventRouter.get("/:id", async (request, response, next) => {
       });
     }
 
+    const event = result.rows[0];
+
+    // Additional checks for private events
+    if (!event.visibility) {
+      userConfirmation(request, response, (err) => {
+        if (err) {
+          return next(err); // If there is an error, pass it to the error handler
+        }
+      });
+
+      // Check invites
+      if (!request.userId) {
+        // If userId isn't set by the middleware, there was an error, so stop
+        return;
+      }
+
+      const { userId } = request;
+
+      const privateResult = await client.query(
+        `SELECT * FROM event_invites WHERE event_id = $1 AND user_id = $2`,
+        [eventId, userId]
+      );
+
+      // User is not invited to this event
+      if (privateResult.rowCount === 0) {
+        return response.status(401).json({
+          error: "You have not been invited to this private event",
+        });
+      }
+    }
+
     // Return the event data
     response.status(200).json({
       event: result.rows[0],
@@ -273,6 +304,37 @@ eventRouter.post(
       if (eventExistsResult.rowCount === 0) {
         // If no rows are returned, the event doesn't exist
         return response.status(400).json({ error: "EventId does not exist" });
+      }
+
+      const event = eventExistsResult.rows[0];
+
+      // Additional checks for private events
+      if (!event.visibility) {
+        userConfirmation(request, response, (err) => {
+          if (err) {
+            return next(err); // If there is an error, pass it to the error handler
+          }
+        });
+
+        // Check invites
+        if (!request.userId) {
+          // If userId isn't set by the middleware, there was an error, so stop
+          return;
+        }
+
+        const { userId } = request;
+
+        const privateResult = await client.query(
+          `SELECT * FROM event_invites WHERE event_id = $1 AND user_id = $2`,
+          [eventId, userId]
+        );
+
+        // User is not invited to this event
+        if (privateResult.rowCount === 0) {
+          return response.status(401).json({
+            error: "You have not been invited to this private event",
+          });
+        }
       }
 
       await client.query(
