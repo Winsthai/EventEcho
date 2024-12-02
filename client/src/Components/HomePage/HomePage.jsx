@@ -21,6 +21,7 @@ import SportsEsportsIcon from "@mui/icons-material/SportsEsports";
 import FilterAltIcon from "@mui/icons-material/FilterAlt";
 import NavigateBeforeIcon from "@mui/icons-material/NavigateBefore";
 import NavigateNextIcon from "@mui/icons-material/NavigateNext";
+import AdminPanelSettingsIcon from "@mui/icons-material/AdminPanelSettings";
 
 import { useParams, useNavigate } from "react-router-dom";
 
@@ -37,6 +38,7 @@ const HomePage = () => {
   const [activeFilters, setActiveFilters] = useState([]); // State to track active filters
   const [pageNum, setPageNum] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
+  const [isAdmin, setIsAdmin] = useState(false);
   const [error, setError] = useState("");
 
   const authToken = localStorage.getItem("authToken");
@@ -124,6 +126,54 @@ const HomePage = () => {
     fetchEvents();
   }, [activeFilters, searchQuery, pageNum]); // Call each time activeFilters or searchQuery changes.
 
+  async function authenticateAdmin() {
+    {
+      // Generate API Url
+      const APIUrl = `http://localhost:3001/api/admin`;
+
+      try {
+        // Fetch and store results from API URL
+        const response = await fetch(APIUrl, {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${authToken}`,
+          },
+        });
+        const data = await response.json();
+
+        // Error message
+        if (!response.ok) {
+          throw new Error(data.error || "An unexpected error occurred");
+        }
+
+        return data;
+      } catch (e) {
+        setError(e.message);
+      }
+    }
+  }
+
+  // Fetch admin status on startup
+  useEffect(() => {
+    const fetchAuthenticateAdmin = async () => {
+      try {
+        setError(null);
+
+        const result = await authenticateAdmin();
+        if (result.message === "Admin authenticated") {
+          setIsAdmin(true);
+        } else {
+          setIsAdmin(false);
+        }
+      } catch (e) {
+        setIsAdmin(false);
+        setError(e.message);
+      }
+    };
+
+    fetchAuthenticateAdmin();
+  }, [authToken]);
+
   if (isMobile) {
     // Mobile Component
     return (
@@ -147,6 +197,22 @@ const HomePage = () => {
                 <Box id="homeLoginButton"> Login </Box>
               </Button>
             </Box>
+          )}
+
+          {/* Admin button */}
+          {isAdmin && authToken ? (
+            <Box>
+              <Button
+                variant="contained"
+                onClick={() => navigate("/admin")}
+                sx={{ borderRadius: "20px" }}
+                startIcon={<AdminPanelSettingsIcon />}
+              >
+                Admin
+              </Button>
+            </Box>
+          ) : (
+            <></>
           )}
         </Stack>
 
@@ -254,10 +320,6 @@ const HomePage = () => {
           </Stack>
           {/* Upcoming events section */}
           <Box id="homeUpcomingHeader"> Upcoming Events </Box>
-
-          {error && (
-            <p style={{ color: "red", textAlign: "center" }}>{error}</p>
-          )}
 
           {events.length !== 0 ? (
             <>
@@ -444,8 +506,6 @@ const HomePage = () => {
 
         {/* Upcoming Events */}
         <h1>Upcoming Events</h1>
-
-        {error && <p style={{ color: "red", textAlign: "center" }}>{error}</p>}
 
         {events.length !== 0 ? (
           <>
