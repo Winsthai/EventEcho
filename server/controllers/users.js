@@ -302,6 +302,7 @@ userRouter.post(
         message: `UserId ${incomingRequestId} accepted friend request from UserId ${outgoingRequestId}`,
       });
     } catch (error) {
+      await client.query("ROLLBACK"); // Rollback in case of an error
       next(error);
     }
   }
@@ -363,12 +364,8 @@ userRouter.post(
   }
 );
 
-// Add admin endpoint
-
 // Get invited users for an event?
 
 // ADD THIS: for private event: only participants can view details/register
-
-// Banning user (only for admin)
 
 export default userRouter;
