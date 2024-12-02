@@ -308,6 +308,60 @@ userRouter.post(
 );
 
 // Send a friend request
+// Url: (id in url should be the id of the user who is sending the request)
+// Body contains the id of the user who sent them the request (incomingRequestId: <if of person who friend request is being sent to>)
+// Requires a token to be provided representing the user who is sending the friend request
+userRouter.post(
+  "/outgoingFriendRequests/:id",
+  specificUserConfirmation,
+  async (request, response, next) => {
+    const outgoingRequestId = request.params.id;
+    const { incomingRequestId } = request.body;
+
+    try {
+      // Start a transaction
+      await client.query("BEGIN");
+
+      // Check if the users are not the same (i.e., a user can't send a request to themselves)
+      if (outgoingRequestId === incomingRequestId) {
+        await client.query("ROLLBACK");
+        return response.status(400).json({
+          error: "You cannot send a friend request to yourself",
+        });
+      }
+
+      // Check if the friend request already exists
+      const checkRequestResult = await client.query(
+        `SELECT * FROM friend_requests WHERE outgoing_request = $1 AND incoming_request = $2`,
+        [outgoingRequestId, incomingRequestId]
+      );
+
+      if (checkRequestResult.rowCount > 0) {
+        await client.query("ROLLBACK");
+        return response.status(400).json({
+          error: "Friend request already exists",
+        });
+      }
+
+      // Insert the new friend request into the database
+      await client.query(
+        `INSERT INTO friend_requests (outgoing_request, incoming_request) VALUES ($1, $2)`,
+        [outgoingRequestId, incomingRequestId]
+      );
+
+      // Commit the transaction
+      await client.query("COMMIT");
+
+      // Return a success message
+      response.status(200).json({
+        message: `UserId ${outgoingRequestId} sent a friend request to UserId ${incomingRequestId}`,
+      });
+    } catch (error) {
+      await client.query("ROLLBACK"); // Ensure rollback in case of an error
+      next(error);
+    }
+  }
+);
 
 // Add admin endpoint
 
