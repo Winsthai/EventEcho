@@ -3,6 +3,16 @@ import { SECRET } from "./config.js";
 import client from "../index.js";
 
 export const errorHandler = (error, _request, response, next) => {
+  // Handle duplicate key errors (unique constraint violation)
+  if (
+    error.code === "23505" &&
+    error.message.includes("event_participants_pkey")
+  ) {
+    return response.status(400).json({
+      error: "This participant is already added to the event.",
+    });
+  }
+
   if (error.name === "JsonWebTokenError") {
     return response.status(401).json({ error: "token invalid" });
   } else if (error.name === "TokenExpiredError") {
