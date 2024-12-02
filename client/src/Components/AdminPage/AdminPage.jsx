@@ -27,7 +27,7 @@ const AdminPage = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [pageNum, setPageNum] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
-  const [userBanSwitch, setUserBanSwitch] = useState(0); // Switch for user bans to update lists
+  const [buttonSwitch, setButtonSwitch] = useState(0); // Switch for updating events and users
   const [error, setError] = useState("");
 
   const isMobile = useMediaQuery("(max-width:600px)");
@@ -56,23 +56,36 @@ const AdminPage = () => {
     });
   };
 
-  // User bans and unbans
-  const handleBanButton = async (userId) => {
+  // Removing an event
+  const handleRemovebutton = async (eventId) => {
     try {
-      await banUser(userId);
-      setUserBanSwitch((prevUserBanSwitch) => {
-        return prevUserBanSwitch + 1;
+      await removeEvent(eventId);
+      setButtonSwitch((buttonSwitch) => {
+        return buttonSwitch + 1;
       });
     } catch (e) {
       setError(e.message);
     }
   };
 
+  // Ban button
+  const handleBanButton = async (userId) => {
+    try {
+      await banUser(userId);
+      setButtonSwitch((buttonSwitch) => {
+        return buttonSwitch + 1;
+      });
+    } catch (e) {
+      setError(e.message);
+    }
+  };
+
+  // Unban button
   const handleUnbanButton = async (userId) => {
     try {
       await unbanUser(userId);
-      setUserBanSwitch((prevUserBanSwitch) => {
-        return prevUserBanSwitch + 1;
+      setButtonSwitch((buttonSwitch) => {
+        return buttonSwitch + 1;
       });
     } catch (e) {
       setError(e.message);
@@ -105,7 +118,7 @@ const AdminPage = () => {
     }
   }
 
-  // Fetch events on startup, then update events each time filters or search change.
+  // Fetch events on startup, then update events each time one of the states change
   useEffect(() => {
     const fetchEvents = async () => {
       try {
@@ -120,7 +133,7 @@ const AdminPage = () => {
     };
 
     fetchEvents();
-  }, [searchQuery, pageNum, selectedTab]); // Call each time activeFilters or searchQuery changes.
+  }, [searchQuery, pageNum, selectedTab, buttonSwitch]); // Call this useEffect each time one of these states change.
 
   // Query users from the API
   async function queryUsers(search = "") {
@@ -143,7 +156,7 @@ const AdminPage = () => {
     }
   }
 
-  // Fetch events on startup, then update users each on search change.
+  // Fetch users on startup, then update users on state changes.
   useEffect(() => {
     const fetchUsers = async () => {
       try {
@@ -157,7 +170,7 @@ const AdminPage = () => {
     };
 
     fetchUsers();
-  }, [searchQuery, userBanSwitch, selectedTab]); // Call each time searchQuery changes.
+  }, [searchQuery, buttonSwitch, selectedTab]); // Call this useEffect each time one of these states change.
 
   // Query banned users from the API
   async function queryBannedUsers(search = "") {
@@ -185,7 +198,7 @@ const AdminPage = () => {
     }
   }
 
-  // Fetch banned users on startup, then update banned users on search change.
+  // Fetch banned users on startup, then update banned users on state change
   useEffect(() => {
     const fetchBannedUsers = async () => {
       try {
@@ -199,8 +212,32 @@ const AdminPage = () => {
     };
 
     fetchBannedUsers();
-  }, [searchQuery, userBanSwitch, selectedTab]); // Call each time searchQuery changes.
+  }, [searchQuery, buttonSwitch, selectedTab]); // Call this useEffect each time one of these states change.
 
+  // Call API to remove an event
+  async function removeEvent(eventId) {
+    const APIUrl = `http://localhost:3001/api/events/${eventId}`;
+    const authToken = localStorage.getItem("authToken");
+    try {
+      // Fetch and store results from API URL
+      const response = await fetch(APIUrl, {
+        method: "DELETE",
+        headers: {
+          Authorization: `Bearer ${authToken}`,
+        },
+      });
+      const data = await response.json();
+
+      // Error message
+      if (!response.ok) {
+        throw new Error(data.error || "An unexpected error occurred");
+      }
+    } catch (e) {
+      setError(e.message);
+    }
+  }
+
+  // Call API to ban a user
   async function banUser(userId) {
     const APIUrl = `http://localhost:3001/api/admin/banUser/${userId}`;
     const authToken = localStorage.getItem("authToken");
@@ -223,6 +260,7 @@ const AdminPage = () => {
     }
   }
 
+  // Call API to unban a user
   async function unbanUser(userId) {
     const APIUrl = `http://localhost:3001/api/admin/unbanUser/${userId}`;
     const authToken = localStorage.getItem("authToken");
@@ -317,7 +355,7 @@ const AdminPage = () => {
                 Events
               </Typography>
               {events.map((event) => (
-                <EventCard key={event.id} event={event} variant="admin" />
+                <EventCard key={event.id} event={event} variant="admin" onRemoveButton={handleRemovebutton} />
               ))}
             </>
           ) : (
