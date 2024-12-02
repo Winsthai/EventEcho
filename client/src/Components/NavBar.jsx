@@ -27,7 +27,7 @@ const NavBar = () => {
   }
 
   const authToken = localStorage.getItem("authToken");
-  const userId= localStorage.getItem("id");
+  const userId = localStorage.getItem("id");
 
   return (
     <Box

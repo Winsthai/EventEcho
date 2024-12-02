@@ -198,13 +198,12 @@ const UserPage = () => {
             borderRadius: "20px",
             backgroundColor: "#A50B07",
           }}
-          startIcon={<MenuIcon />}
           aria-controls={open ? "userMenu" : undefined}
           aria-haspopup="true"
           aria-expanded={open ? "true" : undefined}
           onClick={handleDropdownClick}
         >
-          Menu
+          <MenuIcon />
         </Button>
         {/* User Menu */}
         <Menu

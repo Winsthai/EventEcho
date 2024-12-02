@@ -11,6 +11,9 @@ const MobileNavBar = () => {
 
   const [value, setValue] = useState(null);
 
+  const authToken = localStorage.getItem("authToken");
+  const userId = localStorage.getItem("id");
+
   useEffect(() => {
     const basePath = location.pathname.split("/")[1];
 
@@ -57,7 +60,7 @@ const MobileNavBar = () => {
         label="Create Event"
         icon={<AddCircleOutlineIcon />}
         component={Link}
-        to={`/createEvent`}
+        to={authToken ? `/createEvent` : `/login`}
         sx={{
           "&.Mui-selected": {
             color: "#F0534F",
@@ -69,7 +72,7 @@ const MobileNavBar = () => {
         label="Profile"
         icon={<AccountCircleIcon />}
         component={Link}
-        to={`/login`}
+        to={authToken ? `/user/${userId}` : `/login`}
         sx={{
           "&.Mui-selected": {
             color: "#F0534F",
