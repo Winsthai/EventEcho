@@ -329,14 +329,14 @@ eventRouter.put(
       address || eventExists.rows[0].address,
       startdate || eventExists.rows[0].startdate,
       starttime || eventExists.rows[0].starttime,
-      enddate || eventExists.rows[0].enddate,
-      endtime || eventExists.rows[0].endtime,
-      visibility || eventExists.rows[0].visibility,
+      enddate,
+      endtime,
+      visibility,
       startdateraw || eventExists.rows[0].startdateraw,
       starttimeraw || eventExists.rows[0].starttimeraw,
-      enddateraw || eventExists.rows[0].enddateraw,
-      endtimeraw || eventExists.rows[0].endtimeraw,
-      eventimage || eventExists.rows[0].eventimage,
+      enddateraw,
+      endtimeraw,
+      eventimage,
       id,
     ];
 
@@ -371,6 +371,41 @@ eventRouter.put(
       }
 
       response.status(200).json({ event: result.rows[0] });
+    } catch (error) {
+      next(error);
+    }
+  }
+);
+
+// Get invited users for an event
+// Requires a token to ensure that the user viewing the invited users of this event is the one who made it, or is an admin
+eventRouter.get(
+  "/:id/invitedUsers",
+  creatorConfirmation,
+  async (req, res, next) => {
+    const eventId = req.params.id; // Get the event ID from the URL parameter
+
+    try {
+      // Execute the query with the eventId as the parameter
+      const result = await client.query(
+        `
+      SELECT u.id, u.username, u.firstname, u.lastname, u.email, u.phonenum
+      FROM users u
+      JOIN event_invites ei ON u.id = ei.user_id
+      WHERE ei.event_id = $1;
+    `,
+        [eventId]
+      );
+
+      // Check if any users were invited (optional check, frontend can decide if needed or not)
+      /* if (result.rowCount === 0) {
+      return res
+        .status(404)
+        .json({ error: "No invited users found for this event" });
+    } */
+
+      // Return list of invited users
+      res.status(200).json(result.rows);
     } catch (error) {
       next(error);
     }

@@ -1,7 +1,10 @@
 import express from "express";
 import bcrypt from "bcryptjs"; // Import bcrypt for hashing passwords
 import client from "../index.js";
-import { userConfirmation } from "../utils/middleware.js";
+import {
+  specificUserConfirmation,
+  userConfirmation,
+} from "../utils/middleware.js";
 
 const userRouter = express.Router();
 const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\W).{8,}$/;
@@ -154,7 +157,7 @@ userRouter.get("/allUsers", async (request, response, next) => {
     // Search query (optional)
     const searchTerm = request.query.search || ""; // Default to empty string if no search term
 
-    let queryText = `SELECT u.id, u.username, u.firstname, u.lastname FROM users u WHERE 1=1`;
+    let queryText = `SELECT u.id, u.username, u.firstname, u.lastname FROM users u WHERE u.status != 3`;
     const queryParams = [];
 
     // Apply search filter if search term is provided
@@ -249,5 +252,118 @@ userRouter.get(
     }
   }
 );
+
+// Accept a friend request
+// Url: (id in url should be the id of the user who is accepting the request)
+// Body contains the id of the user who sent them the request (outgoingRequestId: <person who sent id>)
+// Requires a token to be provided representing the user who is accepting the friend request
+userRouter.post(
+  "/incomingFriendRequests/:id",
+  specificUserConfirmation,
+  async (request, response, next) => {
+    const incomingRequestId = request.params.id;
+    const { outgoingRequestId } = request.body;
+
+    try {
+      // Start a transaction
+      await client.query("BEGIN");
+
+      // Check if the friend request exists before trying to delete
+      const checkRequestResult = await client.query(
+        `SELECT * FROM friend_requests WHERE outgoing_request = $1 AND incoming_request = $2`,
+        [outgoingRequestId, incomingRequestId]
+      );
+
+      // If no friend request exists
+      if (checkRequestResult.rowCount === 0) {
+        await client.query("ROLLBACK"); // Discard the transaction
+        return response.status(404).json({
+          error: "Friend request not found",
+        });
+      }
+
+      // Delete the friend request
+      await client.query(
+        `DELETE FROM friend_requests WHERE outgoing_request = $1 AND incoming_request = $2`,
+        [outgoingRequestId, incomingRequestId]
+      );
+
+      // Add both users to the friends list (mutual friendship)
+      await client.query(
+        `INSERT INTO friends_list (user_id, friend_id) VALUES ($1, $2), ($2, $1)`,
+        [outgoingRequestId, incomingRequestId]
+      );
+
+      // Commit the transaction
+      await client.query("COMMIT");
+
+      // Return the users
+      response.status(200).json({
+        message: `UserId ${incomingRequestId} accepted friend request from UserId ${outgoingRequestId}`,
+      });
+    } catch (error) {
+      await client.query("ROLLBACK"); // Rollback in case of an error
+      next(error);
+    }
+  }
+);
+
+// Send a friend request
+// Url: (id in url should be the id of the user who is sending the request)
+// Body contains the id of the user who sent them the request (incomingRequestId: <if of person who friend request is being sent to>)
+// Requires a token to be provided representing the user who is sending the friend request
+userRouter.post(
+  "/outgoingFriendRequests/:id",
+  specificUserConfirmation,
+  async (request, response, next) => {
+    const outgoingRequestId = request.params.id;
+    const { incomingRequestId } = request.body;
+
+    try {
+      // Start a transaction
+      await client.query("BEGIN");
+
+      // Check if the users are not the same (i.e., a user can't send a request to themselves)
+      if (outgoingRequestId === incomingRequestId) {
+        await client.query("ROLLBACK");
+        return response.status(400).json({
+          error: "You cannot send a friend request to yourself",
+        });
+      }
+
+      // Check if the friend request already exists
+      const checkRequestResult = await client.query(
+        `SELECT * FROM friend_requests WHERE outgoing_request = $1 AND incoming_request = $2`,
+        [outgoingRequestId, incomingRequestId]
+      );
+
+      if (checkRequestResult.rowCount > 0) {
+        await client.query("ROLLBACK");
+        return response.status(400).json({
+          error: "Friend request already exists",
+        });
+      }
+
+      // Insert the new friend request into the database
+      await client.query(
+        `INSERT INTO friend_requests (outgoing_request, incoming_request) VALUES ($1, $2)`,
+        [outgoingRequestId, incomingRequestId]
+      );
+
+      // Commit the transaction
+      await client.query("COMMIT");
+
+      // Return a success message
+      response.status(200).json({
+        message: `UserId ${outgoingRequestId} sent a friend request to UserId ${incomingRequestId}`,
+      });
+    } catch (error) {
+      await client.query("ROLLBACK"); // Ensure rollback in case of an error
+      next(error);
+    }
+  }
+);
+
+// ADD THIS: for private event: only participants can view details/register
 
 export default userRouter;
