@@ -242,9 +242,6 @@ export default function CreateEventPage({
     data.append("upload_preset", "eventEcho");
     data.append("cloud_name", "dk7v80lgt");
     data.append("c_crop", "h_600,w_800");
-    if (!data) {
-      data = 'empty';
-    }
 
     const fileURL = URL.createObjectURL(file);
     setEventDetails({
