@@ -1,4 +1,5 @@
 import NoUpcomingEvents from "../HomePage/Components/NoUpcomingEvents";
+import NoUsers from "./Components/NoUsers";
 import EventCard from "../EventCard/EventCard";
 import UserCard from "../UserCard/UserCard";
 import SearchBar from "../SearchBar";
@@ -9,64 +10,278 @@ import {
   Tabs,
   Typography,
   useMediaQuery,
+  Button,
+  Stack,
 } from "@mui/material";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
-const events = [
-  {
-    id: "1",
-    title: "Football Game",
-    eventtype: "Sports",
-    description: "A friendly neighborhood football game.",
-    address: "123 Stadium Rd, City",
-    coordinates: {
-      x: 40.7128,
-      y: -74.006,
-    },
-    startdate: "2024-11-15T00:00:00.000Z",
-    starttime: "15:00:00+00",
-    enddate: "2024-11-15T00:00:00.000Z",
-    endtime: "17:00:00+00",
-    visibility: true,
-    image:
-      "https://m.media-amazon.com/images/M/MV5BOWZiNzZkZGEtMWEwOS00NjZkLWFmYTctZmQyMDY3NGU0OWZjXkEyXkFqcGc@._V1_.jpg", // temporary
-  },
-  {
-    id: "2",
-    title: "Jazz Concert",
-    eventtype: "Music",
-    description: "Live jazz performance.",
-    address: "456 Music Hall Ave, City",
-    coordinates: {
-      x: 40.7306,
-      y: -73.9352,
-    },
-    startdate: "2024-12-01T00:00:00.000Z",
-    starttime: "19:00:00+00",
-    enddate: "2024-12-01T00:00:00.000Z",
-    endtime: "21:00:00+00",
-    visibility: true,
-    image:
-      "https://www.horizonsmusic.co.uk/cdn/shop/articles/image1_1600x1600.jpg?v=1621417277", // temporary
-  },
-];
-
-const users = [
-  { id: 1, name: "Steven Nguyen", phone: "(403)-000-0000" },
-  { id: 2, name: "Winston Thai", phone: "(403)-111-1111" },
-  { id: 3, name: "Shaun Tapiau", phone: "(403)-222-2222" },
-  { id: 4, name: "Ahmed Elshabasi", phone: "(403)-333-3333" },
-  { id: 5, name: "Desmond Lau", phone: "(403)-444-4444" },
-];
+import NavigateBeforeIcon from "@mui/icons-material/NavigateBefore";
+import NavigateNextIcon from "@mui/icons-material/NavigateNext";
 
 const AdminPage = () => {
+  // React states
   const [selectedTab, setSelectedTab] = useState(0); // State to manage selected tab
+  const [events, setEvents] = useState([]);
+  const [users, setUsers] = useState([]);
+  const [bannedUsers, setBannedUsers] = useState([]);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [pageNum, setPageNum] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const [buttonSwitch, setButtonSwitch] = useState(0); // Switch for updating events and users
+  const [error, setError] = useState("");
 
   const isMobile = useMediaQuery("(max-width:600px)");
 
+  // Handle switching tabs
   const handleTabChange = (event, newValue) => {
     setSelectedTab(newValue); // Update the selected tab
   };
+
+  // Update search query state
+  const handleSearchChange = (query) => {
+    setSearchQuery(query); // Update search query
+    setPageNum(1);
+  };
+
+  // Page navigation
+  const handlePrevPage = () => {
+    setPageNum((prevPageNum) => {
+      return prevPageNum - 1;
+    });
+  };
+
+  const handleNextPage = () => {
+    setPageNum((prevPageNum) => {
+      return prevPageNum + 1;
+    });
+  };
+
+  // Removing an event
+  const handleRemovebutton = async (eventId) => {
+    try {
+      await removeEvent(eventId);
+      setButtonSwitch((buttonSwitch) => {
+        return buttonSwitch + 1;
+      });
+    } catch (e) {
+      setError(e.message);
+    }
+  };
+
+  // Ban button
+  const handleBanButton = async (userId) => {
+    try {
+      await banUser(userId);
+      setButtonSwitch((buttonSwitch) => {
+        return buttonSwitch + 1;
+      });
+    } catch (e) {
+      setError(e.message);
+    }
+  };
+
+  // Unban button
+  const handleUnbanButton = async (userId) => {
+    try {
+      await unbanUser(userId);
+      setButtonSwitch((buttonSwitch) => {
+        return buttonSwitch + 1;
+      });
+    } catch (e) {
+      setError(e.message);
+    }
+  };
+
+  // Query events from the API
+  async function queryEvents(
+    eventType = "",
+    search = "",
+    page = "1",
+    limit = ""
+  ) {
+    // Generate API Url
+    const APIUrl = `http://localhost:3001/api/events?eventType=${eventType}&search=${search}&page=${page}&limit=${limit}`;
+
+    try {
+      // Fetch and store results from API URL
+      const response = await fetch(APIUrl);
+      const data = await response.json();
+
+      // Error message
+      if (!response.ok) {
+        throw new Error(data.error || "An unexpected error occurred");
+      }
+
+      return data;
+    } catch (e) {
+      setError(e.message);
+    }
+  }
+
+  // Fetch events on startup, then update events each time one of the states change
+  useEffect(() => {
+    const fetchEvents = async () => {
+      try {
+        setError(null);
+
+        const result = await queryEvents("", searchQuery, pageNum);
+        setEvents(result.events);
+        setTotalPages(result.totalPages);
+      } catch (e) {
+        setError(e.message);
+      }
+    };
+
+    fetchEvents();
+  }, [searchQuery, pageNum, selectedTab, buttonSwitch]); // Call this useEffect each time one of these states change.
+
+  // Query users from the API
+  async function queryUsers(search = "") {
+    // Generate API Url
+    const APIUrl = `http://localhost:3001/api/users/allUsers?search=${search}&noAdmins=true`;
+
+    try {
+      // Fetch and store results from API URL
+      const response = await fetch(APIUrl);
+      const data = await response.json();
+
+      // Error message
+      if (!response.ok) {
+        throw new Error(data.error || "An unexpected error occurred");
+      }
+
+      return data;
+    } catch (e) {
+      setError(e.message);
+    }
+  }
+
+  // Fetch users on startup, then update users on state changes.
+  useEffect(() => {
+    const fetchUsers = async () => {
+      try {
+        setError(null);
+
+        const result = await queryUsers(searchQuery);
+        setUsers(result.users);
+      } catch (e) {
+        setError(e.message);
+      }
+    };
+
+    fetchUsers();
+  }, [searchQuery, buttonSwitch, selectedTab]); // Call this useEffect each time one of these states change.
+
+  // Query banned users from the API
+  async function queryBannedUsers(search = "") {
+    // Generate API Url
+    const APIUrl = `http://localhost:3001/api/admin/bannedUsers?search=${search}`;
+    const authToken = localStorage.getItem("authToken");
+    try {
+      // Fetch and store results from API URL
+      const response = await fetch(APIUrl, {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${authToken}`,
+        },
+      });
+      const data = await response.json();
+
+      // Error message
+      if (!response.ok) {
+        throw new Error(data.error || "An unexpected error occurred");
+      }
+
+      return data;
+    } catch (e) {
+      setError(e.message);
+    }
+  }
+
+  // Fetch banned users on startup, then update banned users on state change
+  useEffect(() => {
+    const fetchBannedUsers = async () => {
+      try {
+        setError(null);
+
+        const result = await queryBannedUsers(searchQuery);
+        setBannedUsers(result.users);
+      } catch (e) {
+        setError(e.message);
+      }
+    };
+
+    fetchBannedUsers();
+  }, [searchQuery, buttonSwitch, selectedTab]); // Call this useEffect each time one of these states change.
+
+  // Call API to remove an event
+  async function removeEvent(eventId) {
+    const APIUrl = `http://localhost:3001/api/events/${eventId}`;
+    const authToken = localStorage.getItem("authToken");
+    try {
+      // Fetch and store results from API URL
+      const response = await fetch(APIUrl, {
+        method: "DELETE",
+        headers: {
+          Authorization: `Bearer ${authToken}`,
+        },
+      });
+      const data = await response.json();
+
+      // Error message
+      if (!response.ok) {
+        throw new Error(data.error || "An unexpected error occurred");
+      }
+    } catch (e) {
+      setError(e.message);
+    }
+  }
+
+  // Call API to ban a user
+  async function banUser(userId) {
+    const APIUrl = `http://localhost:3001/api/admin/banUser/${userId}`;
+    const authToken = localStorage.getItem("authToken");
+    try {
+      // Fetch and store results from API URL
+      const response = await fetch(APIUrl, {
+        method: "PATCH",
+        headers: {
+          Authorization: `Bearer ${authToken}`,
+        },
+      });
+      const data = await response.json();
+
+      // Error message
+      if (!response.ok) {
+        throw new Error(data.error || "An unexpected error occurred");
+      }
+    } catch (e) {
+      setError(e.message);
+    }
+  }
+
+  // Call API to unban a user
+  async function unbanUser(userId) {
+    const APIUrl = `http://localhost:3001/api/admin/unbanUser/${userId}`;
+    const authToken = localStorage.getItem("authToken");
+    try {
+      // Fetch and store results from API URL
+      const response = await fetch(APIUrl, {
+        method: "PATCH",
+        headers: {
+          Authorization: `Bearer ${authToken}`,
+        },
+      });
+      const data = await response.json();
+
+      // Error message
+      if (!response.ok) {
+        throw new Error(data.error || "An unexpected error occurred");
+      }
+    } catch (e) {
+      setError(e.message);
+    }
+  }
 
   return (
     <Box
@@ -83,17 +298,37 @@ const AdminPage = () => {
       </Typography>
 
       {/* Search bar */}
-      {events.length !== 0 && selectedTab == 0 ? (
+      {selectedTab == 0 ? (
         <Box sx={{ display: "flex", paddingBottom: "2vh" }}>
-          <SearchBar noMargin={true} placeholder="Search for events..." />
+          <SearchBar
+            onSearchChange={handleSearchChange}
+            noMargin={true}
+            placeholder="Search for events..."
+          />
         </Box>
       ) : (
         <></>
       )}
 
-      {users.length !== 0 && selectedTab == 1 ? (
+      {selectedTab == 1 ? (
         <Box sx={{ display: "flex", paddingBottom: "2vh" }}>
-          <SearchBar noMargin={true} placeholder="Search for users..." />
+          <SearchBar
+            onSearchChange={handleSearchChange}
+            noMargin={true}
+            placeholder="Search for users..."
+          />
+        </Box>
+      ) : (
+        <></>
+      )}
+
+      {selectedTab == 2 ? (
+        <Box sx={{ display: "flex", paddingBottom: "2vh" }}>
+          <SearchBar
+            onSearchChange={handleSearchChange}
+            noMargin={true}
+            placeholder="Search for banned users..."
+          />
         </Box>
       ) : (
         <></>
@@ -108,6 +343,7 @@ const AdminPage = () => {
       >
         <Tab label="Events" />
         <Tab label="Users" />
+        <Tab label="Banned Users" />
       </Tabs>
 
       {/* Events Section */}
@@ -119,24 +355,100 @@ const AdminPage = () => {
                 Events
               </Typography>
               {events.map((event) => (
-                <EventCard key={event.id} event={event} variant="admin" />
+                <EventCard key={event.id} event={event} variant="admin" onRemoveButton={handleRemovebutton} />
               ))}
             </>
           ) : (
             <NoUpcomingEvents />
           )}
+          {/* Page Navigation */}
+          <Stack
+            direction="row"
+            sx={{
+              justifyContent: "center",
+              alignItems: "center",
+              mt: "1.5vh",
+              mb: "80px",
+            }}
+          >
+            {/* Prev Button */}
+            <Button
+              variant="contained"
+              sx={{
+                borderRadius: "20px",
+                backgroundColor: "#ff7474",
+              }}
+              startIcon={<NavigateBeforeIcon />}
+              disabled={pageNum <= 1}
+              onClick={() => handlePrevPage()}
+            >
+              Prev
+            </Button>
+
+            {/* Display pages */}
+            <Box sx={{ ml: "4vw", mr: "4vw", fontSize: "14px" }}>
+              Page {pageNum} of {totalPages}
+            </Box>
+
+            {/* Next Button */}
+            <Button
+              variant="contained"
+              sx={{
+                borderRadius: "20px",
+                backgroundColor: "#ff7474",
+              }}
+              endIcon={<NavigateNextIcon />}
+              disabled={pageNum >= totalPages}
+              onClick={() => handleNextPage()}
+            >
+              Next
+            </Button>
+          </Stack>
         </>
       )}
 
       {/* Users Section*/}
       {selectedTab === 1 && (
         <>
-          <Typography variant="h5" sx={{ fontWeight: "bold", mb: 2 }}>
-            Users
-          </Typography>
-          {users.map((user) => (
-            <UserCard key={user.id} user={user} />
-          ))}
+          {users.length !== 0 ? (
+            <>
+              <Typography variant="h5" sx={{ fontWeight: "bold", mb: 2 }}>
+                Users
+              </Typography>
+              {users.map((user) => (
+                <UserCard
+                  key={user.id}
+                  user={user}
+                  onBanButton={handleBanButton}
+                />
+              ))}
+            </>
+          ) : (
+            <NoUsers />
+          )}
+        </>
+      )}
+
+      {/* Banned Users Section*/}
+      {selectedTab === 2 && (
+        <>
+          {bannedUsers.length !== 0 ? (
+            <>
+              <Typography variant="h5" sx={{ fontWeight: "bold", mb: 2 }}>
+                Banned Users
+              </Typography>
+              {bannedUsers.map((user) => (
+                <UserCard
+                  variant="banned"
+                  key={user.id}
+                  user={user}
+                  onUnbanButton={handleUnbanButton}
+                />
+              ))}
+            </>
+          ) : (
+            <NoUsers />
+          )}
         </>
       )}
     </Box>

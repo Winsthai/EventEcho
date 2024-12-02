@@ -7,7 +7,7 @@ import "./EventCardStyles.css";
 import { useNavigate } from "react-router-dom";
 import logo from "../../images/logo.png";
 
-const EventCard = ({ event, variant = "" }) => {
+const EventCard = ({ event, variant = "", onRemoveButton}) => {
   // Use media query to check if screen width is less than 600px (mobile view)
   const isMobile = useMediaQuery("(max-width:600px)");
 
@@ -128,6 +128,7 @@ const EventCard = ({ event, variant = "" }) => {
                 }}
                 onClick={(e) => {
                   e.stopPropagation();
+                  onRemoveButton(event.id);
                 }}
               >
                 Remove
@@ -236,6 +237,7 @@ const EventCard = ({ event, variant = "" }) => {
                 }}
                 onClick={(e) => {
                   e.stopPropagation();
+                  onRemoveButton(event.id);
                 }}
               >
                 Remove
