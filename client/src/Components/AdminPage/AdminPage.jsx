@@ -101,7 +101,7 @@ const AdminPage = () => {
   // Query users from the API
   async function queryUsers(search = "") {
     // Generate API Url
-    const APIUrl = `http://localhost:3001/api/users/allUsers?search=${search}`;
+    const APIUrl = `http://localhost:3001/api/users/allUsers?search=${search}&noAdmins=true`;
 
     try {
       // Fetch and store results from API URL
