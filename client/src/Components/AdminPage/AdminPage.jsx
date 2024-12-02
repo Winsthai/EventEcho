@@ -57,7 +57,7 @@ const AdminPage = () => {
   };
 
   // Removing an event
-  const handleRemovebutton = async (eventId) => {
+  const handleRemoveButton = async (eventId) => {
     try {
       await removeEvent(eventId);
       setButtonSwitch((buttonSwitch) => {
@@ -355,7 +355,7 @@ const AdminPage = () => {
                 Events
               </Typography>
               {events.map((event) => (
-                <EventCard key={event.id} event={event} variant="admin" onRemoveButton={handleRemovebutton} />
+                <EventCard key={event.id} event={event} variant="admin" onRemoveButton={handleRemoveButton} />
               ))}
             </>
           ) : (

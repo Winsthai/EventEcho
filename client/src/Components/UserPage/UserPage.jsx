@@ -24,6 +24,7 @@ const UserPage = () => {
   const [upcomingEvents, setUpcomingEvents] = useState([]);
   const [selectedTab, setSelectedTab] = useState(0); // State to manage selected tab
   const [searchQuery, setSearchQuery] = useState("");
+  const [buttonSwitch, setButtonSwitch] = useState(0);
   const [error, setError] = useState("");
 
   const isMobile = useMediaQuery("(max-width:600px)");
@@ -51,6 +52,17 @@ const UserPage = () => {
   const handleTabChange = (event, newValue) => {
     setSelectedTab(newValue); // Update the selected tab
   };
+
+  const handleUnregisterButton = async (eventId) => {
+    try {
+      await unregisterEvent(eventId);
+      setButtonSwitch((buttonSwitch) => {
+        return buttonSwitch + 1;
+      });
+    } catch (e) {
+      setError(e.message);
+    }
+  }
 
   // Query users hosted events
   async function queryHostedEvents() {
@@ -91,7 +103,7 @@ const UserPage = () => {
     };
 
     fetchHostedEvents();
-  }, [searchQuery, selectedTab]); // Call this useEffect each time one of these states change.
+  }, [searchQuery, selectedTab, buttonSwitch]); // Call this useEffect each time one of these states change.
 
   // Query users hosted events
   async function queryUpcomingEvents() {
@@ -132,7 +144,31 @@ const UserPage = () => {
     };
 
     fetchUpcomingEvents();
-  }, [searchQuery, selectedTab]); // Call this useEffect each time one of these states change.
+  }, [searchQuery, selectedTab, buttonSwitch]); // Call this useEffect each time one of these states change.
+
+  // Call API to unregister user from event
+  async function unregisterEvent(eventId) {
+    const APIUrl = `http://localhost:3001/api/events/${eventId}/unregister`;
+    const authToken = localStorage.getItem("authToken");
+    try {
+      // Fetch and store results from API URL
+      const response = await fetch(APIUrl, {
+        method: "DELETE",
+        headers: {
+          Authorization: `Bearer ${authToken}`,
+        },
+      });
+      const data = await response.json();
+
+      // Error message
+      if (!response.ok) {
+        throw new Error(data.error || "An unexpected error occurred");
+      }
+    } catch (e) {
+      setError(e.message);
+    }
+  }
+
 
   return (
     <Box
@@ -261,7 +297,7 @@ const UserPage = () => {
           {upcomingEvents.length !== 0 ? (
             <>
               {upcomingEvents.map((event) => (
-                <EventCard key={event.id} event={event} variant="upcoming" />
+                <EventCard key={event.id} event={event} variant="upcoming" OnUnregisterButton={handleUnregisterButton}/>
               ))}
             </>
           ) : (
