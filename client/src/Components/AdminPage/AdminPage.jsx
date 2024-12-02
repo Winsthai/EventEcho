@@ -27,6 +27,7 @@ const AdminPage = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [pageNum, setPageNum] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
+  const [userBanSwitch, setUserBanSwitch] = useState(false); // Switch for user bans to update lists
   const [error, setError] = useState("");
 
   const isMobile = useMediaQuery("(max-width:600px)");
@@ -52,6 +53,13 @@ const AdminPage = () => {
   const handleNextPage = () => {
     setPageNum((prevPageNum) => {
       return prevPageNum + 1;
+    });
+  };
+
+  const handleBanButton = (userId) => {
+    banUser(userId);
+    setUserBanSwitch((prevUserBanSwitch) => {
+      return !prevUserBanSwitch;
     });
   };
 
@@ -133,7 +141,7 @@ const AdminPage = () => {
     };
 
     fetchUsers();
-  }, [searchQuery]); // Call each time searchQuery changes.
+  }, [searchQuery, userBanSwitch]); // Call each time searchQuery changes.
 
   // Query banned users from the API
   async function queryBannedUsers(search = "") {
@@ -143,10 +151,10 @@ const AdminPage = () => {
     try {
       // Fetch and store results from API URL
       const response = await fetch(APIUrl, {
-        method: 'GET',
+        method: "GET",
         headers: {
-          'Authorization': `Bearer ${authToken}`
-        }
+          Authorization: `Bearer ${authToken}`,
+        },
       });
       const data = await response.json();
 
@@ -175,7 +183,29 @@ const AdminPage = () => {
     };
 
     fetchBannedUsers();
-  }, [searchQuery]); // Call each time searchQuery changes.
+  }, [searchQuery, userBanSwitch]); // Call each time searchQuery changes.
+
+  async function banUser(userId) {
+    const APIUrl = `http://localhost:3001/api/admin/banUser/${userId}`;
+    const authToken = localStorage.getItem("authToken");
+    try {
+      // Fetch and store results from API URL
+      const response = await fetch(APIUrl, {
+        method: "PATCH",
+        headers: {
+          Authorization: `Bearer ${authToken}`,
+        },
+      });
+      const data = await response.json();
+
+      // Error message
+      if (!response.ok) {
+        throw new Error(data.error || "An unexpected error occurred");
+      }
+    } catch (e) {
+      setError(e.message);
+    }
+  }
 
   return (
     <Box
@@ -310,7 +340,7 @@ const AdminPage = () => {
                 Users
               </Typography>
               {users.map((user) => (
-                <UserCard key={user.id} user={user} />
+                <UserCard key={user.id} user={user} onBanButton={handleBanButton}/>
               ))}
             </>
           ) : (
@@ -328,7 +358,11 @@ const AdminPage = () => {
                 Banned Users
               </Typography>
               {bannedUsers.map((user) => (
-                <UserCard variant="banned" key={user.id} user={user} />
+                <UserCard
+                  variant="banned"
+                  key={user.id}
+                  user={user}
+                />
               ))}
             </>
           ) : (

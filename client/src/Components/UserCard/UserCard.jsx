@@ -2,7 +2,7 @@ import { useMediaQuery, Box, Stack, Button, Typography } from "@mui/material";
 import "./UserCardStyles.css";
 import { useNavigate } from "react-router-dom";
 
-const UserCard = ({ user, variant = "" }) => {
+const UserCard = ({ user, variant = "", onBanButton}) => {
   const isMobile = useMediaQuery("(max-width:600px)");
 
   if (!user) {
@@ -91,19 +91,35 @@ const UserCard = ({ user, variant = "" }) => {
           </Box>
 
           <Box>
-            <Button
-              variant="contained"
-              sx={{
-                borderRadius: "20px",
-                height: "80%",
-                backgroundColor: "#A50B07",
-                marginRight: "3vw",
-                textTransform: "none",
-              }}
-              //onClick=
-            >
-              Ban
-            </Button>
+            {variant === "banned" ? (
+              <Button
+                variant="contained"
+                sx={{
+                  borderRadius: "20px",
+                  height: "80%",
+                  backgroundColor: "#A50B07",
+                  marginRight: "3vw",
+                  textTransform: "none",
+                }}
+                //onClick=
+              >
+                Unban
+              </Button>
+            ) : (
+              <Button
+                variant="contained"
+                sx={{
+                  borderRadius: "20px",
+                  height: "80%",
+                  backgroundColor: "#A50B07",
+                  marginRight: "3vw",
+                  textTransform: "none",
+                }}
+                onClick={() => onBanButton(user.id)}
+              >
+                Ban
+              </Button>
+            )}
           </Box>
         </Stack>
       </Box>
