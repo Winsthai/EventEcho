@@ -310,20 +310,6 @@ eventRouter.post(
 
       // Additional checks for private events
       if (!event.visibility) {
-        userConfirmation(request, response, (err) => {
-          if (err) {
-            return next(err); // If there is an error, pass it to the error handler
-          }
-        });
-
-        // Check invites
-        if (!request.userId) {
-          // If userId isn't set by the middleware, there was an error, so stop
-          return;
-        }
-
-        const { userId } = request;
-
         const privateResult = await client.query(
           `SELECT * FROM event_invites WHERE event_id = $1 AND user_id = $2`,
           [eventId, userId]
@@ -343,6 +329,56 @@ eventRouter.post(
       );
 
       response.status(201).json({ eventId: eventId, userRegisteredId: userId });
+    } catch (error) {
+      next(error);
+    }
+  }
+);
+
+// Unregister a user from an event
+// Requires a token to identify who the user is unregistering for this event
+eventRouter.delete(
+  "/:id/unregister",
+  userConfirmation,
+  async (request, response, next) => {
+    const eventId = request.params.id;
+    const userId = request.userId; // Access the user ID from the token
+
+    if (!userId) {
+      return response.status(400).json({ error: "Invalid token" });
+    }
+
+    try {
+      const eventExistsResult = await client.query(
+        `SELECT 1 FROM events WHERE id = $1`,
+        [eventId]
+      );
+
+      if (eventExistsResult.rowCount === 0) {
+        // If no rows are returned, the event doesn't exist
+        return response.status(400).json({ error: "EventId does not exist" });
+      }
+
+      const userRegisteredResult = await client.query(
+        `SELECT 1 FROM event_participants WHERE event_id = $1 AND user_id = $2`,
+        [eventId, userId]
+      );
+
+      if (userRegisteredResult.rowCount === 0) {
+        // If no rows are returned, user is not registered for this event
+        return response
+          .status(400)
+          .json({ error: "You are not registered for this event" });
+      }
+
+      await client.query(
+        `DELETE FROM event_participants WHERE event_id = $1 AND user_id = $2`,
+        [eventId, userId]
+      );
+
+      response.status(200).json({
+        message: `UserId ${userId} unregistered from eventId ${eventId}`,
+      });
     } catch (error) {
       next(error);
     }
