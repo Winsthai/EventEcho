@@ -297,7 +297,7 @@ eventRouter.post(
 
     try {
       const eventExistsResult = await client.query(
-        `SELECT 1 FROM events WHERE id = $1`,
+        `SELECT e.visibility FROM events e WHERE e.id = $1`,
         [eventId]
       );
 
