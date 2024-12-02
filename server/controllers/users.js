@@ -151,14 +151,23 @@ userRouter.get(
 );
 
 // Get users, has optional search query to filter by search
-// search = <search Term>,
+// Optional queries:
+// search = <search Term>
+// noAdmins = true if no admins wanted
 userRouter.get("/allUsers", async (request, response, next) => {
   try {
     // Search query (optional)
     const searchTerm = request.query.search || ""; // Default to empty string if no search term
 
+    // Query to exclude admins (optional)
+    const adminExclusion = request.query.noAdmins;
+
     let queryText = `SELECT u.id, u.username, u.firstname, u.lastname FROM users u WHERE u.status != 3`;
     const queryParams = [];
+
+    if (adminExclusion) {
+      queryText += ` AND u.status != 2`;
+    }
 
     // Apply search filter if search term is provided
     if (searchTerm) {
@@ -363,7 +372,5 @@ userRouter.post(
     }
   }
 );
-
-// ADD THIS: for private event: only participants can view details/register
 
 export default userRouter;
