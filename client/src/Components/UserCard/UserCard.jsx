@@ -72,7 +72,7 @@ const UserCard = ({ user }) => {
             sx={{gap: "4px"}}
           >
             <span style={{fontWeight: "bold"}}>Name: </span>
-            <Typography component="span">{user.name}</Typography>
+            <Typography component="span">{user.firstname} {user.lastname}</Typography>
           </Box>
 
           {/* Phone Number */}
@@ -81,7 +81,7 @@ const UserCard = ({ user }) => {
             color="text.secondary"
             sx={{gap: "4px"}}
           >
-            <span style={{fontWeight: "bold"}}>Phone Number: </span> {user.phone}
+            <span style={{fontWeight: "bold"}}>Username: </span> {user.username}
           </Box>
 
             <Box>

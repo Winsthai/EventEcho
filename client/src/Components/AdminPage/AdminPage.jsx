@@ -97,6 +97,43 @@ const AdminPage = () => {
     fetchEvents();
   }, [searchQuery, pageNum]); // Call each time activeFilters or searchQuery changes.
 
+  // Query users from the API
+  async function queryUsers(search = "") {
+    // Generate API Url
+    const APIUrl = `http://localhost:3001/api/users/allUsers?search=${search}`;
+
+    try {
+      // Fetch and store results from API URL
+      const response = await fetch(APIUrl);
+      const data = await response.json();
+
+      // Error message
+      if (!response.ok) {
+        throw new Error(data.error || "An unexpected error occurred");
+      }
+
+      return data;
+    } catch (e) {
+      setError(e.message);
+    }
+  }
+
+  // Fetch events on startup, then update events each time filters or search change.
+  useEffect(() => {
+    const fetchUsers = async () => {
+      try {
+        setError(null);
+
+        const result = await queryUsers(searchQuery);
+        setUsers(result.users);
+      } catch (e) {
+        setError(e.message);
+      }
+    };
+
+    fetchUsers();
+  }, [searchQuery]); // Call each time activeFilters or searchQuery changes.
+
   return (
     <Box
       sx={{
@@ -172,6 +209,7 @@ const AdminPage = () => {
               mb: "80px",
             }}
           >
+            {/* Prev Button */}
             <Button
               variant="contained"
               sx={{
@@ -184,9 +222,13 @@ const AdminPage = () => {
             >
               Prev
             </Button>
+
+            {/* Display pages */}
             <Box sx={{ ml: "4vw", mr: "4vw", fontSize: "14px" }}>
               Page {pageNum} of {totalPages}
             </Box>
+
+            {/* Next Button */}
             <Button
               variant="contained"
               sx={{

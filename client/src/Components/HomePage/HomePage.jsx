@@ -126,11 +126,7 @@ const HomePage = () => {
       try {
         setError(null);
 
-        const result = await queryEvents(
-          activeFilters,
-          searchQuery,
-          pageNum
-        );
+        const result = await queryEvents(activeFilters, searchQuery, pageNum);
         setEvents(result.events);
         setTotalPages(result.totalPages);
       } catch (e) {
@@ -291,6 +287,7 @@ const HomePage = () => {
               mb: "80px",
             }}
           >
+            {/* Prev Button */}
             <Button
               variant="contained"
               sx={{
@@ -303,9 +300,13 @@ const HomePage = () => {
             >
               Prev
             </Button>
+
+            {/* Display pages */}
             <Box sx={{ ml: "4vw", mr: "4vw", fontSize: "14px" }}>
               Page {pageNum} of {totalPages}
             </Box>
+
+            {/* Next Button */}
             <Button
               variant="contained"
               sx={{
@@ -470,6 +471,7 @@ const HomePage = () => {
           direction="row"
           sx={{ justifyContent: "center", alignItems: "center", mt: "1.5vh" }}
         >
+          {/* Prev Button */}
           <Button
             variant="contained"
             sx={{
@@ -482,9 +484,13 @@ const HomePage = () => {
           >
             Prev
           </Button>
+
+          {/* Display pages */}
           <Box sx={{ ml: "4vw", mr: "4vw", fontSize: "1.2vw" }}>
             Page {pageNum} of {totalPages}
           </Box>
+
+          {/* Next Button */}
           <Button
             variant="contained"
             sx={{
