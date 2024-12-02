@@ -60,7 +60,7 @@ export const userConfirmation = (request, _response, next) => {
   }
 };
 
-export const creatorConfirmation = async (request, _response, next) => {
+export const creatorConfirmation = async (request, response, next) => {
   let token;
 
   const id = request.params.id;
@@ -79,7 +79,9 @@ export const creatorConfirmation = async (request, _response, next) => {
       );
 
       if (result.rowCount === 0) {
-        return response.status(404).json({ error: "Id not found" });
+        return response
+          .status(404)
+          .json({ error: `Event with id ${id} does not exist` });
       }
 
       const userId = result.rows[0].user_id;

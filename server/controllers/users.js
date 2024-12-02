@@ -364,8 +364,6 @@ userRouter.post(
   }
 );
 
-// Get invited users for an event?
-
 // ADD THIS: for private event: only participants can view details/register
 
 export default userRouter;
