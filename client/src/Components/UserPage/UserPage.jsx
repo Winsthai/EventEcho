@@ -195,8 +195,11 @@ const UserPage = () => {
           id="desktopUserButton"
           variant="contained"
           sx={{
-            borderRadius: "20px",
+            borderRadius: "10px",
             backgroundColor: "#A50B07",
+            padding: 0,
+            minWidth: "40px",
+            minHeight: "30px",
           }}
           aria-controls={open ? "userMenu" : undefined}
           aria-haspopup="true"

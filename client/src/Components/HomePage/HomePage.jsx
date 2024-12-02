@@ -39,6 +39,8 @@ const HomePage = () => {
   const [totalPages, setTotalPages] = useState(1);
   const [error, setError] = useState("");
 
+  const authToken = localStorage.getItem("authToken");
+
   // Update search query state
   const handleSearchChange = (query) => {
     setSearchQuery(query); // Update search query
@@ -132,16 +134,20 @@ const HomePage = () => {
           <h1>Events</h1>
 
           {/* Login button */}
-          <Box>
-            <Button
-              variant="contained"
-              onClick={() => navigate("/user/1")}
-              sx={{ borderRadius: "20px" }}
-              startIcon={<AccountCircleIcon />}
-            >
-              <Box id="homeLoginButton"> Login </Box>
-            </Button>
-          </Box>
+          {authToken ? (
+            <></>
+          ) : (
+            <Box>
+              <Button
+                variant="contained"
+                onClick={() => navigate("/login")}
+                sx={{ borderRadius: "20px" }}
+                startIcon={<AccountCircleIcon />}
+              >
+                <Box id="homeLoginButton"> Login </Box>
+              </Button>
+            </Box>
+          )}
         </Stack>
 
         {/* Main body for events */}
