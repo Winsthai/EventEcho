@@ -72,7 +72,13 @@ const events = [
   },
 ];
 
-export default function CreateEventPage({ eventDetails, setEventDetails, detailsCompleted, setDetailsCompleted }) {
+export default function CreateEventPage({
+  eventDetails,
+  setEventDetails,
+  setDetailsCompleted,
+  detailsChanged,
+  setDetailsChanged
+}) {
   const { id } = useParams();
   const navigate = useNavigate();
   // console.log(eventDetails);
@@ -95,24 +101,73 @@ export default function CreateEventPage({ eventDetails, setEventDetails, details
   });
 
 
-  if (onEditPage) {
-    vis = events[id - 1].visibility;
-    startTimeTrimmed = events[id - 1].starttime.slice(0, -3);
-    endTimeTrimmed = events[id - 1].endtime.slice(0, -3);
-  }
-  else {
-    vis = true;
+  async function fetchEvent(eventId) {
+    const APIUrl = `http://localhost:3001/api/events/${eventId}`;
+
+    try {
+      const response = await fetch(APIUrl);
+      const data = await response.json();
+      console.log("retrieved data", data);
+
+      if (!response.ok) {
+        throw new Error(data.error || "something bad happened uh oh");
+      }
+      return data.event;
+
+    } catch (error) {
+      console.log("some error here", error);
+    }
   }
 
-  const [eventPublic, setEventPublic] = React.useState(vis);
+  // useeffect
+
+  React.useEffect(() => {
+    if (onEditPage && !detailsChanged) {
+      console.log("fetch useEffect called");
+      const fetchEvents = async () => {
+        if (id) {
+          // before api call
+          try {
+            const retrieveEvent = await fetchEvent(id);
+            console.log("useEffect retrieveEvent: ", retrieveEvent.title);
+
+            setEventDetails({
+              ...eventDetails,
+              title: retrieveEvent.title,
+              eventtype: retrieveEvent.eventtype,
+              description: retrieveEvent.description,
+              address: retrieveEvent.address,
+              startdate: format(retrieveEvent.startdate, 'yyyy-MM-dd'),
+              starttime: retrieveEvent.starttime,
+              enddate: format(retrieveEvent.enddate, 'yyyy-MM-dd'),
+              endtime: retrieveEvent.endtime,
+              visibility: retrieveEvent.visibility,
+              startdateraw: retrieveEvent.startdateraw,
+              starttimeraw: retrieveEvent.starttimeraw,
+              enddateraw: retrieveEvent.enddateraw,
+              endtimeraw: retrieveEvent.endtimeraw,
+              eventimage: retrieveEvent.eventimage,
+              imagename: retrieveEvent.eventimage,
+              imagenamemobile: mobileFileNameFormat(retrieveEvent.eventimage),
+              imageform: "exists_in_cloud" // check to make sure if this is still there, then do not reupload when posting
+            });
+          }
+          catch (e) {
+            console.log("error: ", e);
+          }
+        }
+      };
+      fetchEvents();
+    }
+
+
+  }, [id]);
 
   const updateDetails = (event) => {
     const { name, value } = event.target;
-    setEventDetails((prevDetails) => {
-      const updatedDetails = { ...eventDetails, [name]: value };
-      // console.log(updatedDetails);
-      return updatedDetails;
-    });
+    setEventDetails({ ...eventDetails, [name]: value });
+
+    setDetailsChanged(true);
   };
 
   const handleStartDateChange = (date) => {
@@ -151,10 +206,26 @@ export default function CreateEventPage({ eventDetails, setEventDetails, details
   }
 
   const handleVisibilityChange = (event) => {
-    setEventPublic(event.target.checked);
     const { checked } = event.target;
     console.log(checked);
     setEventDetails({ ...eventDetails, visibility: checked });
+  }
+
+  function mobileFileNameFormat(file) {
+    if (!file) {
+      return;
+    }
+    let mobileFileName = '';
+    if (file.length > 25) {
+      const beginning = file.slice(0, 8);
+      const filetype = file.slice(-8);
+      mobileFileName = beginning.concat("...", filetype);
+      console.log(mobileFileName);
+    }
+    else {
+      mobileFileName = file;
+    }
+    return mobileFileName;
   }
 
   // save image to push later
@@ -167,16 +238,7 @@ export default function CreateEventPage({ eventDetails, setEventDetails, details
       return;
     }
 
-    let mobileFileName = '';
-    if (file.name.length > 25) {
-      const beginning = file.name.slice(0, 8);
-      const filetype = file.name.slice(-8);
-      mobileFileName = beginning.concat("...", filetype);
-      console.log(mobileFileName);
-    }
-    else {
-      mobileFileName = file.name;
-    }
+    const mobileFileName = mobileFileNameFormat(file.name);
 
     const data = new FormData();
     data.append("file", file);
@@ -192,12 +254,14 @@ export default function CreateEventPage({ eventDetails, setEventDetails, details
       imagenamemobile: mobileFileName,
       imageform: data
     });
+    setDetailsChanged(true);
 
   }
 
   // deletes files
   const handleDeleteFile = () => {
     setEventDetails({ ...eventDetails, eventimage: null, imagename: '', imageform: null });
+    setDetailsChanged(true);
   }
 
   // call field checking here
@@ -495,40 +559,19 @@ export default function CreateEventPage({ eventDetails, setEventDetails, details
 
             {/* Confirm and Invite Guests Button if create, Confirm Changes+Edit Guests if edit */}
             {onEditPage ?
-              <Stack direction="row" spacing={2}
+
+              <Button variant='contained'
+                onClick={() => handleNavigate(`/editEvent/${id}/changeGuests`)}
                 sx={{
-                  display: "flex",
-                  justifyContent: "center",
-                  width: '100%',
-                  '& > *': {
-                    flex: 1
+                  borderRadius: '10px',
+                  backgroundColor: "#F68F8D",
+                  "&:hover": {
+                    backgroundColor: "#A50B07",
                   }
-                }}>
-                <Button variant='contained'
-                  onClick={() => handleNavigate(`/editEvent/${id}/reviewEvent`)}
-                  sx={{
-                    borderRadius: '10px',
-                    backgroundColor: "#F68F8D",
-                    "&:hover": {
-                      backgroundColor: "#A50B07",
-                    }
-                  }}
-                >
-                  Confirm Changes
-                </Button>
-                <Button variant='contained'
-                  onClick={() => handleNavigate(`/editEvent/${id}/changeGuests`)}
-                  sx={{
-                    borderRadius: '10px',
-                    backgroundColor: "#F68F8D",
-                    "&:hover": {
-                      backgroundColor: "#A50B07",
-                    }
-                  }}
-                >
-                  Edit Guests
-                </Button>
-              </Stack> :
+                }}
+              >
+                Confirm Changes
+              </Button> :
               <Button variant='contained'
                 onClick={() => handleNavigate('/createEvent/addGuests')}
                 sx={{

@@ -8,7 +8,6 @@ import Typography from '@mui/material/Typography';
 import { useNavigate } from "react-router-dom";
 import { useParams } from 'react-router-dom';
 
-import CreateEventPage from './CreateEventPage/CreateEventPage';
 
 const steps = ['Event Details', 'Invite Guests', 'Review and Post'];
 

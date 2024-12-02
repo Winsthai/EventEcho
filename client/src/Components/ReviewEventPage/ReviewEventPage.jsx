@@ -26,64 +26,6 @@ import SportsEsportsIcon from "@mui/icons-material/SportsEsports";
 
 import "./ReviewEventPageStyles.css";
 
-// This needs to get deleted.
-const events = [
-  {
-    id: "1",
-    title: "Football Game",
-    eventtype: "Sports",
-    description: "A friendly neighborhood football game.",
-    address: "123 Stadium Rd, City",
-    coordinates: {
-      x: 40.7128,
-      y: -74.006,
-    },
-    startdate: "2024-11-15",
-    starttime: "15:00:00+00",
-    enddate: "2024-11-15",
-    endtime: "17:00:00+00",
-    visibility: true,
-    image:
-      "https://m.media-amazon.com/images/M/MV5BOWZiNzZkZGEtMWEwOS00NjZkLWFmYTctZmQyMDY3NGU0OWZjXkEyXkFqcGc@._V1_.jpg", // temporary
-  },
-  {
-    id: "2",
-    title: "Jazz Concert",
-    eventtype: "Music",
-    description: "Live jazz performance.",
-    address: "456 Music Hall Ave, City",
-    coordinates: {
-      x: 40.7306,
-      y: -73.9352,
-    },
-    startdate: "2024-12-01",
-    starttime: "19:00:00+00",
-    enddate: "2024-12-01",
-    endtime: "21:00:00+00",
-    visibility: true,
-    image:
-      "https://www.horizonsmusic.co.uk/cdn/shop/articles/image1_1600x1600.jpg?v=1621417277", // temporary
-  },
-  {
-    id: "3",
-    title: "Food Festival",
-    eventtype: "Food",
-    description: "A festival with foods from around the world.",
-    address: "789 Gourmet St, City",
-    coordinates: {
-      x: 40.7612,
-      y: -73.9822,
-    },
-    startdate: "2024-11-20",
-    starttime: "11:00:00+00",
-    enddate: "2024-11-20",
-    endtime: "16:00:00+00",
-    visibility: false,
-    image:
-      "https://i.ytimg.com/vi/BLsQyx604Yc/hq720.jpg?sqp=-oaymwEhCK4FEIIDSFryq4qpAxMIARUAAAAAGAElAADIQj0AgKJD&rs=AOn4CLAYWKCLjjwlIHVaM6MGC9bvpVLe_A", // temporary
-  },
-];
-
 const contacts = [
   { id: 1, name: "Steven Nguyen", phone: "(403)-000-0000" },
   { id: 2, name: "Winston Thai", phone: "(403)-111-1111" },
@@ -94,7 +36,6 @@ const contacts = [
 
 const ReviewEventPage = ({
   eventDetails,
-  setEventDetails,
   detailsCompleted,
   invitedGuests,
 }) => {
@@ -107,49 +48,43 @@ const ReviewEventPage = ({
 
   // if user forcefully enters in createEvent/reviewEvent before details finished need to redirect or something
   useEffect(() => {
-    if (!detailsCompleted) {
+    if (!detailsCompleted && !onEditPage) {
       navigate("/createEvent");
+    }
+    else if (!detailsCompleted && onEditPage) {
+      navigate(`/editEvent/${id}`)
     }
   }, [detailsCompleted, navigate]);
 
-  let reviewTime, reviewDate, startTimeTrimmed, endTimeTrimmed, databaseImage;
+  let reviewTime, reviewDate, startTimeTrimmed, endTimeTrimmed;
 
   if (detailsCompleted) {
-    if (onEditPage) {
-      startTimeTrimmed = events[id - 1].starttime.slice(0, -6);
-      endTimeTrimmed = events[id - 1].endtime.slice(0, -6);
+    startTimeTrimmed = eventDetails.starttime.slice(0, -6);
+    // if there is end time
+    if (eventDetails.endtime !== null) {
+      endTimeTrimmed = eventDetails.endtime.slice(0, -6);
       reviewTime = startTimeTrimmed.concat(" - ", endTimeTrimmed);
-      databaseImage = events[id - 1].image;
+      console.log("end time exists");
     } else {
-      startTimeTrimmed = eventDetails.starttime.slice(0, -6);
-      // if there is end time
-      if (eventDetails.endtime !== null) {
-        endTimeTrimmed = eventDetails.endtime.slice(0, -6);
-        reviewTime = startTimeTrimmed.concat(" - ", endTimeTrimmed);
-        console.log("end time exists");
-      } else {
-        reviewTime = startTimeTrimmed.concat(" - TBD");
-      }
-
-      // if there is end date
-      if (
-        eventDetails.enddate !== null &&
-        !dayjs(JSON.parse(eventDetails.startdateraw)).isSame(
-          dayjs(JSON.parse(eventDetails.enddateraw))
-        )
-      ) {
-        reviewDate = eventDetails.startdate.concat(" - ", eventDetails.enddate);
-      } else {
-        reviewDate = eventDetails.startdate;
-      }
-
-      console.log(startTimeTrimmed);
-      console.log(eventDetails.endtime);
+      reviewTime = startTimeTrimmed.concat(" - TBD");
     }
+
+    // if there is end date
+    if (
+      eventDetails.enddate !== null &&
+      !dayjs(JSON.parse(eventDetails.startdateraw)).isSame(
+        dayjs(JSON.parse(eventDetails.enddateraw))
+      )
+    ) {
+      reviewDate = eventDetails.startdate.concat(" - ", eventDetails.enddate);
+    } else {
+      reviewDate = eventDetails.startdate;
+    }
+
+    console.log(startTimeTrimmed);
   }
 
   async function addEventTodb(cloudinaryLink) {
-    // if (eventDetails.eventimage.includes("cloudinary")) {
     try {
       const response = await fetch("http://localhost:3001/api/events", {
         method: "POST",
@@ -185,39 +120,82 @@ const ReviewEventPage = ({
     } catch (error) {
       console.log("some error here", error);
     }
-    // }
+  };
+
+  async function editEventdb(cloudinaryLink) {
+    console.log("pushing changes to db");
+    console.log("link: ", cloudinaryLink);
+    try {
+      const response = await fetch(`http://localhost:3001/api/events/${id}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${localStorage.authToken}`
+        },
+        body: JSON.stringify({
+          title: eventDetails.title,
+          eventtype: eventDetails.eventtype,
+          description: eventDetails.description,
+          address: eventDetails.address,
+          startdate: eventDetails.startdate,
+          startdateraw: eventDetails.startdateraw,
+          starttime: eventDetails.starttime,
+          starttimeraw: eventDetails.starttimeraw,
+          enddate: eventDetails.enddate,
+          enddateraw: eventDetails.enddateraw,
+          endtime: eventDetails.endtime,
+          endtimeraw: eventDetails.endtimeraw,
+          visibility: eventDetails.visibility,
+          eventimage: cloudinaryLink
+        })
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        console.log(errorData);
+      }
+      const data = await response.json();
+      console.log("event updated", data);
+
+    } catch (error) {
+      console.log("some error here", error);
+    }
+
   };
 
   const handlePostEvent = async (url) => {
     // upload to cloud
-    let uploadedImageURL;
+    let uploadedImageURL = '';
     if (eventDetails.imageform !== null) {
-      const response = await fetch(
-        `https://api.cloudinary.com/v1_1/dk7v80lgt/image/upload`,
-        {
-          method: "POST",
-          body: eventDetails.imageform,
-        }
-      );
+      if (typeof (eventDetails.imageform) !== "string") {
+        const response = await fetch(
+          `https://api.cloudinary.com/v1_1/dk7v80lgt/image/upload`,
+          {
+            method: "POST",
+            body: eventDetails.imageform,
+          }
+        );
 
-      uploadedImageURL = await response.json();
-      console.log(uploadedImageURL.url);
+        uploadedImageURL = await response.json();
+        console.log("cloud link", uploadedImageURL.url);
+      }
+      else {
+        console.log("this image is the same so not reuploading");
+      }
+      onEditPage ? editEventdb(uploadedImageURL.url) : addEventTodb(uploadedImageURL.url);
+    }
+    else {
+      console.log("no image so just add event");
+      onEditPage ? editEventdb(null) : addEventTodb(null);
     }
 
-    addEventTodb(uploadedImageURL.url);
 
     navigate(url);
   };
 
-  const eventType = onEditPage
-    ? events[id - 1].eventtype
-    : eventDetails.eventtype;
+  const eventType = eventDetails.eventtype;
 
-  let imageUrl = onEditPage ? events[id - 1].image : eventDetails.eventimage;
-  // if no image exists, change to logo
-  if (imageUrl === null) {
-    imageUrl = logo;
-  }
+  const imageUrl = eventDetails.eventimage;
 
   const getIcon = (type) => {
     switch (type) {
@@ -299,6 +277,13 @@ const ReviewEventPage = ({
             pt: "4.5rem",
           }}
         >
+          <Box
+            component="img"
+            id="EventReviewPhoto"
+            src={
+              eventDetails.imageform === null ? logo : eventDetails.eventimage
+            }
+          ></Box>
           {onEditPage ? (
             <Box
               component="img"
@@ -325,7 +310,7 @@ const ReviewEventPage = ({
           {/* Event Title */}
           <Box>
             <h1 id="EventReviewTitle">
-              {onEditPage ? events[id - 1].title : eventDetails.title}
+              {eventDetails.title}
             </h1>
           </Box>
           {/* Date, time, and address */}
@@ -339,7 +324,7 @@ const ReviewEventPage = ({
             >
               <CalendarMonthIcon />
               <p id="EventReviewP">
-                {onEditPage ? events[id - 1].startdate : reviewDate}
+                {reviewDate}
               </p>
             </Stack>
             {/* Time */}
@@ -350,7 +335,7 @@ const ReviewEventPage = ({
               color="text.secondary"
             >
               <AccessTimeIcon />
-              <p id="EventReviewP">{onEditPage ? reviewTime : reviewTime}</p>
+              <p id="EventReviewP">{reviewTime}</p>
             </Stack>
             {/* Address */}
             <Stack
@@ -361,7 +346,7 @@ const ReviewEventPage = ({
             >
               <LocationOnIcon />
               <p id="EventReviewP">
-                {onEditPage ? events[id - 1].address : eventDetails.address}
+                {eventDetails.address}
               </p>
             </Stack>
           </Stack>
@@ -405,9 +390,7 @@ const ReviewEventPage = ({
           >
             <h1 id="EventReviewHeader">Event Description</h1>
             <p id="EventReviewP">
-              {onEditPage
-                ? events[id - 1].description
-                : eventDetails.description}
+              {eventDetails.description}
             </p>
           </Box>
         </Box>
@@ -457,7 +440,7 @@ const ReviewEventPage = ({
         >
           <Button
             variant="contained"
-            onClick={() => navigate("/user/1")}
+            onClick={() => handlePostEvent("/user/1")}
             sx={{
               borderRadius: "10px",
               mx: 3, // margin on left/right
@@ -526,6 +509,19 @@ const ReviewEventPage = ({
             ></Box>
 
             {/* Event Image */}
+            <Box
+              component="img"
+              id="EventReviewPhotoDesktop"
+              src={
+                eventDetails.imageform === null
+                  ? logo
+                  : eventDetails.eventimage
+              }
+              sx={{
+                position: "relative",
+                zIndex: 2, // Place above the blur
+              }}
+            ></Box>
             {onEditPage ? (
               <Box
                 component="img"
@@ -566,7 +562,7 @@ const ReviewEventPage = ({
           >
             {/* Title */}
             <h1 id="EventReviewTitleDesktop">
-              {onEditPage ? events[id - 1].title : eventDetails.title}
+              {eventDetails.title}
             </h1>
             <Stack spacing={1}>
               {/* Date */}
@@ -578,7 +574,7 @@ const ReviewEventPage = ({
               >
                 <CalendarMonthIcon id="EventReviewIconsDesktop" />
                 <p id="EventReviewPDesktop">
-                  {onEditPage ? events[id - 1].startdate : reviewDate}
+                  {reviewDate}
                 </p>
               </Stack>
               {/* Time */}
@@ -590,7 +586,7 @@ const ReviewEventPage = ({
               >
                 <AccessTimeIcon id="EventReviewIconsDesktop" />
                 <p id="EventReviewPDesktop">
-                  {onEditPage ? reviewTime : reviewTime}
+                  {reviewTime}
                 </p>
               </Stack>
               {/* Address */}
@@ -602,7 +598,7 @@ const ReviewEventPage = ({
               >
                 <LocationOnIcon id="EventReviewIconsDesktop" />
                 <p id="EventReviewPDesktop">
-                  {onEditPage ? events[id - 1].address : eventDetails.address}
+                  {eventDetails.address}
                 </p>
               </Stack>
             </Stack>
@@ -647,12 +643,12 @@ const ReviewEventPage = ({
         >
           <h1 id="EventReviewEDDesktop">Event Description</h1>
           <p id="EventReviewPDesktop">
-            {onEditPage ? events[id - 1].description : eventDetails.description}
+            {eventDetails.description}
           </p>
         </Box>
 
         {/* Guest List */}
-        <h1 id="EventReviewHeaderDesktop" style={{marginBottom: "0.5rem"}}>Guest List</h1>
+        <h1 id="EventReviewHeaderDesktop" style={{ marginBottom: "0.5rem" }}>Guest List</h1>
         <Box
           sx={{
             display: "flex",
@@ -662,7 +658,7 @@ const ReviewEventPage = ({
         >
           {/* Map Guests */}
           {invitedGuests.length === 0
-            ? <p id="EventReviewPDesktop" style={{marginTop: "0"}}>Consider inviting some guests!</p>
+            ? <p id="EventReviewPDesktop" style={{ marginTop: "0" }}>Consider inviting some guests!</p>
             : invitedGuests.map((id, index) => {
               const contact = contacts.find((contact) => contact.id === id);
               return (
