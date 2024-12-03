@@ -86,7 +86,7 @@ export default function CreateEventPage({
               address: retrieveEvent.address,
               startdate: retrieveEvent.startdate.slice(0, -14),
               starttime: retrieveEvent.starttime,
-              enddate: format(retrieveEvent.enddate, 'yyyy-MM-dd'),
+              enddate: retrieveEvent.enddate ? retrieveEvent.enddate.slice(0, -14) : retrieveEvent.enddate,
               endtime: retrieveEvent.endtime,
               visibility: retrieveEvent.visibility,
               startdateraw: retrieveEvent.startdateraw,

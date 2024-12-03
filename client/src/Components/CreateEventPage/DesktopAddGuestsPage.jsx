@@ -40,14 +40,80 @@ export default function DesktopAddGuestsPage({ invitedGuests, setInvitedGuests }
     console.log(invitedGuests);
   };
 
+
+  // get registered users (checking)
+  async function getRegisteredUsers() {
+    try {
+      const response = await fetch(`http://localhost:3001/api/events/${id}/attendingUsers`, {
+        method: "GET",
+        headers: { "Authorization": `Bearer ${localStorage.authToken}` }
+      });
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || "wonder where they are...");
+      }
+
+      return data;
+
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  // retrieve registered users on render
+  useEffect(() => {
+    const fetchRegisteredUsers = async () => {
+      try {
+        const myRegisteredUsers = await getRegisteredUsers();
+        console.log("hello registered users ", myRegisteredUsers);
+      } catch (error) {
+        console.log("cooked (register)");
+      }
+    };
+    fetchRegisteredUsers();
+  }, []);
+
+  // retrieves list of invited users 
+  async function getInvitedUsers() {
+    try {
+      const response = await fetch(`http://localhost:3001/api/events/${id}/invitedUsers`, {
+        method: "GET",
+        headers: { "Authorization": `Bearer ${localStorage.authToken}` }
+      });
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || "wonder where they are...");
+      }
+
+      return data;
+
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  // retrieve invited users on render
+  useEffect(() => {
+    const fetchInvitedUsers = async () => {
+      try {
+        const myInvitedUsers = await getInvitedUsers();
+        console.log("hello invited users ", myInvitedUsers);
+      } catch (error) {
+        console.log("cooked (invite)");
+      }
+    };
+    fetchInvitedUsers();
+  }, []);
+
+  // ------------- FRIENDS LIST -------------
   const [friendsList, setFriendsList] = useState([]);
 
   // retrieve friends
   async function fetchFriends() {
-    const APIUrl = `http://localhost:3001/api/users/friends`;
-
     try {
-      const response = await fetch(APIUrl, {
+      const response = await fetch(`http://localhost:3001/api/users/friends`, {
         method: "GET",
         headers: { "Authorization": `Bearer ${localStorage.authToken}` }
       }
@@ -65,7 +131,7 @@ export default function DesktopAddGuestsPage({ invitedGuests, setInvitedGuests }
     }
   };
 
-  // retrieve friends list from the db at the beginning
+  // retrieve friends list from the db on render
   useEffect(() => {
     const fetchMyFriends = async () => {
       try {

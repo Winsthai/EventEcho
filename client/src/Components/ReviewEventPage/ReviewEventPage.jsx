@@ -42,10 +42,8 @@ const ReviewEventPage = ({
 
   // retrieve friends
   async function fetchFriends() {
-    const APIUrl = `http://localhost:3001/api/users/friends`;
-
     try {
-      const response = await fetch(APIUrl, {
+      const response = await fetch(`http://localhost:3001/api/users/friends`, {
         method: "GET",
         headers: { "Authorization": `Bearer ${localStorage.authToken}` }
       }
@@ -109,6 +107,39 @@ const ReviewEventPage = ({
     }
   }
 
+  // retrieves list of invited users 
+  async function getInvitedUsers() {
+
+  };
+
+  // get registered users (checking)
+  async function getRegisteredUsers() {
+
+  };
+
+  // add newly invited users to the event (need to check beforehand if users are previously invited or already registered)
+  async function eventInvitesdb() {
+    try {
+      const response = await fetch(`http://localhost:3001/api/${id}/invitedUsers`, {
+        method: "POST",
+        headers: { "Authorization": `Bearer ${localStorage.authToken}` },
+        body: invitedGuests
+      });
+
+      const data = await response.json();
+      console.log("friend invites sent to: ", data);
+
+      if (!response.ok) {
+        throw new Error(data.error || "where yo friends at boy");
+      }
+      return data;
+
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  // add event to db
   async function addEventTodb(cloudinaryLink) {
     try {
       const response = await fetch("http://localhost:3001/api/events", {
@@ -147,6 +178,7 @@ const ReviewEventPage = ({
     }
   };
 
+  // edit event changes to db
   async function editEventdb(cloudinaryLink) {
     console.log("pushing changes to db");
     console.log("link: ", cloudinaryLink);
@@ -222,6 +254,8 @@ const ReviewEventPage = ({
       console.log("no image so just add event");
       onEditPage ? editEventdb(null) : addEventTodb(null);
     }
+
+    // call function to add guests to event invites
 
     navigate(url);
   };
@@ -456,7 +490,7 @@ const ReviewEventPage = ({
         >
           <Button
             variant="contained"
-            onClick={() => handlePostEvent("/user/1")}
+            onClick={() => handlePostEvent("/user")}
             sx={{
               borderRadius: "10px",
               mx: 3, // margin on left/right
@@ -674,7 +708,7 @@ const ReviewEventPage = ({
         {/* Post event / send invites button */}
         <Button
           variant="contained"
-          onClick={() => handlePostEvent("/user/1")}
+          onClick={() => handlePostEvent("/user")}
           sx={{
             borderRadius: "10px",
             width: "100%", // button width
