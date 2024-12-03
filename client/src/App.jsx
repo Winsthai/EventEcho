@@ -33,7 +33,7 @@ function App() {
           ></Route>
 
           {/* <Route path="/createEvent/reviewEvent" element={<ReviewEventPage></ReviewEventPage>}></Route> */}
-          <Route path="/user/:id" element={<UserPage></UserPage>}></Route>
+          <Route path="/user/" element={<UserPage></UserPage>}></Route>
           <Route path="/user/:id/friends" element={<FriendsPage></FriendsPage>}></Route>
           <Route path="/login" element={<LoginPage></LoginPage>}></Route>
           <Route path="/signUp" element={<SignUpPage></SignUpPage>}></Route>

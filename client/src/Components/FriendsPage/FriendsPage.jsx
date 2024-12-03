@@ -304,7 +304,7 @@ const FriendsPage = () => {
           }}
           onClick={(e) => {
             e.stopPropagation();
-            navigate(`/user/${id}`);
+            navigate(`/user`);
           }} // Probably change this later
         >
           Back to Profile

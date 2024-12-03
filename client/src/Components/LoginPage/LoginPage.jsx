@@ -50,10 +50,9 @@ const LoginPage = () => {
       // Save the token, username, and id (e.g., in localStorage)
       localStorage.setItem("authToken", data.token);
       localStorage.setItem("username", data.username);
-      localStorage.setItem("id", data.id);
 
       // Navigate to the next page after successful login
-      navigate(`/user/${data.id}`);
+      navigate(`/user`);
     } catch (err) {
       // Set the error message to display on the UI
       setError(err.message);
