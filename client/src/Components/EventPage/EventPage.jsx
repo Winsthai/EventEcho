@@ -38,11 +38,16 @@ const EventPage = () => {
   async function fetchEvent(eventId) {
     // Generate API Url
     const APIUrl = `http://localhost:3001/api/events/${eventId}`;
-
+    const authToken = localStorage.getItem("authToken");
     try {
       // Fetch and store results from API URL
       setError("");
-      const response = await fetch(APIUrl);
+      const response = await fetch(APIUrl, {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${authToken}`,
+        },
+      });
       const data = await response.json();
       console.log("API Response:", data); // Debugging output
       // Error message
@@ -85,9 +90,12 @@ const EventPage = () => {
   }
 
   // end date exists
-  if (event.enddate !== null && !dayjs(JSON.parse(event.startdateraw)).isSame(
-    dayjs(JSON.parse(event.enddateraw))
-  )) {
+  if (
+    event.enddate !== null &&
+    !dayjs(JSON.parse(event.startdateraw)).isSame(
+      dayjs(JSON.parse(event.enddateraw))
+    )
+  ) {
     reviewDate = event.startdate
       .slice(0, 10)
       .concat(" - ", event.enddate.slice(0, 10));
