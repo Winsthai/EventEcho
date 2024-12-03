@@ -31,6 +31,18 @@ const UserPage = () => {
   const authToken = localStorage.getItem("authToken");
   const username = localStorage.getItem("username");
 
+  const handleSearchChange = (query) => {
+    setSearchQuery(query); // Update search query
+  };
+
+  const searchedHostedEvents = hostedEvents.filter((event) =>
+    event.title.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
+  const searchedUpcomingEvents = upcomingEvents.filter((event) =>
+    event.title.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
   // User menu constants
   const [anchorE1, setAnchorE1] = useState(null);
   const open = Boolean(anchorE1);
@@ -54,6 +66,18 @@ const UserPage = () => {
   const handleUnregisterButton = async (eventId) => {
     try {
       await unregisterEvent(eventId);
+      setButtonSwitch((buttonSwitch) => {
+        return buttonSwitch + 1;
+      });
+    } catch (e) {
+      setError(e.message);
+    }
+  };
+
+  // Removing an event
+  const handleRemoveButton = async (eventId) => {
+    try {
+      await removeEvent(eventId);
       setButtonSwitch((buttonSwitch) => {
         return buttonSwitch + 1;
       });
@@ -140,10 +164,10 @@ const UserPage = () => {
           // Get start dates of each event
           const eventA = a.startdate.toLowerCase();
           const eventB = b.startdate.toLowerCase();
-        
+
           if (eventA < eventB) return -1; // If event a comes before event b
-          if (eventA > eventB) return 1;  // If event a comes after event b
-          return 0;                      // Same event dates
+          if (eventA > eventB) return 1; // If event a comes after event b
+          return 0; // Same event dates
         });
 
         setUpcomingEvents(sortedUpcomingEvents);
@@ -158,6 +182,29 @@ const UserPage = () => {
   // Call API to unregister user from event
   async function unregisterEvent(eventId) {
     const APIUrl = `http://localhost:3001/api/events/${eventId}/unregister`;
+    const authToken = localStorage.getItem("authToken");
+    try {
+      // Fetch and store results from API URL
+      const response = await fetch(APIUrl, {
+        method: "DELETE",
+        headers: {
+          Authorization: `Bearer ${authToken}`,
+        },
+      });
+      const data = await response.json();
+
+      // Error message
+      if (!response.ok) {
+        throw new Error(data.error || "An unexpected error occurred");
+      }
+    } catch (e) {
+      setError(e.message);
+    }
+  }
+
+  // Call API to remove an event
+  async function removeEvent(eventId) {
+    const APIUrl = `http://localhost:3001/api/events/${eventId}`;
     const authToken = localStorage.getItem("authToken");
     try {
       // Fetch and store results from API URL
@@ -266,7 +313,11 @@ const UserPage = () => {
 
       {/* Search bar */}
       <Box sx={{ display: "flex", paddingBottom: "2vh" }}>
-        <SearchBar noMargin={true} placeholder="Search for events..." />
+        <SearchBar
+          onSearchChange={handleSearchChange}
+          noMargin={true}
+          placeholder="Search for events..."
+        />
       </Box>
 
       {/* Tabs for switching between Hosted and Upcoming Events */}
@@ -286,10 +337,10 @@ const UserPage = () => {
           <Typography variant="h5" sx={{ fontWeight: "bold", mb: 2 }}>
             Your Hosted Events
           </Typography>
-          {hostedEvents.length !== 0 ? (
+          {searchedHostedEvents.length !== 0 ? (
             <>
-              {hostedEvents.map((event) => (
-                <EventCard key={event.id} event={event} variant="hosted" />
+              {searchedHostedEvents.map((event) => (
+                <EventCard key={event.id} event={event} variant="hosted" onRemoveButton={handleRemoveButton}/>
               ))}
             </>
           ) : (
@@ -304,9 +355,9 @@ const UserPage = () => {
           <Typography variant="h5" sx={{ fontWeight: "bold", mb: 2 }}>
             Your Upcoming Events
           </Typography>
-          {upcomingEvents.length !== 0 ? (
+          {searchedUpcomingEvents.length !== 0 ? (
             <>
-              {upcomingEvents.map((event) => (
+              {searchedUpcomingEvents.map((event) => (
                 <EventCard
                   key={event.id}
                   event={event}

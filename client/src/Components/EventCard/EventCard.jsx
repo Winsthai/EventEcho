@@ -120,7 +120,7 @@ const EventCard = ({
                 Edit
               </Button>
 
-              {/* Delete button */}
+              {/* Delete/Remove button */}
               <Button
                 variant="contained"
                 sx={{
@@ -132,6 +132,7 @@ const EventCard = ({
                 }}
                 onClick={(e) => {
                   e.stopPropagation();
+                  onRemoveButton(event.id);
                 }}
               >
                 Delete
@@ -139,6 +140,7 @@ const EventCard = ({
             </Stack>
           ) : variant === "admin" ? (
             <Box>
+              {/* Remove button */}
               <Button
                 variant="contained"
                 sx={{
