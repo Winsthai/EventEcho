@@ -118,7 +118,7 @@ adminRouter.get("/bannedUsers", async (request, response, next) => {
     let queryText = `SELECT * FROM users u`;
 
     if (banned) {
-      queryText += ` WHERE u.status != 3`;
+      queryText += ` WHERE u.status != 3 AND u.status != 2`;
     } else {
       queryText += ` WHERE u.status = 3`;
     }
