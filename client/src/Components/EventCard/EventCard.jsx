@@ -23,7 +23,7 @@ const EventCard = ({
   }
 
   const startDateTime = new Date(
-    `${event.startdate.slice(0, 10)}T${event.starttime.slice(0, 8)}+00:00`
+    `${event.startdate.slice(0, 10)}T${event.starttime.slice(0, 8)}-07:00`
   );
 
   let imageUrl = event.eventimage ? event.eventimage : logo;
@@ -120,7 +120,7 @@ const EventCard = ({
                 Edit
               </Button>
 
-              {/* Delete button */}
+              {/* Delete/Remove button */}
               <Button
                 variant="contained"
                 sx={{
@@ -132,6 +132,7 @@ const EventCard = ({
                 }}
                 onClick={(e) => {
                   e.stopPropagation();
+                  onRemoveButton(event.id);
                 }}
               >
                 Delete
@@ -139,6 +140,7 @@ const EventCard = ({
             </Stack>
           ) : variant === "admin" ? (
             <Box>
+              {/* Remove button */}
               <Button
                 variant="contained"
                 sx={{

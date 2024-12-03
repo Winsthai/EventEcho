@@ -229,7 +229,7 @@ export default function DesktopAddGuestsPage({ invitedGuests, setInvitedGuests }
             <div className="mobile-container">
               <TextField
                 variant="outlined"
-                placeholder="Search contacts..."
+                placeholder="Search friends..."
                 size="small"
                 sx={{
                   flexGrow: 1, // Ensures the search bar takes available space
@@ -320,7 +320,7 @@ export default function DesktopAddGuestsPage({ invitedGuests, setInvitedGuests }
         <div className="desktop-search-and-add">
           <TextField
             variant="outlined"
-            placeholder="Search contacts..."
+            placeholder="Search friends..."
             size="small"
             //onChange={(event) => onSearchChange(event.target.value)}
             sx={{
