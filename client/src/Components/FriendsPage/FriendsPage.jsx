@@ -205,6 +205,7 @@ const FriendsPage = () => {
       const response = await fetch(APIUrl, {
         method: "POST",
         headers: {
+          "Content-Type": "application/json",
           Authorization: `Bearer ${authToken}`,
         },
         body: JSON.stringify({ incomingRequestId: recipientId }), // "person who friend request is being sent to" I interpret this as the recipient
@@ -233,9 +234,12 @@ const FriendsPage = () => {
       const response = await fetch(APIUrl, {
         method: "POST",
         headers: {
+          "Content-Type": "application/json",
           Authorization: `Bearer ${authToken}`,
         },
-        body: JSON.stringify({ outgoingRequestId: senderID }), // by definition, we put senderID into the body
+        body: JSON.stringify({ 
+          outgoingRequestId: senderID 
+        }), // by definition, we put senderID into the body
       });
 
       const data = await response.json();
