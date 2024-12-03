@@ -60,7 +60,7 @@ const UserPage = () => {
     } catch (e) {
       setError(e.message);
     }
-  }
+  };
 
   // Query users hosted events
   async function queryHostedEvents() {
@@ -167,7 +167,6 @@ const UserPage = () => {
     }
   }
 
-
   return (
     <Box
       sx={{
@@ -273,11 +272,11 @@ const UserPage = () => {
       {/* Hosted Events Section */}
       {selectedTab === 0 && (
         <>
-          {hostedEvents !== 0 ? (
+          <Typography variant="h5" sx={{ fontWeight: "bold", mb: 2 }}>
+            Your Hosted Events
+          </Typography>
+          {hostedEvents.length !== 0 ? (
             <>
-              <Typography variant="h5" sx={{ fontWeight: "bold", mb: 2 }}>
-                Your Hosted Events
-              </Typography>
               {hostedEvents.map((event) => (
                 <EventCard key={event.id} event={event} variant="hosted" />
               ))}
@@ -297,7 +296,12 @@ const UserPage = () => {
           {upcomingEvents.length !== 0 ? (
             <>
               {upcomingEvents.map((event) => (
-                <EventCard key={event.id} event={event} variant="upcoming" OnUnregisterButton={handleUnregisterButton}/>
+                <EventCard
+                  key={event.id}
+                  event={event}
+                  variant="upcoming"
+                  OnUnregisterButton={handleUnregisterButton}
+                />
               ))}
             </>
           ) : (
