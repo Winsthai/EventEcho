@@ -21,6 +21,7 @@ const FriendsPage = () => {
   const [incomingRequests, setIncomingRequests] = useState([]);
   const [outgoingRequests, setOutgoingRequests] = useState([]);
   const [addableUsers, setAddableUsers] = useState([]);
+  const [allUsers, setAllUsers] = useState([]);
   const [error, setError] = useState("");
   const [selectedTab, setSelectedTab] = useState(0); // State to manage selected tab
   const [searchQuery, setSearchQuery] = useState("");
@@ -128,6 +129,16 @@ const FriendsPage = () => {
     }
   }
 
+  // function to get a user, so we can properly update friends list with the correct information.
+  const getUser = (userID) => {
+    const user = allUsers.find(user => user.id === userID);
+    if (!user) {
+      throw new Error("User not found");
+    }
+    return user; // Return the user data
+  };
+
+
   // useEffect to get friends, incomingFR, outgoingFR, all users, (also determines addable users).
   useEffect(() => {
     if (authToken) {
@@ -146,6 +157,7 @@ const FriendsPage = () => {
           setFriends(fetchedFriends);
           setIncomingRequests(fetchedIncomingRequests);
           setOutgoingRequests(fetchedOutgoingRequests);
+          setAllUsers(fetchedAllUsers); // used for the get user function
 
           const addable = fetchedAllUsers.filter(
             (user) =>
@@ -166,7 +178,7 @@ const FriendsPage = () => {
        //Go to login screen if no token
       navigate("/login");
     }
-  }, [searchQuery, selectedTab]);
+  }, [searchQuery, selectedTab]); // should auth token go in?
 
   // Remove Friend
   const handleRemoveFriend = async (friendId) => {
@@ -200,7 +212,6 @@ const FriendsPage = () => {
     const senderId = localStorage.getItem("id"); // us
     const APIUrl = `http://localhost:3001/api/users/outgoingFriendRequests/${senderId}`; // url contains the ID of the person SENDING, which is us
     
-    console.log(recipientId);
     try {
       const response = await fetch(APIUrl, {
         method: "POST",
@@ -247,10 +258,12 @@ const FriendsPage = () => {
       if (!response.ok) {
         throw new Error(data.error || "Failed to accept friend request.");
       }
+
+      const userData = getUser(senderID);
   
       // Update incoming requests and friends
       setIncomingRequests((prev) => prev.filter((req) => req.id !== senderID));
-      setFriends((prev) => [...prev, { id: senderID }]);
+      setFriends((prev) => [...prev, userData]);
     } catch (e) {
       setError(e.message);
     }
