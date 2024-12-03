@@ -26,14 +26,6 @@ import SportsEsportsIcon from "@mui/icons-material/SportsEsports";
 
 import "./ReviewEventPageStyles.css";
 
-const contacts = [
-  { id: 1, name: "Steven Nguyen", phone: "(403)-000-0000" },
-  { id: 2, name: "Winston Thai", phone: "(403)-111-1111" },
-  { id: 3, name: "Shaun Tapiau", phone: "(403)-222-2222" },
-  { id: 4, name: "Ahmed Elshabasi", phone: "(403)-333-3333" },
-  { id: 5, name: "Desmond Lau", phone: "(403)-444-4444" },
-];
-
 const ReviewEventPage = ({
   eventDetails,
   detailsCompleted,
@@ -230,7 +222,6 @@ const ReviewEventPage = ({
       console.log("no image so just add event");
       onEditPage ? editEventdb(null) : addEventTodb(null);
     }
-
 
     navigate(url);
   };
@@ -465,7 +456,7 @@ const ReviewEventPage = ({
         >
           <Button
             variant="contained"
-            onClick={() => handlePostEvent("/user")}
+            onClick={() => handlePostEvent("/user/1")}
             sx={{
               borderRadius: "10px",
               mx: 3, // margin on left/right
@@ -683,7 +674,7 @@ const ReviewEventPage = ({
         {/* Post event / send invites button */}
         <Button
           variant="contained"
-          onClick={() => handlePostEvent("/user")}
+          onClick={() => handlePostEvent("/user/1")}
           sx={{
             borderRadius: "10px",
             width: "100%", // button width
