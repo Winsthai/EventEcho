@@ -66,7 +66,7 @@ export default function CreateEventPage({
     } catch (error) {
       console.log("some error here", error);
     }
-  }
+  };
 
   // retrieve event info if on edit page
   React.useEffect(() => {
