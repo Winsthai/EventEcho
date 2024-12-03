@@ -373,4 +373,41 @@ userRouter.post(
   }
 );
 
+// Remove a friend
+// Url: (id in url should be the id of the user to delete)
+// Requires a token to be provided representing the user who wants to remove someone from their friends list
+userRouter.delete(
+  "/friend/:id",
+  userConfirmation,
+  async (request, response, next) => {
+    const userId = request.userId;
+    const friendToDeleteId = request.params.id;
+
+    try {
+      // Check if they are currently friends
+      const result = await client.query(
+        `SELECT * FROM friends_list WHERE (user_id = $1 AND friend_id = $2) OR (user_id = $2 AND friend_id = $1)`,
+        [userId, friendToDeleteId]
+      );
+
+      if (result.rowCount === 0) {
+        return response
+          .status(400)
+          .json({ message: "You are not currently friends with that user" });
+      }
+
+      // Delete the friend request both ways
+      await client.query(
+        `DELETE FROM friends_list WHERE (user_id = $1 AND friend_id = $2) OR (user_id = $2 AND friend_id = $1)`,
+        [userId, friendToDeleteId]
+      );
+
+      // Return no content on successful delete
+      response.status(204).send();
+    } catch (error) {
+      next(error);
+    }
+  }
+);
+
 export default userRouter;
