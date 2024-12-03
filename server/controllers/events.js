@@ -313,7 +313,6 @@ eventRouter.post(
 
       const event = eventExistsResult.rows[0];
       const today = new Date();
-      console.log("today: ", today);
 
       // Convert dates to Date objects for comparison
       const eventStartDate = new Date(event.startdate);

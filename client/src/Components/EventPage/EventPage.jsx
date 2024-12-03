@@ -26,7 +26,9 @@ const EventPage = () => {
   const [event, setEvent] = useState(null); // []
   const [error, setError] = useState("");
   const [showPopup, setShowPopup] = useState(false); // Popup state
+  const [popupMessage, setPopupMessage] = useState(""); // Message for the popup
   const [userRegistered, setUserRegistered] = useState(false);
+  const [isEventPassed, setIsEventPassed] = useState(false); // To track if the event has passed
 
   const authToken = localStorage.getItem("authToken");
 
@@ -35,9 +37,18 @@ const EventPage = () => {
   };
 
   const handleRegisterButton = async (eventId) => {
+    if (isEventPassed) {
+      // Display message if the event has passed
+      setPopupMessage("This event has already passed.");
+      setShowPopup(true);
+      return;
+    }
+
     try {
       await registerEvent(eventId);
       setUserRegistered(true);
+      setPopupMessage("Successfully registered for event!");
+      setShowPopup(true);
     } catch (e) {
       setError(e.message);
     }
@@ -47,12 +58,29 @@ const EventPage = () => {
   const isMobile = useMediaQuery("(max-width:600px)");
   const onEditPage = location.pathname.includes("edit");
 
-  useEffect(() => {
-    // Check if eventRegistered flag is present in state
-    if (userRegistered) {
-      setShowPopup(true);
+  const isEventDatePassed = (event) => {
+    const today = new Date();
+    const startDate = new Date(event.startdate);
+    const endDate = event.enddate ? new Date(event.enddate) : null;
 
-      // Hide popup after 3 seconds
+    if (endDate) {
+      return today > endDate;
+    } else {
+      return today > startDate;
+    }
+  };
+
+  useEffect(() => {
+    // Check if the event has passed
+    if (event) {
+      const hasPassed = isEventDatePassed(event);
+      setIsEventPassed(hasPassed);
+    }
+  }, [event]);
+
+  useEffect(() => {
+    // Hide popup after 3 seconds
+    if (showPopup) {
       const timer = setTimeout(() => {
         setShowPopup(false);
       }, 3000);
@@ -60,7 +88,7 @@ const EventPage = () => {
       // Cleanup timeout on unmount
       return () => clearTimeout(timer);
     }
-  }, [userRegistered]);
+  }, [showPopup]);
 
   // Query event from the API
   async function fetchEvent(eventId) {
@@ -336,15 +364,17 @@ const EventPage = () => {
           <Button
             variant="contained"
             sx={{
-              backgroundColor: "#F68F8D",
+              backgroundColor: isEventPassed ? "gray" : "#F68F8D",
               borderRadius: "20px",
-              marginBottom: "80px", // so button doesn't overlap with mobile interface at the bottom.
+              marginBottom: "80px",
+              cursor: "pointer",
               "&:hover": {
-                backgroundColor: "#A50B07",
+                backgroundColor: isEventPassed ? "gray" : "#A50B07",
               },
             }}
             onClick={() => handleRegisterButton(event.id)}
           >
+            {isEventPassed ? "Event Passed" : "Register"}
             Register
           </Button>
           {showPopup && (
@@ -354,7 +384,7 @@ const EventPage = () => {
                 top: "5%",
                 left: "50%",
                 transform: "translateX(-50%)",
-                backgroundColor: "#5cb85c",
+                backgroundColor: isEventPassed ? "darkred" : "#5cb85c",
                 color: "white",
                 padding: "10px 20px",
                 borderRadius: "8px",
@@ -365,7 +395,7 @@ const EventPage = () => {
                 minWidth: "250px", // Ensures it’s not too narrow
               }}
             >
-              Successfully registered for event!
+              {popupMessage}
             </Box>
           )}
         </Box>
@@ -537,12 +567,12 @@ const EventPage = () => {
                 variant="contained"
                 sx={{
                   marginBottom: "1.5rem",
-                  backgroundColor: "#F68F8D",
+                  backgroundColor: isEventPassed ? "gray" : "#F68F8D",
                   borderRadius: "30px", // This is different compared to the 20px in mobile version
                   fontSize: "20px",
                   //fontFamily: "Poppins", // this does nothing?
                   "&:hover": {
-                    backgroundColor: "#A50B07",
+                    backgroundColor: isEventPassed ? "gray" : "#A50B07",
                   },
                 }}
                 onClick={() => handleRegisterButton(event.id)}
@@ -556,7 +586,7 @@ const EventPage = () => {
                     top: "10%",
                     left: "50%",
                     transform: "translateX(-50%)",
-                    backgroundColor: "#5cb85c",
+                    backgroundColor: isEventPassed ? "darkred" : "#5cb85c",
                     color: "white",
                     padding: "10px 20px",
                     borderRadius: "8px",
@@ -564,7 +594,7 @@ const EventPage = () => {
                     boxShadow: "0px 4px 6px rgba(0, 0, 0, 0.1)",
                   }}
                 >
-                  Successfully registered for event!
+                  {popupMessage}
                 </Box>
               )}
             </Box>
