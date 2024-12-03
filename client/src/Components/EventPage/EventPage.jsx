@@ -25,14 +25,42 @@ const EventPage = () => {
   const navigate = useNavigate();
   const [event, setEvent] = useState(null); // []
   const [error, setError] = useState("");
+  const [showPopup, setShowPopup] = useState(false); // Popup state
+  const [userRegistered, setUserRegistered] = useState(false);
+
+  const authToken = localStorage.getItem("authToken");
 
   const handleClick = (url) => {
     navigate(url);
   };
 
+  const handleRegisterButton = async (eventId) => {
+    try {
+      await registerEvent(eventId);
+      setUserRegistered(true);
+    } catch (e) {
+      setError(e.message);
+    }
+  };
+
   // Determine whether to display mobile or desktop version of website
   const isMobile = useMediaQuery("(max-width:600px)");
   const onEditPage = location.pathname.includes("edit");
+
+  useEffect(() => {
+    // Check if eventRegistered flag is present in state
+    if (userRegistered) {
+      setShowPopup(true);
+
+      // Hide popup after 3 seconds
+      const timer = setTimeout(() => {
+        setShowPopup(false);
+      }, 3000);
+
+      // Cleanup timeout on unmount
+      return () => clearTimeout(timer);
+    }
+  }, [userRegistered]);
 
   // Query event from the API
   async function fetchEvent(eventId) {
@@ -67,6 +95,27 @@ const EventPage = () => {
       fetchEvent(id);
     }
   }, [id]);
+
+  async function registerEvent(eventId) {
+    const APIUrl = `http://localhost:3001/api/events/${eventId}/register`;
+    try {
+      // Fetch and store results from API URL
+      const response = await fetch(APIUrl, {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${authToken}`,
+        },
+      });
+      const data = await response.json();
+
+      // Error message
+      if (!response.ok) {
+        throw new Error(data.error || "An unexpected error occurred");
+      }
+    } catch (e) {
+      setError(e.message);
+    }
+  }
 
   if (error) {
     return <div>Error: {error}</div>;
@@ -294,9 +343,31 @@ const EventPage = () => {
                 backgroundColor: "#A50B07",
               },
             }}
+            onClick={() => handleRegisterButton(event.id)}
           >
             Register
           </Button>
+          {showPopup && (
+            <Box
+              sx={{
+                position: "fixed",
+                top: "5%",
+                left: "50%",
+                transform: "translateX(-50%)",
+                backgroundColor: "#5cb85c",
+                color: "white",
+                padding: "10px 20px",
+                borderRadius: "8px",
+                zIndex: 1000,
+                boxShadow: "0px 4px 6px rgba(0, 0, 0, 0.1)",
+                width: "80%", // Makes it responsive on mobile
+                maxWidth: "400px", // Ensures it doesn’t get too wide on large screens
+                minWidth: "250px", // Ensures it’s not too narrow
+              }}
+            >
+              Successfully registered for event!
+            </Box>
+          )}
         </Box>
       </Box>
     );
@@ -474,9 +545,28 @@ const EventPage = () => {
                     backgroundColor: "#A50B07",
                   },
                 }}
+                onClick={() => handleRegisterButton(event.id)}
               >
                 Register
               </Button>
+              {showPopup && (
+                <Box
+                  sx={{
+                    position: "fixed",
+                    top: "10%",
+                    left: "50%",
+                    transform: "translateX(-50%)",
+                    backgroundColor: "#5cb85c",
+                    color: "white",
+                    padding: "10px 20px",
+                    borderRadius: "8px",
+                    zIndex: 1000,
+                    boxShadow: "0px 4px 6px rgba(0, 0, 0, 0.1)",
+                  }}
+                >
+                  Successfully registered for event!
+                </Box>
+              )}
             </Box>
           </Box>
         </Box>

@@ -1,14 +1,13 @@
 import { Box, TextField, Button, Stack, useMediaQuery } from "@mui/material";
 import PasswordBox from "../PasswordBox";
 import { useNavigate, useLocation } from "react-router-dom";
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from "react";
 
 import "./LoginPageStyles.css";
 
 import logo from "../../images/logo.png";
 
 const LoginPage = () => {
-
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState(""); // To display errors
@@ -18,15 +17,15 @@ const LoginPage = () => {
   useEffect(() => {
     // Check if accountCreated flag is present in state
     if (location.state?.accountCreated) {
-        setShowPopup(true);
+      setShowPopup(true);
 
-        // Hide popup after 3 seconds
-        const timer = setTimeout(() => {
-            setShowPopup(false);
-        }, 3000);
+      // Hide popup after 3 seconds
+      const timer = setTimeout(() => {
+        setShowPopup(false);
+      }, 3000);
 
-        // Cleanup timeout on unmount
-        return () => clearTimeout(timer);
+      // Cleanup timeout on unmount
+      return () => clearTimeout(timer);
     }
   }, [location.state]);
 
@@ -70,40 +69,44 @@ const LoginPage = () => {
   if (isMobile) {
     // Mobile component
     return (
-      <Box component="section" id="loginBox"
-      sx={{
-        width: "100%",
-        height: "100%",
-        display: "flex",
-        justifyContent: "center",
-        alignItems: "center",
-        textAlign: "center",
-    }}>
-
-    {showPopup && (
-                    <Box
-                        sx={{
-                            position: "fixed",
-                            top: "5%",
-                            left: "50%",
-                            transform: "translateX(-50%)",
-                            backgroundColor: "darkred",
-                            color: "white",
-                            padding: "10px 20px",
-                            borderRadius: "8px",
-                            zIndex: 1000,
-                            boxShadow: "0px 4px 6px rgba(0, 0, 0, 0.1)",
-                            width: "80%", // Makes it responsive on mobile
-                            maxWidth: "400px", // Ensures it doesn’t get too wide on large screens
-                            minWidth: "250px", // Ensures it’s not too narrow
-                        }}
-                    >
-                        Account created successfully! Please log in.
-                    </Box>
-                )}
+      <Box
+        component="section"
+        id="loginBox"
+        sx={{
+          width: "100%",
+          height: "100%",
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          textAlign: "center",
+        }}
+      >
+        {showPopup && (
+          <Box
+            sx={{
+              position: "fixed",
+              top: "5%",
+              left: "50%",
+              transform: "translateX(-50%)",
+              backgroundColor: "darkred",
+              color: "white",
+              padding: "10px 20px",
+              borderRadius: "8px",
+              zIndex: 1000,
+              boxShadow: "0px 4px 6px rgba(0, 0, 0, 0.1)",
+              width: "80%", // Makes it responsive on mobile
+              maxWidth: "400px", // Ensures it doesn’t get too wide on large screens
+              minWidth: "250px", // Ensures it’s not too narrow
+            }}
+          >
+            Account created successfully! Please log in.
+          </Box>
+        )}
         <Box component="form" id="loginFormBox">
           <Stack direction="column" spacing={6.5} id="loginFormStack">
-            <h1 id="loginHeader" style={{ marginTop: "20px"  }}>EventEcho</h1>
+            <h1 id="loginHeader" style={{ marginTop: "20px" }}>
+              EventEcho
+            </h1>
 
             <Box>
               <img
@@ -125,13 +128,14 @@ const LoginPage = () => {
               onChange={(e) => setPassword(e.target.value)}
             />
 
-            {error && <p style={{ color: "red", textAlign: "center" }}>{error}</p>}
-  
-            <Stack 
-              direction="row"
-              id="loginButtonStack"
-            >
-              <Button variant="text" onClick={() => handleClick("/signUp")}>Create Account</Button>
+            {error && (
+              <p style={{ color: "red", textAlign: "center" }}>{error}</p>
+            )}
+
+            <Stack direction="row" id="loginButtonStack">
+              <Button variant="text" onClick={() => handleClick("/signUp")}>
+                Create Account
+              </Button>
               <Button
                 variant="contained"
                 sx={{ borderRadius: "15px", padding: "2vw 5vw 2vw 5vw" }}
@@ -142,8 +146,10 @@ const LoginPage = () => {
             </Stack>
 
             <Box>
-              <Button variant="text" onClick={() => handleClick("/")}>Stay on Guest Mode</Button>
-            </Box>   
+              <Button variant="text" onClick={() => handleClick("/")}>
+                Stay on Guest Mode
+              </Button>
+            </Box>
           </Stack>
         </Box>
       </Box>
@@ -153,23 +159,23 @@ const LoginPage = () => {
     return (
       <Box component="section" id="loginBox">
         {showPopup && (
-                    <Box
-                        sx={{
-                            position: "fixed",
-                            top: "10%",
-                            left: "50%",
-                            transform: "translateX(-50%)",
-                            backgroundColor: "darkred",
-                            color: "white",
-                            padding: "10px 20px",
-                            borderRadius: "8px",
-                            zIndex: 1000,
-                            boxShadow: "0px 4px 6px rgba(0, 0, 0, 0.1)",
-                        }}
-                    >
-                        Account created successfully! Please log in.
-                    </Box>
-                )}
+          <Box
+            sx={{
+              position: "fixed",
+              top: "10%",
+              left: "50%",
+              transform: "translateX(-50%)",
+              backgroundColor: "darkred",
+              color: "white",
+              padding: "10px 20px",
+              borderRadius: "8px",
+              zIndex: 1000,
+              boxShadow: "0px 4px 6px rgba(0, 0, 0, 0.1)",
+            }}
+          >
+            Account created successfully! Please log in.
+          </Box>
+        )}
         <Box component="form" id="loginFormBox">
           <Stack direction="column" spacing={10} id="loginFormStack">
             <Stack direction="row" id="loginHeaderStack">
@@ -189,15 +195,18 @@ const LoginPage = () => {
               onChange={(e) => setPassword(e.target.value)}
             />
 
-            {error && <p style={{ color: "red", textAlign: "center" }}>{error}</p>}
-  
-            <Stack 
-              direction="row"
-              id="loginButtonStack"
-            >
-              <Button variant="text" onClick={() => handleClick("/")}>Stay on Guest Mode</Button>
+            {error && (
+              <p style={{ color: "red", textAlign: "center" }}>{error}</p>
+            )}
+
+            <Stack direction="row" id="loginButtonStack">
+              <Button variant="text" onClick={() => handleClick("/")}>
+                Stay on Guest Mode
+              </Button>
               <Box>
-                <Button variant="text" onClick={() => handleClick("/signUp")}>Create Account</Button>
+                <Button variant="text" onClick={() => handleClick("/signUp")}>
+                  Create Account
+                </Button>
                 <Button
                   variant="contained"
                   sx={{ marginLeft: "1.5vw" }}

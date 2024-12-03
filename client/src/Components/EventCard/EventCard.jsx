@@ -23,7 +23,7 @@ const EventCard = ({
   }
 
   const startDateTime = new Date(
-    `${event.startdate.slice(0, 10)}T${event.starttime.slice(0, 8)}+00:00`
+    `${event.startdate.slice(0, 10)}T${event.starttime.slice(0, 8)}-07:00`
   );
 
   let imageUrl = event.eventimage ? event.eventimage : logo;
