@@ -250,7 +250,7 @@ const UserPage = () => {
                 textTransform: "none",
               }}
             >
-              Signout
+              Sign out
             </Button>
           </MenuItem>
         </Menu>
