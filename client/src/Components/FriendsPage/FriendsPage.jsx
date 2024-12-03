@@ -178,12 +178,13 @@ const FriendsPage = () => {
        //Go to login screen if no token
       navigate("/login");
     }
-  }, [searchQuery, selectedTab]); // should auth token go in?
+  }, [authToken, selectedTab, searchQuery, friends]);
+  // Might need to change. didnt have friends/incomReq/outReq before. ^^^^^
 
   // Remove Friend
   const handleRemoveFriend = async (friendId) => {
     const authToken = localStorage.getItem("authToken");
-    const APIUrl = `http://localhost:3001/api/users/friends/${friendId}`;
+    const APIUrl = `http://localhost:3001/api/users/friend/${friendId}`;
     try {
       const response = await fetch(APIUrl, {
         method: "DELETE",
