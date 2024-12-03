@@ -465,7 +465,7 @@ const ReviewEventPage = ({
         >
           <Button
             variant="contained"
-            onClick={() => handlePostEvent("/user/1")}
+            onClick={() => handlePostEvent("/user")}
             sx={{
               borderRadius: "10px",
               mx: 3, // margin on left/right
@@ -683,7 +683,7 @@ const ReviewEventPage = ({
         {/* Post event / send invites button */}
         <Button
           variant="contained"
-          onClick={() => handlePostEvent("/user/1")}
+          onClick={() => handlePostEvent("/user")}
           sx={{
             borderRadius: "10px",
             width: "100%", // button width

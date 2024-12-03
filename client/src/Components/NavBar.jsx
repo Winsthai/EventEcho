@@ -24,7 +24,6 @@ const NavBar = () => {
   const [error, setError] = useState("");
 
   const authToken = localStorage.getItem("authToken");
-  const userId = localStorage.getItem("id");
 
   const handleClick = (url) => {
     navigate(url);
@@ -139,7 +138,7 @@ const NavBar = () => {
           <Chip
             icon={<PersonIcon />}
             label="User Profile"
-            onClick={() => handleUserProfile(`/user/${userId}`)}
+            onClick={() => handleUserProfile("/user")}
             sx={chipStyle}
           />
         ) : (

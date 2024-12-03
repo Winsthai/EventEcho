@@ -363,7 +363,7 @@ export default function CreateEventPage({
               </Typography>
 
               <IconButton
-                onClick={onEditPage ? () => navigate('/user/1') : () => navigate('/')}
+                onClick={onEditPage ? () => navigate('/user') : () => navigate('/')}
                 edge="start"
                 color="inherit"
                 aria-label="back"

@@ -1,4 +1,3 @@
-import { useParams } from "react-router-dom";
 import {
   Box,
   Typography,
@@ -19,7 +18,6 @@ import { useNavigate } from "react-router-dom";
 import MenuIcon from "@mui/icons-material/Menu";
 
 const UserPage = () => {
-  const { id } = useParams();
   const [hostedEvents, setHostedEvents] = useState([]);
   const [upcomingEvents, setUpcomingEvents] = useState([]);
   const [selectedTab, setSelectedTab] = useState(0); // State to manage selected tab
@@ -222,7 +220,7 @@ const UserPage = () => {
           <MenuItem
             onClick={(e) => {
               e.stopPropagation();
-              navigate(`/user/${id}/friends`);
+              navigate(`/user/friends`);
             }}
           >
             <Button
