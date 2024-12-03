@@ -116,7 +116,18 @@ const HomePage = () => {
         setError(null);
 
         const result = await queryEvents(activeFilters, searchQuery, pageNum);
-        setEvents(result.events);
+
+        const sortedEvents = result.events.sort((a, b) => {
+          // Get start dates of each event
+          const eventA = a.startdate.toLowerCase();
+          const eventB = b.startdate.toLowerCase();
+        
+          if (eventA < eventB) return -1; // If event a comes before event b
+          if (eventA > eventB) return 1;  // If event a comes after event b
+          return 0;                      // Same event dates
+        });
+
+        setEvents(sortedEvents);
         setTotalPages(result.totalPages);
       } catch (e) {
         setError(e.message);
