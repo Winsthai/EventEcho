@@ -15,94 +15,246 @@ import { useNavigate } from "react-router-dom";
 
 import "./FriendsPage.css";
 
-// Test data for now
-const testUsers = [
-  {
-    id: 1,
-    username: "Steven",
-    registeredEvents: [],
-    createdEvents: [],
-    friends: [2, 3, 4, 5, 6],
-    outgoingRequests: [6],
-    incomingRequests: [5],
-  },
-  {
-    id: 2,
-    username: "Shaun Tapiau",
-    registeredEvents: [],
-    createdEvents: [],
-    friends: [1, 3],
-    outgoingRequests: [6],
-    incomingRequests: [],
-  },
-  {
-    id: 3,
-    username: "Winston",
-    registeredEvents: [],
-    createdEvents: [],
-    friends: [1, 2],
-    outgoingRequests: [6],
-    incomingRequests: [],
-  },
-  {
-    id: 4,
-    username: "Dummy",
-    registeredEvents: [],
-    createdEvents: [],
-    friends: [],
-    outgoingRequests: [6],
-    incomingRequests: [],
-  },
-  {
-    id: 5,
-    username: "Add Me!!!",
-    registeredEvents: [],
-    createdEvents: [],
-    friends: [],
-    outgoingRequests: [1, 6],
-    incomingRequests: [],
-  },
-  {
-    id: 6,
-    username: "Already sent request",
-    registeredEvents: [],
-    createdEvents: [],
-    friends: [],
-    outgoingRequests: [],
-    incomingRequests: [1, 2, 3, 4, 5],
-  },
-];
-
 const FriendsPage = () => {
   const { id } = useParams();
-  const [user, setUser] = useState(null);
+  const [friends, setFriends] = useState([]);
+  const [incomingRequests, setIncomingRequests] = useState([]);
+  const [outgoingRequests, setOutgoingRequests] = useState([]);
+  const [addableUsers, setAddableUsers] = useState([]);
+  const [error, setError] = useState("");
   const [selectedTab, setSelectedTab] = useState(0); // State to manage selected tab
+  const [searchQuery, setSearchQuery] = useState("");
 
   const isMobile = useMediaQuery("(max-width:600px)");
   const navigate = useNavigate();
 
-  useEffect(() => {
-    if (id) {
-      const currUser = testUsers.find((elem) => elem.id == id);
-      setUser(currUser);
-    }
-  }, [id]);
+  // Get session token from local storage, might need to change?
+  const authToken = localStorage.getItem("authToken");
+  const username = localStorage.getItem("username");
 
   const handleTabChange = (event, newValue) => {
     setSelectedTab(newValue); // Update the selected tab
   };
 
-  if (!user) {
-    return <div>loading...</div>;
+  async function queryFriends() {
+    const APIUrl = `http://localhost:3001/api/users/friends`;
+    try {
+      // Fetch and store results from API URL
+      const response = await fetch(APIUrl, {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${authToken}`,
+        },
+      });
+      const data = await response.json();
+
+      // Error message
+      if (!response.ok) {
+        throw new Error(data.error || "An unexpected error occurred");
+      }
+
+      return data.users;
+    }catch (e) {
+      setError(e.message);
+    }
   }
 
-  const addableUsers = testUsers.filter(
-    (testUser) =>
-      !user.friends.includes(testUser.id) && // Not already friends
-      testUser.id !== user.id && // Not the user itself
-      !user.outgoingRequests.includes(testUser.id) && // Not a user with an outgoing request
-      !user.incomingRequests.includes(testUser.id) // Not a user with an incoming request
-  );
+  async function queryIncomingRequests() {
+    const APIUrl = `http://localhost:3001/api/users/incomingFriendRequests`;
+    try {
+      // Fetch and store results from API URL
+      const response = await fetch(APIUrl, {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${authToken}`,
+        },
+      });
+      const data = await response.json();
+
+      // Error message
+      if (!response.ok) {
+        throw new Error(data.error || "An unexpected error occurred");
+      }
+
+      return data.users;
+    }catch (e) {
+      setError(e.message);
+    }
+  }
+
+  async function queryOutgoingRequests() {
+    const APIUrl = `http://localhost:3001/api/users/outgoingFriendRequests`;
+    try {
+      // Fetch and store results from API URL
+      const response = await fetch(APIUrl, {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${authToken}`,
+        },
+      });
+      const data = await response.json();
+
+      // Error message
+      if (!response.ok) {
+        throw new Error(data.error || "An unexpected error occurred");
+      }
+
+      return data.users;
+    }catch (e) {
+      setError(e.message);
+    }
+  }
+
+  async function queryAllUsers() {
+    const APIUrl = `http://localhost:3001/api/users/allUsers`;
+    try {
+      // Fetch and store results from API URL
+      const response = await fetch(APIUrl, {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${authToken}`,
+        },
+      });
+      const data = await response.json();
+
+      // Error message
+      if (!response.ok) {
+        throw new Error(data.error || "An unexpected error occurred");
+      }
+
+      return data.users;
+    }catch (e) {
+      setError(e.message);
+    }
+  }
+
+  // useEffect to get friends, incomingFR, outgoingFR, all users, (also determines addable users).
+  useEffect(() => {
+    if (authToken) {
+      const fetchAll = async () => {
+        try {
+          setError(null);
+  
+          const [fetchedFriends, fetchedIncomingRequests, fetchedOutgoingRequests, fetchedAllUsers] =
+          await Promise.all([
+            queryFriends(),
+            queryIncomingRequests(),
+            queryOutgoingRequests(),
+            queryAllUsers(),
+          ]);
+
+          setFriends(fetchedFriends);
+          setIncomingRequests(fetchedIncomingRequests);
+          setOutgoingRequests(fetchedOutgoingRequests);
+
+          const addable = fetchedAllUsers.filter(
+            (user) =>
+              user.id !== localStorage.getItem("id") &&
+              !fetchedFriends.find((friend) => friend.id === user.id) &&
+              !fetchedIncomingRequests.find((req) => req.id === user.id) &&
+              !fetchedOutgoingRequests.find((req) => req.id === user.id)
+          );
+  
+          setAddableUsers(addable);
+        } catch (e) {
+          setError(e.message);
+        }
+      };
+  
+      fetchAll();
+      } else {
+       //Go to login screen if no token
+      navigate("/login");
+    }
+  }, [searchQuery, selectedTab]);
+
+  // Remove Friend
+  const handleRemoveFriend = async (friendId) => {
+    const authToken = localStorage.getItem("authToken");
+    const APIUrl = `http://localhost:3001/api/users/friends/${friendId}`;
+    try {
+      const response = await fetch(APIUrl, {
+        method: "DELETE",
+        headers: {
+          Authorization: `Bearer ${authToken}`,
+        },
+      });
+
+      const data = await response.json();
+
+      if(!response.ok) {
+        throw new Error(data.error || "Failed to remove friend.")
+      }
+
+      // Update friends list
+      setFriends((prev) => prev.filter((friend) => friend.id !== friendId));
+    } catch (e) {
+      setError(e.message);
+    }
+  };
+
+  // Send a friend request
+  const handleSendRequest = async (recipientId) => {
+    // recipientId is the person who is receiving the friend request from us
+    const authToken = localStorage.getItem("authToken");
+    const senderId = localStorage.getItem("id"); // us
+    const APIUrl = `http://localhost:3001/api/users/outgoingFriendRequests/${senderId}`; // url contains the ID of the person SENDING, which is us
+    
+    console.log(recipientId);
+    try {
+      const response = await fetch(APIUrl, {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${authToken}`,
+        },
+        body: JSON.stringify({ incomingRequestId: recipientId }), // "person who friend request is being sent to" I interpret this as the recipient
+      });
+
+      const data = await response.json();
+  
+      if (!response.ok) {
+        throw new Error(data.error || "Failed to send friend request.");
+      }
+  
+      // Update outgoing requests + addable users
+      setOutgoingRequests((prev) => [...prev, { id: recipientId }]);
+      setAddableUsers((prev) => prev.filter((user) => user.id !== recipientId));
+    } catch (e) {
+      setError(e.message);
+    }
+  };
+
+  // Accept a friend request
+  const handleAcceptRequest = async (senderID) => {
+    const authToken = localStorage.getItem("authToken");
+    const recipientId = localStorage.getItem("id"); // us, the user, are receiving the friend requests
+    const APIUrl = `http://localhost:3001/api/users/incomingFriendRequests/${recipientId}`; // we go to recipientId, because that is us
+    try {
+      const response = await fetch(APIUrl, {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${authToken}`,
+        },
+        body: JSON.stringify({ outgoingRequestId: senderID }), // by definition, we put senderID into the body
+      });
+
+      const data = await response.json();
+  
+      if (!response.ok) {
+        throw new Error(data.error || "Failed to accept friend request.");
+      }
+  
+      // Update incoming requests and friends
+      setIncomingRequests((prev) => prev.filter((req) => req.id !== senderID));
+      setFriends((prev) => [...prev, { id: senderID }]);
+    } catch (e) {
+      setError(e.message);
+    }
+  };
+
+  if (!authToken) {
+    return <div>loading...</div>;
+  }
 
   return (
     <Box
@@ -123,7 +275,7 @@ const FriendsPage = () => {
         }}
       >
         <Typography variant="h4" sx={{ fontWeight: "bold" }}>
-          Hello {user.username}!
+          Hello {username}!
         </Typography>
         <Button
           id="FriendsPageButton"
@@ -142,7 +294,7 @@ const FriendsPage = () => {
       </Box>
 
       {/* Search bar */}
-      {(user.friends.length !== 0 && selectedTab == 0) || selectedTab == 1 ? (
+      {(friends.length !== 0 && selectedTab == 0) || selectedTab == 1 ? (
         <Box sx={{ display: "flex", paddingBottom: "2vh" }}>
           <SearchBar noMargin={true} placeholder="Search for friends..." />
         </Box>
@@ -169,21 +321,19 @@ const FriendsPage = () => {
           {/* Mobile view */}
           {isMobile ? (
             <>
-              {user.friends.length !== 0 ? (
+              {friends.length !== 0 ? (
                 <>
                   <Typography variant="h5" sx={{ fontWeight: "bold", mb: 2 }}>
                     Your Friends List
                   </Typography>
 
-                  {user.friends.map((friendID) => {
-                    const friend = testUsers.find(
-                      (user) => user.id === friendID
-                    );
+                  {friends.map((friend) => {
                     return (
                       <UserCard
                         key={friend.id}
                         user={friend}
                         variant="remove"
+                        onAction={() => handleRemoveFriend(friend.id)}
                       />
                     );
                   })}
@@ -195,7 +345,7 @@ const FriendsPage = () => {
           ) : (
             // Desktop layout, wrap in box so we can put user cards side by side
             <>
-              {user.friends.length !== 0 ? (
+              {friends.length !== 0 ? (
                 <>
                   <Typography variant="h5" sx={{ fontWeight: "bold", mb: 2 }}>
                     Your Friends List
@@ -208,15 +358,13 @@ const FriendsPage = () => {
                       gap: 2, // Add spacing between cards
                     }}
                   >
-                    {user.friends.map((friendID) => {
-                      const friend = testUsers.find(
-                        (user) => user.id === friendID
-                      );
+                    {friends.map((friend) => {
                       return (
                         <UserCard
                           key={friend.id}
                           user={friend}
                           variant="remove"
+                          onAction={() => handleRemoveFriend(friend.id)}
                         />
                       );
                     })}
@@ -245,6 +393,7 @@ const FriendsPage = () => {
                       key={addableUser.id}
                       user={addableUser}
                       variant="add"
+                      onAction={() => handleSendRequest(addableUser.id)}
                     />
                   ))}
                 </>
@@ -273,6 +422,7 @@ const FriendsPage = () => {
                       key={addableUser.id}
                       user={addableUser}
                       variant="add"
+                      onAction={() => handleSendRequest(addableUser.id)}
                     />
                   ))}
                 </Box>
@@ -291,20 +441,18 @@ const FriendsPage = () => {
         <>
           {isMobile ? (
             <>
-              {user.incomingRequests.length !== 0 ? (
+              {incomingRequests.length !== 0 ? (
                 <>
                   <Typography variant="h5" sx={{ fontWeight: "bold", mb: 2 }}>
                     Current Requests
                   </Typography>
-                  {user.incomingRequests.map((incomingID) => {
-                    const acceptableFriend = testUsers.find(
-                      (user) => user.id === incomingID
-                    );
+                  {incomingRequests.map((acceptableFriend) => {
                     return (
                       <UserCard
                         key={acceptableFriend.id}
                         user={acceptableFriend}
                         variant="accept"
+                        onAction={() => handleAcceptRequest(acceptableFriend.id)}
                       />
                     );
                   })}
@@ -317,7 +465,7 @@ const FriendsPage = () => {
             </>
           ) : (
             <>
-              {user.incomingRequests.length !== 0 ? (
+              {incomingRequests.length !== 0 ? (
                 <>
                   <Typography variant="h5" sx={{ fontWeight: "bold", mb: 2 }}>
                     Current Requests
@@ -330,15 +478,13 @@ const FriendsPage = () => {
                       gap: 2,
                     }}
                   >
-                    {user.incomingRequests.map((incomingID) => {
-                      const acceptableFriend = testUsers.find(
-                        (user) => user.id === incomingID
-                      );
+                    {incomingRequests.map((acceptableFriend) => {
                       return (
                         <UserCard
                           key={acceptableFriend.id}
                           user={acceptableFriend}
                           variant="accept"
+                          onAction={() => handleAcceptRequest(acceptableFriend.id)}
                         />
                       );
                     })}
