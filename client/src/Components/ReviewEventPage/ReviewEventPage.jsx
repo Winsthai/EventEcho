@@ -35,8 +35,8 @@ const ReviewEventPage = ({
   const navigate = useNavigate();
   const isMobile = useMediaQuery("(max-width:600px)");
   const onEditPage = location.pathname.includes("edit");
-  // console.log(invitedGuests);
-  // console.log(eventDetails);
+  console.log(invitedGuests);
+  console.log(eventDetails);
 
   const [friendsList, setFriendsList] = useState([]);
 
@@ -80,6 +80,11 @@ const ReviewEventPage = ({
       }
     };
     fetchMyFriends();
+
+    let intInvitedGuests = invitedGuests.map(str => parseInt(str, 10));
+    invitedGuests = intInvitedGuests;
+    console.log("new invited guests: ", invitedGuests);
+
   }, []);
 
   let reviewTime, reviewDate, startTimeTrimmed, endTimeTrimmed;
@@ -107,23 +112,16 @@ const ReviewEventPage = ({
     }
   }
 
-  // retrieves list of invited users 
-  async function getInvitedUsers() {
-
-  };
-
-  // get registered users (checking)
-  async function getRegisteredUsers() {
-
-  };
-
   // add newly invited users to the event (need to check beforehand if users are previously invited or already registered)
   async function eventInvitesdb() {
     try {
-      const response = await fetch(`http://localhost:3001/api/${id}/invitedUsers`, {
+      const response = await fetch(`http://localhost:3001/api/events/${id}/invitedUsers`, {
         method: "POST",
-        headers: { "Authorization": `Bearer ${localStorage.authToken}` },
-        body: invitedGuests
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${localStorage.authToken}`
+        },
+        body: JSON.stringify({ userIds: invitedGuests })
       });
 
       const data = await response.json();
@@ -173,6 +171,7 @@ const ReviewEventPage = ({
 
       const data = await response.json();
       console.log("event created", data);
+      return data;
     } catch (error) {
       console.log("some error here", error);
     }
@@ -213,6 +212,7 @@ const ReviewEventPage = ({
       }
       const data = await response.json();
       console.log("event updated", data);
+      return data;
 
     } catch (error) {
       console.log("some error here", error);
@@ -238,24 +238,43 @@ const ReviewEventPage = ({
 
         uploadedImageURL = await response.json();
         console.log("cloud link", uploadedImageURL.url);
-        onEditPage ? editEventdb(uploadedImageURL.url) : addEventTodb(uploadedImageURL.url);
+
+        if (onEditPage) {
+          const editConfirmation = await editEventdb(uploadedImageURL.url);
+          console.log("edit confirmation: ", editConfirmation);
+        }
+        else {
+          const addConfirmation = await addEventTodb(uploadedImageURL.url);
+          console.log("add confirmation: ", addConfirmation);
+        }
+
       }
       // EDIT keep same image
       else {
         console.log("this image is the same so not reuploading");
 
         uploadedImageURL = eventDetails.eventimage;
-        editEventdb(uploadedImageURL);
+        console.log("uploadedImageURL: ", uploadedImageURL);
+        const editConfirmation = await editEventdb(uploadedImageURL);
+        console.log("edit confirmation: ", editConfirmation);
       }
 
     }
     // no image
     else {
       console.log("no image so just add event");
-      onEditPage ? editEventdb(null) : addEventTodb(null);
+      if (onEditPage) {
+        const editConfirmation = await editEventdb(null);
+        console.log("edit confirmation: ", editConfirmation);
+      }
+      else {
+        const addConfirmation = await addEventTodb(null);
+        console.log("add confirmation: ", addConfirmation);
+      }
     }
 
     // call function to add guests to event invites
+    await eventInvitesdb();
 
     navigate(url);
   };

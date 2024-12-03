@@ -32,14 +32,32 @@ export default function DesktopAddGuestsPage({ invitedGuests, setInvitedGuests }
   const isMobile = useMediaQuery("(max-width:600px)");
 
   const handleSelect = (id) => {
-    setInvitedGuests((prev) =>
-      prev.includes(id)
-        ? prev.filter((contactId) => contactId !== id)
-        : [...prev, id]
-    );
-    console.log(invitedGuests);
+    if (onEditPage) {
+      if (!invitedUsers.find(user => user.id === id) && !registeredUsers.find(user => user.id === id)) {
+        setInvitedGuests((prev) =>
+          prev.includes(id)
+            ? prev.filter((contactId) => contactId !== id)
+            : [...prev, id]
+        );
+        console.log("new guest checked: ", invitedGuests);
+      }
+      else {
+        console.log("this guest already invited previously or already registered");
+      }
+    }
+    else {
+      setInvitedGuests((prev) =>
+        prev.includes(id)
+          ? prev.filter((contactId) => contactId !== id)
+          : [...prev, id]
+      );
+      console.log("new guest checked: ", invitedGuests);
+    }
+
   };
 
+  const [registeredUsers, setRegisteredUsers] = useState([]);
+  const [invitedUsers, setInvitedUsers] = useState([]);
 
   // get registered users (checking)
   async function getRegisteredUsers() {
@@ -54,7 +72,8 @@ export default function DesktopAddGuestsPage({ invitedGuests, setInvitedGuests }
         throw new Error(data.error || "wonder where they are...");
       }
 
-      return data;
+
+      return data.users;
 
     } catch (error) {
       console.log(error);
@@ -63,15 +82,20 @@ export default function DesktopAddGuestsPage({ invitedGuests, setInvitedGuests }
 
   // retrieve registered users on render
   useEffect(() => {
-    const fetchRegisteredUsers = async () => {
-      try {
-        const myRegisteredUsers = await getRegisteredUsers();
-        console.log("hello registered users ", myRegisteredUsers);
-      } catch (error) {
-        console.log("cooked (register)");
-      }
-    };
-    fetchRegisteredUsers();
+    if (onEditPage) {
+      const fetchRegisteredUsers = async () => {
+        try {
+          const myRegisteredUsers = await getRegisteredUsers();
+          setRegisteredUsers(myRegisteredUsers);
+          console.log("hello registered users ", myRegisteredUsers);
+
+        } catch (error) {
+          console.log("cooked (register)");
+        }
+      };
+      fetchRegisteredUsers();
+    }
+
   }, []);
 
   // retrieves list of invited users 
@@ -96,15 +120,31 @@ export default function DesktopAddGuestsPage({ invitedGuests, setInvitedGuests }
 
   // retrieve invited users on render
   useEffect(() => {
-    const fetchInvitedUsers = async () => {
-      try {
-        const myInvitedUsers = await getInvitedUsers();
-        console.log("hello invited users ", myInvitedUsers);
-      } catch (error) {
-        console.log("cooked (invite)");
-      }
-    };
-    fetchInvitedUsers();
+    if (onEditPage) {
+      const fetchInvitedUsers = async () => {
+        try {
+          const myInvitedUsers = await getInvitedUsers();
+          setInvitedUsers(myInvitedUsers);
+          console.log("hello invited users ", myInvitedUsers);
+
+          if (myInvitedUsers) {
+            setInvitedGuests(() => {
+              let guestlist = [];
+              for (const user of myInvitedUsers) {
+                guestlist.push(user.id);
+              }
+              return guestlist;
+            });
+          }
+
+
+        } catch (error) {
+          console.log("cooked (invite)");
+        }
+      };
+      fetchInvitedUsers();
+    }
+
   }, []);
 
   // ------------- FRIENDS LIST -------------
@@ -144,6 +184,15 @@ export default function DesktopAddGuestsPage({ invitedGuests, setInvitedGuests }
     };
     fetchMyFriends();
   }, []);
+
+  function displayUsers(id) {
+    if (onEditPage) {
+      if (invitedUsers.find(user => user.id === id) || registeredUsers.find(user => user.id === id)) {
+        return true; // user already attending or invited
+      }
+    }
+    return false; // user can be invited
+  };
 
   // Mobile Layout
   const MobileLayout = () => (
@@ -276,12 +325,23 @@ export default function DesktopAddGuestsPage({ invitedGuests, setInvitedGuests }
                         <p className="mobile-phone">{contact.email}</p>
                       </div>
                     </div>
-                    <Checkbox
-                      checked={invitedGuests.includes(contact.id)}
-                      inputProps={{ "aria-label": `Select ${contact.firstname}` }}
-                      icon={<RadioButtonUncheckedIcon />} // Circular unchecked icon
-                      checkedIcon={<CheckCircleIcon />} // Circular checked icon
-                    />
+                    {displayUsers(contact.id) ?
+                      (
+                        <Checkbox
+                          checked={displayUsers(contact.id)}
+                          disabled={true}
+                          inputProps={{ "aria-label": `Select ${contact.firstname}` }}
+                          icon={<RadioButtonUncheckedIcon />} // Circular unchecked icon
+                          checkedIcon={<CheckCircleIcon />} // Circular checked icon
+                        />
+                      ) :
+                      <Checkbox
+                        checked={invitedGuests.includes(contact.id)}
+                        inputProps={{ "aria-label": `Select ${contact.firstname}` }}
+                        icon={<RadioButtonUncheckedIcon />} // Circular unchecked icon
+                        checkedIcon={<CheckCircleIcon />} // Circular checked icon
+                      />}
+
                   </li>
                 ))}
               </ul>
