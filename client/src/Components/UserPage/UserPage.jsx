@@ -60,7 +60,7 @@ const UserPage = () => {
     } catch (e) {
       setError(e.message);
     }
-  }
+  };
 
   // Query users hosted events
   async function queryHostedEvents() {
@@ -135,7 +135,18 @@ const UserPage = () => {
         setError(null);
 
         const result = await queryUpcomingEvents();
-        setUpcomingEvents(result.events);
+
+        const sortedUpcomingEvents = result.events.sort((a, b) => {
+          // Get start dates of each event
+          const eventA = a.startdate.toLowerCase();
+          const eventB = b.startdate.toLowerCase();
+        
+          if (eventA < eventB) return -1; // If event a comes before event b
+          if (eventA > eventB) return 1;  // If event a comes after event b
+          return 0;                      // Same event dates
+        });
+
+        setUpcomingEvents(sortedUpcomingEvents);
       } catch (e) {
         setError(e.message);
       }
@@ -166,7 +177,6 @@ const UserPage = () => {
       setError(e.message);
     }
   }
-
 
   return (
     <Box
@@ -273,11 +283,11 @@ const UserPage = () => {
       {/* Hosted Events Section */}
       {selectedTab === 0 && (
         <>
-          {hostedEvents !== 0 ? (
+          <Typography variant="h5" sx={{ fontWeight: "bold", mb: 2 }}>
+            Your Hosted Events
+          </Typography>
+          {hostedEvents.length !== 0 ? (
             <>
-              <Typography variant="h5" sx={{ fontWeight: "bold", mb: 2 }}>
-                Your Hosted Events
-              </Typography>
               {hostedEvents.map((event) => (
                 <EventCard key={event.id} event={event} variant="hosted" />
               ))}
@@ -297,7 +307,12 @@ const UserPage = () => {
           {upcomingEvents.length !== 0 ? (
             <>
               {upcomingEvents.map((event) => (
-                <EventCard key={event.id} event={event} variant="upcoming" OnUnregisterButton={handleUnregisterButton}/>
+                <EventCard
+                  key={event.id}
+                  event={event}
+                  variant="upcoming"
+                  OnUnregisterButton={handleUnregisterButton}
+                />
               ))}
             </>
           ) : (
