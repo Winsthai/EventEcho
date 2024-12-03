@@ -43,10 +43,35 @@ const ReviewEventPage = ({
   const navigate = useNavigate();
   const isMobile = useMediaQuery("(max-width:600px)");
   const onEditPage = location.pathname.includes("edit");
-  console.log(invitedGuests);
-  console.log(eventDetails);
+  // console.log(invitedGuests);
+  // console.log(eventDetails);
 
-  // if user forcefully enters in createEvent/reviewEvent before details finished need to redirect or something
+  const [friendsList, setFriendsList] = useState([]);
+
+  // retrieve friends
+  async function fetchFriends() {
+    const APIUrl = `http://localhost:3001/api/users/friends`;
+
+    try {
+      const response = await fetch(APIUrl, {
+        method: "GET",
+        headers: { "Authorization": `Bearer ${localStorage.authToken}` }
+      }
+      );
+      const data = await response.json();
+      //console.log("your friends:", data);
+
+      if (!response.ok) {
+        throw new Error(data.error || "where yo friends at boy");
+      }
+      return data.users;
+
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  // retrieve friends list from the db at the beginning
   useEffect(() => {
     if (!detailsCompleted && !onEditPage) {
       navigate("/createEvent");
@@ -54,7 +79,18 @@ const ReviewEventPage = ({
     else if (!detailsCompleted && onEditPage) {
       navigate(`/editEvent/${id}`)
     }
-  }, [detailsCompleted, navigate]);
+
+    const fetchMyFriends = async () => {
+      try {
+        const myFriends = await fetchFriends();
+        setFriendsList(myFriends);
+        console.log("hello friends ", myFriends);
+      } catch (error) {
+        console.log("cooked");
+      }
+    };
+    fetchMyFriends();
+  }, []);
 
   let reviewTime, reviewDate, startTimeTrimmed, endTimeTrimmed;
 
@@ -64,7 +100,6 @@ const ReviewEventPage = ({
     if (eventDetails.endtime !== null) {
       endTimeTrimmed = eventDetails.endtime.slice(0, -6);
       reviewTime = startTimeTrimmed.concat(" - ", endTimeTrimmed);
-      console.log("end time exists");
     } else {
       reviewTime = startTimeTrimmed.concat(" - TBD");
     }
@@ -80,8 +115,6 @@ const ReviewEventPage = ({
     } else {
       reviewDate = eventDetails.startdate;
     }
-
-    console.log(startTimeTrimmed);
   }
 
   async function addEventTodb(cloudinaryLink) {
@@ -396,13 +429,13 @@ const ReviewEventPage = ({
           <h1 id="EventReviewHeader">Guest List</h1>
 
           {/* Map Contacts */}
-          {invitedGuests.length === 0 ? (
+          {invitedGuests.length === 0 || friendsList.length === 0 ? (
             <p id="EventReviewP" style={{ marginTop: 0 }}>
               Consider inviting some guests!
             </p>
           ) : (
             invitedGuests.map((id, index) => {
-              const contact = contacts.find((contact) => contact.id === id);
+              const contact = friendsList.find((cont) => cont.id === id);
               return (
                 <Box
                   sx={{
@@ -413,11 +446,11 @@ const ReviewEventPage = ({
                   key={id}
                 >
                   <div className="ReviewEventPage-desktop-avatar">
-                    {contact.name[0].toUpperCase()}
-                    {contact.name.split(" ")[1][0].toUpperCase()}
+                    {contact.firstname[0].toUpperCase()}
+                    {contact.lastname[0].toUpperCase()}
                   </div>
                   <Box sx={{ display: "flex", flexDirection: "column" }}>
-                    <h1 id="EventReviewNames">{contact.name}</h1>
+                    <h1 id="EventReviewNames">{contact.firstname.concat(" ", contact.lastname)}</h1>
                   </Box>
                 </Box>
               );
@@ -622,10 +655,10 @@ const ReviewEventPage = ({
           }}
         >
           {/* Map Guests */}
-          {invitedGuests.length === 0
+          {invitedGuests.length === 0 || friendsList.length === 0
             ? <p id="EventReviewPDesktop" style={{ marginTop: "0" }}>Consider inviting some guests!</p>
             : invitedGuests.map((id, index) => {
-              const contact = contacts.find((contact) => contact.id === id);
+              const contact = friendsList.find((cont) => cont.id === id);
               return (
                 <Box
                   sx={{
@@ -636,11 +669,11 @@ const ReviewEventPage = ({
                   key={id}
                 >
                   <div className="ReviewEventPage-desktop-avatar">
-                    {contact.name[0].toUpperCase()}
-                    {contact.name.split(" ")[1][0].toUpperCase()}
+                    {contact.firstname[0].toUpperCase()}
+                    {contact.lastname[0].toUpperCase()}
                   </div>
                   <Box sx={{ display: "flex", flexDirection: "column" }}>
-                    <h1 id="EventReviewNamesDesktop">{contact.name}</h1>
+                    <h1 id="EventReviewNamesDesktop">{contact.firstname.concat(" ", contact.lastname)}</h1>
                   </Box>
                 </Box>
               );
