@@ -274,7 +274,10 @@ const ReviewEventPage = ({
     }
 
     // call function to add guests to event invites
-    await eventInvitesdb();
+    if (invitedGuests.length !== 0) {
+      await eventInvitesdb();
+    }
+
 
     navigate(url);
   };
