@@ -163,10 +163,13 @@ const ReviewEventPage = ({
 
   };
 
+  // 2 options for CREATE - either include image or not (upload or don't)
+  // 3 options for EDIT - 1. keep same image, 2. upload new image, 3. delete image
   const handlePostEvent = async (url) => {
     // upload to cloud
-    let uploadedImageURL = '';
+    let uploadedImageURL = null;
     if (eventDetails.imageform !== null) {
+      // CREATE / EDIT upload new image
       if (typeof (eventDetails.imageform) !== "string") {
         const response = await fetch(
           `https://api.cloudinary.com/v1_1/dk7v80lgt/image/upload`,
@@ -178,12 +181,18 @@ const ReviewEventPage = ({
 
         uploadedImageURL = await response.json();
         console.log("cloud link", uploadedImageURL.url);
+        onEditPage ? editEventdb(uploadedImageURL.url) : addEventTodb(uploadedImageURL.url);
       }
+      // EDIT keep same image
       else {
         console.log("this image is the same so not reuploading");
+
+        uploadedImageURL = eventDetails.eventimage;
+        editEventdb(uploadedImageURL);
       }
-      onEditPage ? editEventdb(uploadedImageURL.url) : addEventTodb(uploadedImageURL.url);
+
     }
+    // no image
     else {
       console.log("no image so just add event");
       onEditPage ? editEventdb(null) : addEventTodb(null);
@@ -195,7 +204,7 @@ const ReviewEventPage = ({
 
   const eventType = eventDetails.eventtype;
 
-  const imageUrl = eventDetails.eventimage;
+  const imageUrl = eventDetails.eventimage === null ? logo : eventDetails.eventimage;
 
   const getIcon = (type) => {
     switch (type) {
@@ -280,25 +289,8 @@ const ReviewEventPage = ({
           <Box
             component="img"
             id="EventReviewPhoto"
-            src={
-              eventDetails.imageform === null ? logo : eventDetails.eventimage
-            }
+            src={imageUrl}
           ></Box>
-          {onEditPage ? (
-            <Box
-              component="img"
-              id="EventReviewPhoto"
-              src={imageUrl}
-            ></Box>
-          ) : (
-            <Box
-              component="img"
-              id="EventReviewPhoto"
-              src={
-                imageUrl
-              }
-            ></Box>
-          )}
         </Box>
 
         {/* Event Details */}
@@ -512,39 +504,12 @@ const ReviewEventPage = ({
             <Box
               component="img"
               id="EventReviewPhotoDesktop"
-              src={
-                eventDetails.imageform === null
-                  ? logo
-                  : eventDetails.eventimage
-              }
+              src={imageUrl}
               sx={{
                 position: "relative",
                 zIndex: 2, // Place above the blur
               }}
             ></Box>
-            {onEditPage ? (
-              <Box
-                component="img"
-                id="EventReviewPhotoDesktop"
-                src={imageUrl}
-                sx={{
-                  position: "relative",
-                  zIndex: 2, // Place above the blur
-                }}
-              ></Box>
-            ) : (
-              <Box
-                component="img"
-                id="EventReviewPhotoDesktop"
-                src={
-                  imageUrl
-                }
-                sx={{
-                  position: "relative",
-                  zIndex: 2, // Place above the blur
-                }}
-              ></Box>
-            )}
           </Box>
         </Box>
 
