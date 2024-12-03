@@ -204,7 +204,7 @@ const ReviewEventPage = ({
 
   const eventType = eventDetails.eventtype;
 
-  const imageUrl = eventDetails.imageform === null ? logo : eventDetails.eventimage;
+  const imageUrl = eventDetails.eventimage === null ? logo : eventDetails.eventimage;
 
   const getIcon = (type) => {
     switch (type) {

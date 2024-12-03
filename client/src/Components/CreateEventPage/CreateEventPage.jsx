@@ -722,7 +722,7 @@ export default function CreateEventPage({
             <Box />
           </Stack>
 
-          {/* Time and Date */}
+          {/* Start Time and Date */}
           <Stack direction="row" spacing={4} sx={{ width: "80%", display: "flex", justifyContent: "left" }}>
             {/* Start Date -> Set as required with form submit error checking */}
             <LocalizationProvider dateAdapter={AdapterDayjs}>
@@ -742,6 +742,7 @@ export default function CreateEventPage({
             </LocalizationProvider>
           </Stack>
 
+          {/* End Time and Date */}
           <Stack direction="row" spacing={4} sx={{ width: "80%", display: "flex", justifyContent: "left" }}>
             {/* End Date */}
             <LocalizationProvider dateAdapter={AdapterDayjs}>
@@ -772,7 +773,7 @@ export default function CreateEventPage({
           {/* Upload Photo */}
           <Stack direction="row" spacing={6} sx={{ width: "80%", display: "flex", justifyContent: "left", mb: 4 }}>
             <TextField fullWidth label="Upload File" variant='outlined'
-              value={eventDetails.imagename}
+              value={eventDetails.imagename ? eventDetails.imagename : undefined}
               slotProps={{
                 input: {
                   startAdornment: (
