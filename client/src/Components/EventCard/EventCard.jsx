@@ -7,7 +7,12 @@ import "./EventCardStyles.css";
 import { useNavigate } from "react-router-dom";
 import logo from "../../images/logo.png";
 
-const EventCard = ({ event, variant = "", onRemoveButton, OnUnregisterButton}) => {
+const EventCard = ({
+  event,
+  variant = "",
+  onRemoveButton,
+  OnUnregisterButton,
+}) => {
   // Use media query to check if screen width is less than 600px (mobile view)
   const isMobile = useMediaQuery("(max-width:600px)");
 
@@ -97,26 +102,45 @@ const EventCard = ({ event, variant = "", onRemoveButton, OnUnregisterButton}) =
               </Button>
             </Box>
           ) : variant === "hosted" ? (
-            <Box>
+            <Stack direction="row" sx={{justifyContent: "space-between"}}>
+              {/* Edit button */}
               <Button
                 variant="contained"
                 sx={{
                   borderRadius: "20px",
                   height: "80%",
                   backgroundColor: "#ff7474",
-                  marginRight: "3vw",
                   textTransform: "none",
                 }}
                 onClick={(e) => {
                   e.stopPropagation();
                   navigate(`/editEvent/${event.id}`);
-                }} // Probably change this later
+                }}
               >
                 Edit
               </Button>
-            </Box>
+
+              {/* Delete/Remove button */}
+              <Button
+                variant="contained"
+                sx={{
+                  borderRadius: "20px",
+                  height: "80%",
+                  backgroundColor: "#A50B07",
+                  mr: "3vw",
+                  textTransform: "none",
+                }}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onRemoveButton(event.id);
+                }}
+              >
+                Delete
+              </Button>
+            </Stack>
           ) : variant === "admin" ? (
             <Box>
+              {/* Remove button */}
               <Button
                 variant="contained"
                 sx={{
@@ -209,6 +233,7 @@ const EventCard = ({ event, variant = "", onRemoveButton, OnUnregisterButton}) =
             </Box>
           ) : variant === "hosted" ? (
             <Box>
+              {/* Edit button */}
               <Button
                 variant="contained"
                 sx={{
@@ -223,6 +248,23 @@ const EventCard = ({ event, variant = "", onRemoveButton, OnUnregisterButton}) =
                 }}
               >
                 Edit
+              </Button>
+
+              {/* Delete button */}
+              <Button
+                variant="contained"
+                sx={{
+                  borderRadius: "20px",
+                  height: "80%",
+                  backgroundColor: "#A50B07",
+                  ml: "1vw",
+                  textTransform: "none",
+                }}
+                onClick={(e) => {
+                  e.stopPropagation();
+                }}
+              >
+                Delete
               </Button>
             </Box>
           ) : variant === "admin" ? (
@@ -244,22 +286,7 @@ const EventCard = ({ event, variant = "", onRemoveButton, OnUnregisterButton}) =
               </Button>
             </Box>
           ) : (
-            <Box>
-              <Button
-                variant="contained"
-                sx={{
-                  borderRadius: "20px",
-                  height: "80%",
-                  backgroundColor: "#ff7474",
-                }}
-                onClick={(e) => {
-                  e.stopPropagation();
-                  navigate(`/event/${event.id}`);
-                }}
-              >
-                Register
-              </Button>
-            </Box>
+            <></>
           )}
         </Stack>
       </Box>

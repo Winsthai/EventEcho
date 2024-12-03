@@ -159,12 +159,17 @@ eventRouter.get("/:id", async (request, response, next) => {
       const { userId } = request;
 
       const privateResult = await client.query(
-        `SELECT * FROM event_invites WHERE event_id = $1 AND user_id = $2`,
+        `SELECT 1 FROM event_invites WHERE event_id = $1 AND user_id = $2`,
+        [eventId, userId]
+      );
+
+      const creatorResult = await client.query(
+        `SELECT 1 FROM event_creator WHERE event_id = $1 AND user_id = $2`,
         [eventId, userId]
       );
 
       // User is not invited to this event
-      if (privateResult.rowCount === 0) {
+      if (privateResult.rowCount === 0 && creatorResult.rowCount === 0) {
         return response.status(401).json({
           error: "You have not been invited to this private event",
         });
@@ -297,7 +302,7 @@ eventRouter.post(
 
     try {
       const eventExistsResult = await client.query(
-        `SELECT 1 FROM events WHERE id = $1`,
+        `SELECT e.visibility FROM events e WHERE e.id = $1`,
         [eventId]
       );
 
@@ -504,6 +509,113 @@ eventRouter.get(
 
       // Return list of invited users
       res.status(200).json(result.rows);
+    } catch (error) {
+      next(error);
+    }
+  }
+);
+
+// Get number of users registered for an event
+eventRouter.get("/:id/numberOfUsers", async (req, res, next) => {
+  const eventId = req.params.id; // Get the event ID from the URL parameter
+
+  try {
+    const result = await client.query(
+      ` SELECT COUNT(*) 
+        FROM event_participants 
+        WHERE event_id = $1;`,
+      [eventId]
+    );
+
+    // Return list of invited users
+    res.status(200).json({ count: result.rows[0].count });
+  } catch (error) {
+    next(error);
+  }
+});
+
+// Get users that will be attending the event
+// Requires a token representing the creator of the event
+eventRouter.get(
+  "/:id/attendingUsers",
+  userConfirmation,
+  async (req, response, next) => {
+    const eventId = req.params.id; // Get the event ID from the URL parameter
+    const userId = req.userId;
+
+    try {
+      // Find the event
+      const creatorResult = await client.query(
+        `SELECT * FROM event_creator WHERE event_id = $1`,
+        [eventId]
+      );
+
+      if (creatorResult.rowCount === 0) {
+        return response
+          .status(404)
+          .json({ error: `Event with id ${id} does not exist` });
+      }
+
+      // Get the creator of the event for later check
+      const retrievedUserId = creatorResult.rows[0].user_id;
+
+      const participantResult = await client.query(
+        `SELECT * FROM event_participants WHERE event_id = $1 AND user_id = $2`,
+        [eventId, userId]
+      );
+
+      // Success if user is either a participant OR the creator
+      if (retrievedUserId == userId || participantResult.rowCount !== 0) {
+        // Proceed with the normal logic since the user is authorized
+      } else {
+        // Error if the user is neither a participant nor the creator
+        return response
+          .status(403)
+          .json({ error: "You are not authorized to perform this action" });
+      }
+
+      const result = await client.query(
+        ` SELECT u.id, u.username, u.firstname, u.lastname 
+        FROM event_participants ep
+        JOIN users u ON ep.user_id = u.id 
+        WHERE event_id = $1;`,
+        [eventId]
+      );
+
+      // Return list of invited users
+      response.status(200).json({ users: result.rows });
+    } catch (error) {
+      next(error);
+    }
+  }
+);
+
+// Invite users to an event
+// Requires a token to ensure that the user viewing the invited users of this event is the one who made it, or is an admin
+eventRouter.post(
+  "/:id/invitedUsers",
+  creatorConfirmation,
+  async (req, res, next) => {
+    const eventId = req.params.id; // Get the event ID from the URL parameter
+    const userIds = req.body.userIds;
+
+    if (!userIds || userIds.length === 0) {
+      return res.status(400).json({ message: "No userIds provided" });
+    }
+
+    try {
+      // Insert each user_id into the event_invites table for the given event_id
+      const values = userIds
+        .map((userId) => `(${eventId}, ${userId})`)
+        .join(",");
+
+      await client.query(`
+        INSERT INTO event_invites (event_id, user_id)
+        VALUES ${values}
+        ON CONFLICT (event_id, user_id) DO NOTHING;`);
+
+      // Return list of invited users
+      res.status(200).json({ message: "Users invited successfully" });
     } catch (error) {
       next(error);
     }

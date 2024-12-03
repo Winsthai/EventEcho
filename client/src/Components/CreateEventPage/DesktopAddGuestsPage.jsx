@@ -15,7 +15,7 @@ import { BottomNavigationAction } from "@mui/material";
 import "./DesktopInviteGuests.css";
 import "./MobileInviteGuests.css";
 import PersonAddIcon from "@mui/icons-material/PersonAdd";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import RadioButtonUncheckedIcon from "@mui/icons-material/RadioButtonUnchecked";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
@@ -23,23 +23,12 @@ import { useParams, useNavigate } from "react-router-dom";
 import SearchIcon from "@mui/icons-material/Search";
 import { useLocation } from "react-router-dom";
 
-const contacts = [
-  { id: 1, name: "Steven Nguyen", phone: "(403)-000-0000" },
-  { id: 2, name: "Winston Thai", phone: "(403)-111-1111" },
-  { id: 3, name: "Shaun Tapiau", phone: "(403)-222-2222" },
-  { id: 4, name: "Ahmed Elshabasi", phone: "(403)-333-3333" },
-  { id: 5, name: "Desmond Lau", phone: "(403)-444-4444" },
-];
-
 export default function DesktopAddGuestsPage({ invitedGuests, setInvitedGuests }) {
   const location = useLocation();
   const onEditPage = location.pathname.includes("edit");
   const { id } = useParams();
   const navigate = useNavigate();
 
-  const { message } = location.state || {};
-
-  const [selectedContacts, setSelectedContacts] = useState([]);
   const isMobile = useMediaQuery("(max-width:600px)");
 
   const handleSelect = (id) => {
@@ -51,9 +40,44 @@ export default function DesktopAddGuestsPage({ invitedGuests, setInvitedGuests }
     console.log(invitedGuests);
   };
 
-  const handleReview = () => {
-    alert(`Selected contacts: ${selectedContacts.join(", ")}`);
+  const [friendsList, setFriendsList] = useState([]);
+
+  // retrieve friends
+  async function fetchFriends() {
+    const APIUrl = `http://localhost:3001/api/users/friends`;
+
+    try {
+      const response = await fetch(APIUrl, {
+        method: "GET",
+        headers: { "Authorization": `Bearer ${localStorage.authToken}` }
+      }
+      );
+      const data = await response.json();
+      //console.log("your friends:", data);
+
+      if (!response.ok) {
+        throw new Error(data.error || "where yo friends at boy");
+      }
+      return data.users;
+
+    } catch (error) {
+      console.log(error);
+    }
   };
+
+  // retrieve friends list from the db at the beginning
+  useEffect(() => {
+    const fetchMyFriends = async () => {
+      try {
+        const myFriends = await fetchFriends();
+        setFriendsList(myFriends);
+        console.log("hello friends ", myFriends);
+      } catch (error) {
+        console.log("cooked");
+      }
+    };
+    fetchMyFriends();
+  }, []);
 
   // Mobile Layout
   const MobileLayout = () => (
@@ -135,84 +159,89 @@ export default function DesktopAddGuestsPage({ invitedGuests, setInvitedGuests }
           spacing={2}
           sx={{ height: "100%", padding: 2 }}
         >
-          <div className="mobile-container">
-            <TextField
-              variant="outlined"
-              placeholder="Search contacts..."
-              size="small"
-              sx={{
-                flexGrow: 1, // Ensures the search bar takes available space
-                marginLeft: 0,
-                marginRight: 0,
-                minWidth: "150px",
-                width: "100%",
-                backgroundColor: "white",
-                borderRadius: "24px",
-                "& .MuiOutlinedInput-root": {
+          <Box sx={{ flexGrow: 1 }}>
+            <div className="mobile-container">
+              <TextField
+                variant="outlined"
+                placeholder="Search friends..."
+                size="small"
+                sx={{
+                  flexGrow: 1, // Ensures the search bar takes available space
+                  marginLeft: 0,
+                  marginRight: 0,
+                  minWidth: "150px",
+                  width: "100%",
+                  backgroundColor: "white",
                   borderRadius: "24px",
-                  "&:hover": {
-                    borderColor: "black",
+                  "& .MuiOutlinedInput-root": {
+                    borderRadius: "24px",
+                    "&:hover": {
+                      borderColor: "black",
+                    },
+                    "&.Mui-focused fieldset": {
+                      borderColor: "black",
+                    },
                   },
-                  "&.Mui-focused fieldset": {
-                    borderColor: "black",
+                }}
+                slotProps={{
+                  input: {
+                    startAdornment: (
+                      <InputAdornment position="start">
+                        <SearchIcon />
+                      </InputAdornment>
+                    ),
                   },
-                },
-              }}
-              slotProps={{
-                input: {
-                  startAdornment: (
-                    <InputAdornment position="start">
-                      <SearchIcon />
-                    </InputAdornment>
-                  ),
-                },
-              }}
-            />
-            <ul className="mobile-contactList">
-              {contacts.map((contact) => (
-                <li
-                  key={contact.id}
-                  className="mobile-contactItem"
-                  onClick={() => handleSelect(contact.id)}
-                >
-                  <div className="mobile-contactInfo">
-                    <div className="mobile-avatar">
-                      {contact.name[0].toUpperCase()}
-                      {contact.name.split(" ")[1][0].toUpperCase()}
+                }}
+              />
+              <ul className="mobile-contactList">
+                {friendsList.map((contact) => (
+                  <li
+                    key={contact.id}
+                    className="mobile-contactItem"
+                    onClick={() => handleSelect(contact.id)}
+                  >
+                    <div className="mobile-contactInfo">
+                      <div className="mobile-avatar">
+                        {contact.firstname[0].toUpperCase()}
+                        {contact.lastname[0].toUpperCase()}
+                      </div>
+                      <div>
+                        <p className="mobile-name">{contact.firstname.concat(" ", contact.lastname)}</p>
+                        <p className="mobile-phone">{contact.email}</p>
+                      </div>
                     </div>
-                    <div>
-                      <p className="mobile-name">{contact.name}</p>
-                      <p className="mobile-phone">{contact.phone}</p>
-                    </div>
-                  </div>
-                  <Checkbox
-                    checked={invitedGuests.includes(contact.id)}
-                    inputProps={{ "aria-label": `Select ${contact.name}` }}
-                    icon={<RadioButtonUncheckedIcon />} // Circular unchecked icon
-                    checkedIcon={<CheckCircleIcon />} // Circular checked icon
-                  />
-                </li>
-              ))}
-            </ul>
-          </div>
+                    <Checkbox
+                      checked={invitedGuests.includes(contact.id)}
+                      inputProps={{ "aria-label": `Select ${contact.firstname}` }}
+                      icon={<RadioButtonUncheckedIcon />} // Circular unchecked icon
+                      checkedIcon={<CheckCircleIcon />} // Circular checked icon
+                    />
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </Box>
 
-          <Button
-            variant="contained"
-            onClick={
-              onEditPage
-                ? () => navigate(`/editEvent/${id}/reviewEvent`)
-                : () => navigate("/createEvent/reviewEvent")
-            }
-            sx={{
-              borderRadius: "10px",
-              backgroundColor: "#F68F8D",
-              "&:hover": {
-                backgroundColor: "#A50B07",
-              },
-            }}
-          >
-            Review Event Details
-          </Button>
+          <Box sx={{ position: 'relative', bottom: 0, width: '100%', mb: 2 }}>
+            <Button
+              fullWidth
+              variant="contained"
+              onClick={
+                onEditPage
+                  ? () => navigate(`/editEvent/${id}/reviewEvent`)
+                  : () => navigate("/createEvent/reviewEvent")
+              }
+              sx={{
+                borderRadius: "10px",
+                backgroundColor: "#F68F8D",
+                "&:hover": {
+                  backgroundColor: "#A50B07",
+                },
+              }}
+            >
+              Review Event Details
+            </Button>
+          </Box>
         </Stack>
       </Box>
     </Box>
@@ -225,7 +254,7 @@ export default function DesktopAddGuestsPage({ invitedGuests, setInvitedGuests }
         <div className="desktop-search-and-add">
           <TextField
             variant="outlined"
-            placeholder="Search contacts..."
+            placeholder="Search friends..."
             size="small"
             //onChange={(event) => onSearchChange(event.target.value)}
             sx={{
@@ -271,7 +300,7 @@ export default function DesktopAddGuestsPage({ invitedGuests, setInvitedGuests }
         {/* {message && <p>{message}</p>} */}
 
         <div className="desktop-contactGrid">
-          {contacts.map((contact) => (
+          {friendsList.map((contact) => (
             <div
               key={contact.id}
               className="desktop-contactCard"
@@ -279,17 +308,17 @@ export default function DesktopAddGuestsPage({ invitedGuests, setInvitedGuests }
             >
               <Checkbox
                 checked={invitedGuests.includes(contact.id)}
-                inputProps={{ "aria-label": `Select ${contact.name}` }}
+                inputProps={{ "aria-label": `Select ${contact.firstname}` }}
                 icon={<RadioButtonUncheckedIcon />} // Circular unchecked icon
                 checkedIcon={<CheckCircleIcon />} // Circular checked icon
               />
               <div className="desktop-avatar">
-                {contact.name[0].toUpperCase()}
-                {contact.name.split(" ")[1][0].toUpperCase()}
+                {contact.firstname[0].toUpperCase()}
+                {contact.lastname[0].toUpperCase()}
               </div>
               <div>
-                <p className="desktop-name">{contact.name}</p>
-                <p className="desktop-phone">{contact.phone}</p>
+                <p className="desktop-name">{contact.firstname.concat(" ", contact.lastname)}</p>
+                <p className="desktop-phone">{contact.email}</p>
               </div>
             </div>
           ))}

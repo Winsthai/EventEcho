@@ -25,16 +25,16 @@ INSERT INTO events (
 '"2024-11-15T07:00:00.000Z"', '"2024-11-28T22:00:00.000Z"', '"2024-11-15T07:00:00.000Z"', '"2024-11-29T00:00:00.000Z"',
 'http://res.cloudinary.com/dk7v80lgt/image/upload/v1732950087/mvwkzcb9xumzedksazie.jpg'),
 
-('Jazz Concert', 'Music', 'Live jazz performance.', '456 Music Hall Ave, City', '2024-12-01',  '19:00:00+00',  '2024-12-01',  '21:00:00+00',  TRUE, 
-'"2024-12-01T07:00:00.000Z"', '"2024-11-29T02:00:00.000Z"', '"2024-12-01T07:00:00.000Z"', '"2024-11-29T04:00:00.000Z"', 
+('Jazz Concert', 'Music', 'Live jazz performance.', '456 Music Hall Ave, City', '2024-12-20',  '19:00:00+00',  '2024-12-20',  '21:00:00+00',  TRUE, 
+'"2024-12-20T07:00:00.000Z"', '"2024-11-29T02:00:00.000Z"', '"2024-12-20T07:00:00.000Z"', '"2024-11-29T04:00:00.000Z"', 
 'http://res.cloudinary.com/dk7v80lgt/image/upload/v1732949965/ghdv8uo0xgs8zgg5xdqj.webp'),
 
-('Food Festival', 'Food', 'A festival with foods from around the world.', '789 Gourmet St, City', '2024-11-20', '11:00:00+00', '2024-11-20', '16:00:00+00', FALSE, 
-'"2024-11-20T07:00:00.000Z"', '"2024-11-28T18:00:00.000Z"', '"2024-11-20T07:00:00.000Z"', '"2024-11-28T23:00:00.000Z"',
+('Food Festival', 'Food', 'A festival with foods from around the world.', '789 Gourmet St, City', '2024-12-30', '09:00:00+00', '2024-12-31', '18:30:00+00', FALSE, 
+'"2024-12-30T07:00:00.000Z"', '"2024-12-02T16:00:00.000Z"', '"2024-12-31T07:00:00.000Z"', '"2024-12-03T01:30:00.000Z"',
 'http://res.cloudinary.com/dk7v80lgt/image/upload/v1732950154/vfebcn4vcnwppbzl3qrw.jpg'),
 
-('Art Exhibit', 'Art', 'Exhibition of modern art pieces.', '101 Art Museum Blvd, City', '2024-12-05', '09:00:00+00', NULL, NULL, TRUE,
-'"2024-12-05T07:00:00.000Z"', '"2024-11-28T16:00:00.000Z"', NULL, NULL,
+('Art Exhibit', 'Art', 'Exhibition of modern art pieces.', '101 Art Museum Blvd, City', '2024-12-03', '09:00:00+00', NULL, NULL, TRUE,
+'"2024-12-03T07:00:00.000Z"', '"2024-12-02T16:00:00.000Z"', NULL, NULL,
 'http://res.cloudinary.com/dk7v80lgt/image/upload/v1732950359/f4wltb9ehy06278w3fpb.jpg'),
 
 ('Gaming Convention', 'Gaming', 'A gaming event for all ages.', '202 Gaming Arena, City', '2024-12-10', '10:00:00+00', '2024-12-12', '20:00:00+00', FALSE,
@@ -76,19 +76,3 @@ INSERT INTO friends_list (user_id, friend_id) VALUES
 INSERT INTO friend_requests (outgoing_request, incoming_request) VALUES
 (1, 5),
 (2, 4);
-
-INSERT INTO guest_users (name, email, phonenum) VALUES
-('Pablo Escobar', 'pablo_escobar@example.com', '789-123-4567'),
-('Charlie Brown', 'charlie_brown@example.com', '789-123-1234'),
-('Peter Parker', 'peter_parker@example.com', '789-234-5678'),
-('David Davidson', 'david_davidson@example.com', '789-345-6789');
-
-INSERT INTO guest_user_connections (guest_id, user_id) VALUES
-(1, 1),
-(2, 1),
-(2, 2),
-(2, 3),
-(3, 2),
-(3, 4),
-(4, 1),
-(4, 5);

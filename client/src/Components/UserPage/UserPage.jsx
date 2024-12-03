@@ -1,4 +1,3 @@
-import { useParams } from "react-router-dom";
 import {
   Box,
   Typography,
@@ -19,7 +18,6 @@ import { useNavigate } from "react-router-dom";
 import MenuIcon from "@mui/icons-material/Menu";
 
 const UserPage = () => {
-  const { id } = useParams();
   const [hostedEvents, setHostedEvents] = useState([]);
   const [upcomingEvents, setUpcomingEvents] = useState([]);
   const [selectedTab, setSelectedTab] = useState(0); // State to manage selected tab
@@ -32,6 +30,18 @@ const UserPage = () => {
 
   const authToken = localStorage.getItem("authToken");
   const username = localStorage.getItem("username");
+
+  const handleSearchChange = (query) => {
+    setSearchQuery(query); // Update search query
+  };
+
+  const searchedHostedEvents = hostedEvents.filter((event) =>
+    event.title.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
+  const searchedUpcomingEvents = upcomingEvents.filter((event) =>
+    event.title.toLowerCase().includes(searchQuery.toLowerCase())
+  );
 
   // User menu constants
   const [anchorE1, setAnchorE1] = useState(null);
@@ -62,7 +72,19 @@ const UserPage = () => {
     } catch (e) {
       setError(e.message);
     }
-  }
+  };
+
+  // Removing an event
+  const handleRemoveButton = async (eventId) => {
+    try {
+      await removeEvent(eventId);
+      setButtonSwitch((buttonSwitch) => {
+        return buttonSwitch + 1;
+      });
+    } catch (e) {
+      setError(e.message);
+    }
+  };
 
   // Query users hosted events
   async function queryHostedEvents() {
@@ -137,7 +159,18 @@ const UserPage = () => {
         setError(null);
 
         const result = await queryUpcomingEvents();
-        setUpcomingEvents(result.events);
+
+        const sortedUpcomingEvents = result.events.sort((a, b) => {
+          // Get start dates of each event
+          const eventA = a.startdate.toLowerCase();
+          const eventB = b.startdate.toLowerCase();
+
+          if (eventA < eventB) return -1; // If event a comes before event b
+          if (eventA > eventB) return 1; // If event a comes after event b
+          return 0; // Same event dates
+        });
+
+        setUpcomingEvents(sortedUpcomingEvents);
       } catch (e) {
         setError(e.message);
       }
@@ -169,6 +202,28 @@ const UserPage = () => {
     }
   }
 
+  // Call API to remove an event
+  async function removeEvent(eventId) {
+    const APIUrl = `http://localhost:3001/api/events/${eventId}`;
+    const authToken = localStorage.getItem("authToken");
+    try {
+      // Fetch and store results from API URL
+      const response = await fetch(APIUrl, {
+        method: "DELETE",
+        headers: {
+          Authorization: `Bearer ${authToken}`,
+        },
+      });
+      const data = await response.json();
+
+      // Error message
+      if (!response.ok) {
+        throw new Error(data.error || "An unexpected error occurred");
+      }
+    } catch (e) {
+      setError(e.message);
+    }
+  }
 
   return (
     <Box
@@ -222,7 +277,7 @@ const UserPage = () => {
           <MenuItem
             onClick={(e) => {
               e.stopPropagation();
-              navigate(`/user/${id}/friends`);
+              navigate(`/user/friends`);
             }}
           >
             <Button
@@ -250,7 +305,7 @@ const UserPage = () => {
                 textTransform: "none",
               }}
             >
-              Signout
+              Sign out
             </Button>
           </MenuItem>
         </Menu>
@@ -258,7 +313,11 @@ const UserPage = () => {
 
       {/* Search bar */}
       <Box sx={{ display: "flex", paddingBottom: "2vh" }}>
-        <SearchBar noMargin={true} placeholder="Search for events..." />
+        <SearchBar
+          onSearchChange={handleSearchChange}
+          noMargin={true}
+          placeholder="Search for events..."
+        />
       </Box>
 
       {/* Tabs for switching between Hosted and Upcoming Events */}
@@ -275,13 +334,13 @@ const UserPage = () => {
       {/* Hosted Events Section */}
       {selectedTab === 0 && (
         <>
-          {hostedEvents !== 0 ? (
+          <Typography variant="h5" sx={{ fontWeight: "bold", mb: 2 }}>
+            Your Hosted Events
+          </Typography>
+          {searchedHostedEvents.length !== 0 ? (
             <>
-              <Typography variant="h5" sx={{ fontWeight: "bold", mb: 2 }}>
-                Your Hosted Events
-              </Typography>
-              {hostedEvents.map((event) => (
-                <EventCard key={event.id} event={event} variant="hosted" />
+              {searchedHostedEvents.map((event) => (
+                <EventCard key={event.id} event={event} variant="hosted" onRemoveButton={handleRemoveButton}/>
               ))}
             </>
           ) : (
@@ -296,10 +355,15 @@ const UserPage = () => {
           <Typography variant="h5" sx={{ fontWeight: "bold", mb: 2 }}>
             Your Upcoming Events
           </Typography>
-          {upcomingEvents.length !== 0 ? (
+          {searchedUpcomingEvents.length !== 0 ? (
             <>
-              {upcomingEvents.map((event) => (
-                <EventCard key={event.id} event={event} variant="upcoming" OnUnregisterButton={handleUnregisterButton}/>
+              {searchedUpcomingEvents.map((event) => (
+                <EventCard
+                  key={event.id}
+                  event={event}
+                  variant="upcoming"
+                  OnUnregisterButton={handleUnregisterButton}
+                />
               ))}
             </>
           ) : (

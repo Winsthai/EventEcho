@@ -107,12 +107,22 @@ adminRouter.patch("/unbanUser/:id", async (request, result, next) => {
 });
 
 // Get all banned users
+// banned = false for unbanned users
 adminRouter.get("/bannedUsers", async (request, response, next) => {
   try {
+    const banned = request.query.banned;
+
     // Search query (optional)
     const searchTerm = request.query.search || ""; // Default to empty string if no search term
 
-    let queryText = `SELECT u.id, u.username, u.firstname, u.lastname FROM users u WHERE u.status = 3`;
+    let queryText = `SELECT * FROM users u`;
+
+    if (banned) {
+      queryText += ` WHERE u.status != 3 AND u.status != 2`;
+    } else {
+      queryText += ` WHERE u.status = 3`;
+    }
+
     const queryParams = [];
 
     // Apply search filter if search term is provided

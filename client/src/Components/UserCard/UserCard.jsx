@@ -16,9 +16,15 @@ const UserCard = ({ user, variant = "", onBanButton, onUnbanButton}) => {
           className="adminUserDetails"
           sx={{ justifyContent: "space-between" }}
         >
-          {/* Id */}
+          {/* Username */}
+          <Box alignItems="center" color="text.secondary">
+            <span style={{ fontWeight: "bold" }}>Username: </span>{" "}
+            {user.username}
+          </Box>
+
+          {/* Email */}
           <Box color="text.secondary">
-            <span style={{ fontWeight: "bold" }}>User ID: </span> {user.id}
+            <span style={{ fontWeight: "bold" }}>Email: </span> {user.email}
           </Box>
 
           {/* Name */}
@@ -27,11 +33,7 @@ const UserCard = ({ user, variant = "", onBanButton, onUnbanButton}) => {
             {user.lastname}
           </Box>
 
-          {/* Username */}
-          <Box alignItems="center" color="text.secondary">
-            <span style={{ fontWeight: "bold" }}>Username: </span>{" "}
-            {user.username}
-          </Box>
+          
 
           <Box>
             {variant === "banned" ? (
@@ -71,9 +73,15 @@ const UserCard = ({ user, variant = "", onBanButton, onUnbanButton}) => {
     return (
       <Box className="adminUserBoxDesktop">
         <Stack direction="row" className="adminUserDetailsDesktop">
-          {/* Id */}
+          {/* Username */}
+          <Box alignItems="center" color="text.secondary" sx={{ gap: "4px" }}>
+            <span style={{ fontWeight: "bold" }}>Username: </span>{" "}
+            {user.username}
+          </Box>
+
+          {/* Email */}
           <Box color="text.secondary" sx={{ gap: "4px" }}>
-            <span style={{ fontWeight: "bold" }}>User ID: </span> {user.id}
+            <span style={{ fontWeight: "bold" }}>Email: </span> {user.email}
           </Box>
 
           {/* Name */}
@@ -84,11 +92,7 @@ const UserCard = ({ user, variant = "", onBanButton, onUnbanButton}) => {
             </Typography>
           </Box>
 
-          {/* Username */}
-          <Box alignItems="center" color="text.secondary" sx={{ gap: "4px" }}>
-            <span style={{ fontWeight: "bold" }}>Username: </span>{" "}
-            {user.username}
-          </Box>
+          
 
           <Box>
             {variant === "banned" ? (
