@@ -9,6 +9,7 @@ import LocationOnIcon from "@mui/icons-material/LocationOn";
 import { AppBar, Toolbar, IconButton, Typography } from "@mui/material";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import logo from "../../images/logo.png";
+import dayjs from "dayjs";
 
 import SportsBasketballIcon from "@mui/icons-material/SportsBasketball";
 import MusicNoteIcon from "@mui/icons-material/MusicNote";
@@ -84,7 +85,9 @@ const EventPage = () => {
   }
 
   // end date exists
-  if (event.enddate !== null) {
+  if (event.enddate !== null && !dayjs(JSON.parse(event.startdateraw)).isSame(
+    dayjs(JSON.parse(event.enddateraw))
+  )) {
     reviewDate = event.startdate
       .slice(0, 10)
       .concat(" - ", event.enddate.slice(0, 10));

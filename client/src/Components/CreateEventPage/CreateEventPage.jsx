@@ -77,7 +77,6 @@ export default function CreateEventPage({
           // before api call
           try {
             const retrieveEvent = await fetchEvent(id);
-            console.log("useEffect retrieveEvent: ", retrieveEvent.title);
 
             setEventDetails({
               ...eventDetails,
@@ -85,7 +84,7 @@ export default function CreateEventPage({
               eventtype: retrieveEvent.eventtype,
               description: retrieveEvent.description,
               address: retrieveEvent.address,
-              startdate: format(retrieveEvent.startdate, 'yyyy-MM-dd'),
+              startdate: retrieveEvent.startdate.slice(0, -14),
               starttime: retrieveEvent.starttime,
               enddate: format(retrieveEvent.enddate, 'yyyy-MM-dd'),
               endtime: retrieveEvent.endtime,
@@ -99,6 +98,7 @@ export default function CreateEventPage({
               imagenamemobile: mobileFileNameFormat(retrieveEvent.eventimage),
               imageform: "exists_in_cloud" // check to make sure if this is still there, then do not reupload when posting
             });
+
           }
           catch (e) {
             console.log("error: ", e);
@@ -112,7 +112,6 @@ export default function CreateEventPage({
   const updateDetails = (event) => {
     const { name, value } = event.target;
     setEventDetails({ ...eventDetails, [name]: value });
-
     setDetailsChanged(true);
   };
 
@@ -122,7 +121,7 @@ export default function CreateEventPage({
 
     formattedDate = format(date, 'yyyy-MM-dd');
     setEventDetails({ ...eventDetails, startdate: formattedDate, startdateraw: jsonDate });
-
+    setDetailsChanged(true);
   }
 
   const handleStartTimeChange = (time) => {
@@ -132,6 +131,7 @@ export default function CreateEventPage({
     const formattedTime = format(time, "HH:mm:ss'+00'");
     console.log(time);
     setEventDetails({ ...eventDetails, starttime: formattedTime, starttimeraw: jsonTime });
+    setDetailsChanged(true);
   }
 
   const handleEndDateChange = (date) => {
@@ -140,6 +140,7 @@ export default function CreateEventPage({
 
     formattedDate = format(date, 'yyyy-MM-dd');
     setEventDetails({ ...eventDetails, enddate: formattedDate, enddateraw: jsonDate });
+    setDetailsChanged(true);
   }
 
   const handleEndTimeChange = (time) => {
@@ -149,12 +150,14 @@ export default function CreateEventPage({
     const formattedTime = format(time, "HH:mm:ss'+00'");
     console.log(time);
     setEventDetails({ ...eventDetails, endtime: formattedTime, endtimeraw: jsonTime });
+    setDetailsChanged(true);
   }
 
   const handleVisibilityChange = (event) => {
     const { checked } = event.target;
     console.log(checked);
     setEventDetails({ ...eventDetails, visibility: checked });
+    setDetailsChanged(true);
   }
 
   function mobileFileNameFormat(file) {
@@ -217,7 +220,7 @@ export default function CreateEventPage({
       alert("Some required fields are missing or incorrect.");
     }
     else if (goodTimings === false) {
-      alert("bad timings!");
+      alert("Some event timing fields are incorrect.");
     }
     else {
       setDetailsCompleted(true);
@@ -226,7 +229,7 @@ export default function CreateEventPage({
     }
   };
 
-  // !! add another field to make sure you can't make an event before today's date and time !!
+  // field checking (and alot of error checking for date and times)
   const checkFields = () => {
     goodTimings = true;
 
@@ -288,6 +291,18 @@ export default function CreateEventPage({
           starttime: null,
           startdateraw: JSON.stringify(''),
           starttimeraw: JSON.stringify('')
+        });
+      }
+      // if event is in the past (usually when editing events? like the football game)
+      else if (currentdate.isAfter(startdateraw_conv) || currentdate.isAfter(enddateraw_conv)) {
+        console.log("this event has already passed");
+        goodTimings = false;
+        setEventDetails({
+          ...eventDetails,
+          startdate: null,
+          enddate: null,
+          startdateraw: JSON.stringify(''),
+          enddateraw: JSON.stringify('')
         });
       }
     }
