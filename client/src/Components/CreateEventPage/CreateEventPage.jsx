@@ -773,7 +773,7 @@ export default function CreateEventPage({
           {/* Upload Photo */}
           <Stack direction="row" spacing={6} sx={{ width: "80%", display: "flex", justifyContent: "left", mb: 4 }}>
             <TextField fullWidth label="Upload File" variant='outlined'
-              value={eventDetails.imagename ? eventDetails.imagename : undefined}
+              value={eventDetails.imagename ? eventDetails.imagename : ''}
               slotProps={{
                 input: {
                   startAdornment: (
