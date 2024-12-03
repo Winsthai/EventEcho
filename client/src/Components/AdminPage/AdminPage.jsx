@@ -30,6 +30,8 @@ const AdminPage = () => {
   const [buttonSwitch, setButtonSwitch] = useState(0); // Switch for updating events and users
   const [error, setError] = useState("");
 
+  const authToken = localStorage.getItem("authToken");
+
   const isMobile = useMediaQuery("(max-width:600px)");
 
   // Handle switching tabs
@@ -125,7 +127,18 @@ const AdminPage = () => {
         setError(null);
 
         const result = await queryEvents("", searchQuery, pageNum);
-        setEvents(result.events);
+
+        const sortedEvents = result.events.sort((a, b) => {
+          // Get start dates of each event
+          const eventA = a.startdate.toLowerCase();
+          const eventB = b.startdate.toLowerCase();
+
+          if (eventA < eventB) return -1; // If event a comes before event b
+          if (eventA > eventB) return 1; // If event a comes after event b
+          return 0; // Same event dates
+        });
+
+        setEvents(sortedEvents);
         setTotalPages(result.totalPages);
       } catch (e) {
         setError(e.message);
@@ -138,11 +151,16 @@ const AdminPage = () => {
   // Query users from the API
   async function queryUsers(search = "") {
     // Generate API Url
-    const APIUrl = `http://localhost:3001/api/users/allUsers?search=${search}&noAdmins=true`;
+    const APIUrl = `http://localhost:3001/api/admin/bannedUsers?search=${search}&banned=false`;
 
     try {
       // Fetch and store results from API URL
-      const response = await fetch(APIUrl);
+      const response = await fetch(APIUrl, {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${authToken}`,
+        },
+      });
       const data = await response.json();
 
       // Error message
@@ -176,7 +194,7 @@ const AdminPage = () => {
   async function queryBannedUsers(search = "") {
     // Generate API Url
     const APIUrl = `http://localhost:3001/api/admin/bannedUsers?search=${search}`;
-    const authToken = localStorage.getItem("authToken");
+
     try {
       // Fetch and store results from API URL
       const response = await fetch(APIUrl, {
@@ -217,7 +235,7 @@ const AdminPage = () => {
   // Call API to remove an event
   async function removeEvent(eventId) {
     const APIUrl = `http://localhost:3001/api/events/${eventId}`;
-    const authToken = localStorage.getItem("authToken");
+    
     try {
       // Fetch and store results from API URL
       const response = await fetch(APIUrl, {
@@ -240,7 +258,7 @@ const AdminPage = () => {
   // Call API to ban a user
   async function banUser(userId) {
     const APIUrl = `http://localhost:3001/api/admin/banUser/${userId}`;
-    const authToken = localStorage.getItem("authToken");
+    
     try {
       // Fetch and store results from API URL
       const response = await fetch(APIUrl, {
@@ -263,7 +281,7 @@ const AdminPage = () => {
   // Call API to unban a user
   async function unbanUser(userId) {
     const APIUrl = `http://localhost:3001/api/admin/unbanUser/${userId}`;
-    const authToken = localStorage.getItem("authToken");
+    
     try {
       // Fetch and store results from API URL
       const response = await fetch(APIUrl, {
@@ -355,7 +373,12 @@ const AdminPage = () => {
                 Events
               </Typography>
               {events.map((event) => (
-                <EventCard key={event.id} event={event} variant="admin" onRemoveButton={handleRemoveButton} />
+                <EventCard
+                  key={event.id}
+                  event={event}
+                  variant="admin"
+                  onRemoveButton={handleRemoveButton}
+                />
               ))}
             </>
           ) : (
