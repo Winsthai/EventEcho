@@ -4,7 +4,7 @@ import PropTypes from "prop-types";
 
 import "./UserCard.css";
 
-const UserCard = ({ user, variant = "" }) => {
+const UserCard = ({ user, variant = "", onAction }) => {
   // Use media query to check if screen width is less than 600px (mobile view)
   const isMobile = useMediaQuery("(max-width:600px)");
 
@@ -17,7 +17,9 @@ const UserCard = ({ user, variant = "" }) => {
   // Used for displaying username and profile picture letter respectively
   // Can remove profileLetter if somehow we have customized profile pictures.
   const username = user.username;
-  const profileLetter = username.charAt(0);
+  const firstLetter = user.firstname.charAt(0);
+  const secondLetter = user.lastname.charAt(0);
+  const profileLetters = `${firstLetter}${secondLetter}`;
 
   if (isMobile) {
     return (
@@ -30,7 +32,7 @@ const UserCard = ({ user, variant = "" }) => {
         }}
       >
         <Box sx={{ display: "flex", alignItems: "center" }}>
-          <div id="UserCardProfilePicture">{profileLetter}</div>
+          <div id="UserCardProfilePicture">{profileLetters}</div>
           <Box
             sx={{ display: "flex", flexDirection: "column", marginLeft: "8px" }}
           >
@@ -43,9 +45,7 @@ const UserCard = ({ user, variant = "" }) => {
           <Button
             variant="contained"
             id="UserCardButton"
-            // TODO implement this later
-            // onClick={(e) => {
-            // }}
+            onClick={onAction}
           >
             Remove Friend
           </Button>
@@ -53,9 +53,7 @@ const UserCard = ({ user, variant = "" }) => {
           <Button
             variant="contained"
             id="UserCardButton"
-            // TODO implement this later
-            // onClick={(e) => {
-            // }}
+            onClick={onAction}
           >
             Send Request
           </Button>
@@ -63,9 +61,7 @@ const UserCard = ({ user, variant = "" }) => {
           <Button
             variant="contained"
             id="UserCardButton"
-            // TODO implement this later
-            // onClick={(e) => {
-            // }}
+            onClick={onAction}
           >
             Accept Request
           </Button>
@@ -92,7 +88,7 @@ const UserCard = ({ user, variant = "" }) => {
         }}
       >
         {/* Profile Picture */}
-        <div id="UserCardProfilePictureDesktop"> {profileLetter} </div>
+        <div id="UserCardProfilePictureDesktop"> {profileLetters} </div>
 
         {/* Username */}
         <h1 id="UserCardUserNameDesktop">{username}</h1>
@@ -102,6 +98,7 @@ const UserCard = ({ user, variant = "" }) => {
           <Button
             variant="contained"
             id="UserCardButton"
+            onClick={onAction}
             sx={{
               width: "100%",
               textTransform: "none",
@@ -113,6 +110,7 @@ const UserCard = ({ user, variant = "" }) => {
           <Button
             variant="contained"
             id="UserCardButton"
+            onClick={onAction}
             sx={{
               width: "100%",
               textTransform: "none",
@@ -124,6 +122,7 @@ const UserCard = ({ user, variant = "" }) => {
           <Button
             variant="contained"
             id="UserCardButton"
+            onClick={onAction}
             sx={{
               width: "100%",
               textTransform: "none",
@@ -143,8 +142,11 @@ const UserCard = ({ user, variant = "" }) => {
 UserCard.propTypes = {
   user: PropTypes.shape({
     username: PropTypes.string.isRequired, // Need username
+    firstname: PropTypes.string.isRequired,
+    lastname: PropTypes.string.isRequired,
   }).isRequired,
-  variant: PropTypes.string, // Optional for now
+  variant: PropTypes.oneOf(["add", "remove", "accept"]),
+  onAction: PropTypes.func.isRequired,
 };
 
 export default UserCard;
