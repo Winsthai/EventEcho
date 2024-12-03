@@ -590,4 +590,36 @@ eventRouter.get(
   }
 );
 
+// Invite users to an event
+// Requires a token to ensure that the user viewing the invited users of this event is the one who made it, or is an admin
+eventRouter.post(
+  "/:id/invitedUsers",
+  creatorConfirmation,
+  async (req, res, next) => {
+    const eventId = req.params.id; // Get the event ID from the URL parameter
+    const userIds = req.body.userIds;
+
+    if (!userIds || userIds.length === 0) {
+      return res.status(400).json({ message: "No userIds provided" });
+    }
+
+    try {
+      // Insert each user_id into the event_invites table for the given event_id
+      const values = userIds
+        .map((userId) => `(${eventId}, ${userId})`)
+        .join(",");
+
+      await client.query(`
+        INSERT INTO event_invites (event_id, user_id)
+        VALUES ${values}
+        ON CONFLICT (event_id, user_id) DO NOTHING;`);
+
+      // Return list of invited users
+      res.status(200).json({ message: "Users invited successfully" });
+    } catch (error) {
+      next(error);
+    }
+  }
+);
+
 export default eventRouter;
