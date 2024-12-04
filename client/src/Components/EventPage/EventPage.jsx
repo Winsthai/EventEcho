@@ -224,17 +224,13 @@ useEffect(() => {
     const APIUrl = `http://localhost:3001/api/users/invite/${eventId}`;
     try {
       // Fetch and store results from API URL
-      const response = await fetch(APIUrl, {
+      await fetch(APIUrl, {
         method: "DELETE",
         headers: {
           Authorization: `Bearer ${authToken}`,
         },
       });
 
-      // Error message
-      if (!response.ok) {
-        throw new Error("An unexpected error occurred");
-      }
     } catch (e) {
       setError(e.message);
     }
