@@ -322,6 +322,9 @@ eventRouter.post(
 
       const event = eventExistsResult.rows[0];
       const today = new Date();
+      const todayDateTime = new Date(
+      `${today.toISOString().slice(0, 10)}T${today.toISOString().slice(11, 19)}-07:00`
+        );
 
       // Convert dates to Date objects for comparison
       const eventStartDate = new Date(event.startdate);
@@ -329,12 +332,12 @@ eventRouter.post(
 
       // Check if the event has already passed
       if (eventEndDate) {
-        if (today > eventEndDate) {
+        if (todayDateTime > eventEndDate) {
           return response.status(400).json({
             error: "This event has already passed",
           });
         }
-      } else if (today > eventStartDate) {
+      } else if (todayDateTime > eventStartDate) {
         return response.status(400).json({
           error: "This event has already passed",
         });

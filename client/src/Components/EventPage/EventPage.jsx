@@ -70,13 +70,20 @@ const EventPage = () => {
 
   const isEventDatePassed = (event) => {
     const today = new Date();
+    const todayDateTime = new Date(
+  `${today.toISOString().slice(0, 10)}T${today.toISOString().slice(11, 19)}-07:00`
+    );
+    console.log(todayDateTime);
     const startDate = new Date(event.startdate);
     const endDate = event.enddate ? new Date(event.enddate) : null;
+    console.log("end date: ", event.enddate);
+
+    
 
     if (endDate) {
-      return today > endDate;
+      return todayDateTime > endDate;
     } else {
-      return today > startDate;
+      return todayDateTime > startDate;
     }
   };
 
