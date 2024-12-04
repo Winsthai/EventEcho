@@ -20,6 +20,7 @@ import MenuIcon from "@mui/icons-material/Menu";
 const UserPage = () => {
   const [hostedEvents, setHostedEvents] = useState([]);
   const [upcomingEvents, setUpcomingEvents] = useState([]);
+  const [invitedEvents, setInvitedEvents] = useState([]);
   const [selectedTab, setSelectedTab] = useState(0); // State to manage selected tab
   const [searchQuery, setSearchQuery] = useState("");
   const [buttonSwitch, setButtonSwitch] = useState(0);
@@ -40,6 +41,10 @@ const UserPage = () => {
   );
 
   const searchedUpcomingEvents = upcomingEvents.filter((event) =>
+    event.title.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
+  const searchedInvitedEvents = invitedEvents.filter((event) =>
     event.title.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
@@ -177,6 +182,58 @@ const UserPage = () => {
     };
 
     fetchUpcomingEvents();
+  }, [searchQuery, selectedTab, buttonSwitch]); // Call this useEffect each time one of these states change.
+
+  // Query users invited events
+  async function queryInvitedEvents() {
+    // Generate API Url
+    const APIUrl = `http://localhost:3001/api/users/invitedEvents`;
+    try {
+      // Fetch and store results from API URL
+      const response = await fetch(APIUrl, {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${authToken}`,
+        },
+      });
+      const data = await response.json();
+
+      // Error message
+      if (!response.ok) {
+        throw new Error(data.error || "An unexpected error occurred");
+      }
+
+      return data;
+    } catch (e) {
+      setError(e.message);
+    }
+  }
+
+  // Fetch invited events on startup, then update invited events on state change
+  useEffect(() => {
+    const fetchInvitedEvents = async () => {
+      try {
+        setError(null);
+
+        const result = await queryInvitedEvents();
+
+        const sortedInvitedEvents = result.events.sort((a, b) => {
+          // Get start dates of each event
+          const eventA = a.startdate.toLowerCase();
+          const eventB = b.startdate.toLowerCase();
+
+          if (eventA < eventB) return -1; // If event a comes before event b
+          if (eventA > eventB) return 1; // If event a comes after event b
+          return 0; // Same event dates
+        });
+
+        setInvitedEvents(sortedInvitedEvents);
+      } catch (e) {
+        setError(e.message);
+      }
+    };
+
+    fetchInvitedEvents();
   }, [searchQuery, selectedTab, buttonSwitch]); // Call this useEffect each time one of these states change.
 
   // Call API to unregister user from event
@@ -329,6 +386,7 @@ const UserPage = () => {
       >
         <Tab label="Hosted Events" />
         <Tab label="Upcoming Events" />
+        <Tab label="Invitations" />
       </Tabs>
 
       {/* Hosted Events Section */}
@@ -340,7 +398,12 @@ const UserPage = () => {
           {searchedHostedEvents.length !== 0 ? (
             <>
               {searchedHostedEvents.map((event) => (
-                <EventCard key={event.id} event={event} variant="hosted" onRemoveButton={handleRemoveButton}/>
+                <EventCard
+                  key={event.id}
+                  event={event}
+                  variant="hosted"
+                  onRemoveButton={handleRemoveButton}
+                />
               ))}
             </>
           ) : (
@@ -363,6 +426,27 @@ const UserPage = () => {
                   event={event}
                   variant="upcoming"
                   OnUnregisterButton={handleUnregisterButton}
+                />
+              ))}
+            </>
+          ) : (
+            <NoUpcomingEvents />
+          )}
+        </>
+      )}
+
+      {/* Invitations Section */}
+      {selectedTab === 2 && (
+        <>
+          <Typography variant="h5" sx={{ fontWeight: "bold", mb: 2 }}>
+            Event Invitations
+          </Typography>
+          {searchedInvitedEvents.length !== 0 ? (
+            <>
+              {searchedInvitedEvents.map((event) => (
+                <EventCard
+                  key={event.id}
+                  event={event}
                 />
               ))}
             </>
