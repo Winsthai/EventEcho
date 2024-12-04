@@ -54,7 +54,12 @@ export default function CreateEventPage({
     const APIUrl = `http://localhost:3001/api/events/${eventId}`;
 
     try {
-      const response = await fetch(APIUrl);
+      const response = await fetch(APIUrl,
+        {
+          method: "GET",
+          headers: { "Authorization": `Bearer ${localStorage.authToken}` }
+        }
+      );
       const data = await response.json();
       console.log("retrieved data", data);
 
@@ -86,7 +91,7 @@ export default function CreateEventPage({
               address: retrieveEvent.address,
               startdate: retrieveEvent.startdate.slice(0, -14),
               starttime: retrieveEvent.starttime,
-              enddate: format(retrieveEvent.enddate, 'yyyy-MM-dd'),
+              enddate: retrieveEvent.enddate ? retrieveEvent.enddate.slice(0, -14) : retrieveEvent.enddate,
               endtime: retrieveEvent.endtime,
               visibility: retrieveEvent.visibility,
               startdateraw: retrieveEvent.startdateraw,
@@ -542,9 +547,9 @@ export default function CreateEventPage({
                 </Button>
                 <Stack direction="row" spacing={1} sx={{ display: "flex", justifyContent: "center" }}>
                   <Typography sx={{ fontSize: "14px", alignContent: "center" }}>
-                    {eventDetails.imageform ? eventDetails.imagenamemobile : "No image selected"}
+                    {eventDetails.imageform && eventDetails.eventimage ? eventDetails.imagenamemobile : "No image selected"}
                   </Typography>
-                  {eventDetails.imageform ?
+                  {eventDetails.imageform && eventDetails.eventimage ?
                     <IconButton onClick={handleDeleteFile} sx={{ alignSelf: "center" }}>
                       <DeleteIcon />
                     </IconButton> : null
