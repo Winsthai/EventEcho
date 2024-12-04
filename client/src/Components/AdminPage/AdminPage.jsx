@@ -31,6 +31,28 @@ const AdminPage = () => {
   const [error, setError] = useState("");
   const [showConfirmation, setShowConfirmation] = useState(false);
   const [selectedEventToRemove, setSelectedEventToRemove] = useState(null);
+  const [showBanConfirmation, setShowBanConfirmation] = useState(false);
+  const [selectedUserToBan, setSelectedUserToBan] = useState(null);
+
+  // Function to open the ban confirmation popup
+const handleOpenBanConfirmation = (user) => {
+  setSelectedUserToBan(user);
+  setShowBanConfirmation(true);
+};
+
+// Function to close the ban confirmation popup
+const handleCloseBanConfirmation = () => {
+  setSelectedUserToBan(null);
+  setShowBanConfirmation(false);
+};
+
+// Function to confirm the ban
+const handleConfirmBan = async () => {
+  if (selectedUserToBan) {
+    await handleBanButton(selectedUserToBan.id); // Proceed with banning the user
+  }
+  handleCloseBanConfirmation(); // Close the confirmation popup
+};
 
 // Function to open the confirmation popup
 const handleOpenConfirmation = (event) => {
@@ -497,15 +519,48 @@ const handleConfirmRemove = async () => {
                 <UserCard
                   key={user.id}
                   user={user}
-                  onBanButton={handleBanButton}
-                />
-              ))}
+                  onBanButton={() => handleOpenBanConfirmation(user)}
+              />
+            ))}
+          </>
+              ) : (
+                <NoUsers />
+              )}
             </>
-          ) : (
-            <NoUsers />
           )}
-        </>
-      )}
+
+          {/* Ban Confirmation Popup */}
+          {showBanConfirmation && (
+            <Box
+              sx={{
+                position: "fixed",
+                top: "50%",
+                left: "50%",
+                transform: "translate(-50%, -50%)",
+                backgroundColor: "white",
+                padding: 4,
+                borderRadius: 2,
+                boxShadow: 3,
+                zIndex: 1000,
+              }}
+            >
+              <Typography variant="h6" sx={{ mb: 2 }}>
+                Are you sure you want to ban this user?
+              </Typography>
+              <Stack direction="row" spacing={2}>
+                <Button
+                  variant="contained"
+                  color="error"
+                  onClick={handleConfirmBan}
+                >
+                  Yes
+                </Button>
+                <Button variant="outlined" onClick={handleCloseBanConfirmation}>
+                  No
+                </Button>
+              </Stack>
+            </Box>
+          )}
 
       {/* Banned Users Section*/}
       {selectedTab === 2 && (
