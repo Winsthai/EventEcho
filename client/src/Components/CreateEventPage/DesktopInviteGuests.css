@@ -9,7 +9,7 @@
 .desktop-search-and-add {
   display: flex;
   align-items: center;
-  width: 50%;
+  justify-content: center;
   margin: 0 auto;
 }
 
