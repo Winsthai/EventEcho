@@ -401,6 +401,7 @@ const handleConfirmRemove = async () => {
         value={selectedTab}
         onChange={handleTabChange}
         aria-label="Event Tabs"
+        variant="scrollable"
         sx={{ marginBottom: "2em" }}
       >
         <Tab label="Events" />
