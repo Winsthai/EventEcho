@@ -7,6 +7,7 @@ import {
   Button,
   Menu,
   MenuItem,
+  Stack,
 } from "@mui/material";
 import { useEffect, useState } from "react";
 import NoCreatedEvents from "./Components/NoCreatedEvents";
@@ -19,18 +20,41 @@ import MenuIcon from "@mui/icons-material/Menu";
 
 const UserPage = () => {
   const [hostedEvents, setHostedEvents] = useState([]);
-  const [registeredEvents, setRegisteredEvents] = useState([]);
+  const [upcomingEvents, setUpcomingEvents] = useState([]);
   const [invitedEvents, setInvitedEvents] = useState([]);
   const [selectedTab, setSelectedTab] = useState(0); // State to manage selected tab
   const [searchQuery, setSearchQuery] = useState("");
   const [buttonSwitch, setButtonSwitch] = useState(0);
   const [error, setError] = useState("");
+  const [showRemoveConfirmation, setShowRemoveConfirmation] = useState(false);
+  const [selectedEventToRemove, setSelectedEventToRemove] = useState(null);
+
 
   const isMobile = useMediaQuery("(max-width:600px)");
   const navigate = useNavigate();
 
   const authToken = localStorage.getItem("authToken");
   const username = localStorage.getItem("username");
+
+  // Open confirmation popup
+  const handleOpenRemoveConfirmation = (event) => {
+    setSelectedEventToRemove(event);
+    setShowRemoveConfirmation(true);
+  };
+
+  // Close confirmation popup
+  const handleCloseRemoveConfirmation = () => {
+    setSelectedEventToRemove(null);
+    setShowRemoveConfirmation(false);
+  };
+
+  // Confirm removal
+  const handleConfirmRemove = async () => {
+    if (selectedEventToRemove) {
+      await handleRemoveButton(selectedEventToRemove.id); // Call the original remove logic
+    }
+    handleCloseRemoveConfirmation();
+  };
 
   const handleSearchChange = (query) => {
     setSearchQuery(query); // Update search query
@@ -40,7 +64,7 @@ const UserPage = () => {
     event.title.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
-  const searchedRegisteredEvents = registeredEvents.filter((event) =>
+  const searchedUpcomingEvents = upcomingEvents.filter((event) =>
     event.title.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
@@ -133,7 +157,7 @@ const UserPage = () => {
   }, [searchQuery, selectedTab, buttonSwitch]); // Call this useEffect each time one of these states change.
 
   // Query users hosted events
-  async function queryRegisteredEvents() {
+  async function queryUpcomingEvents() {
     // Generate API Url
     const APIUrl = `http://localhost:3001/api/users/registeredEvents`;
     try {
@@ -159,13 +183,13 @@ const UserPage = () => {
 
   // Fetch hosted events on startup, then update hosted events on state change
   useEffect(() => {
-    const fetchRegisteredEvents = async () => {
+    const fetchUpcomingEvents = async () => {
       try {
         setError(null);
 
-        const result = await queryRegisteredEvents();
+        const result = await queryUpcomingEvents();
 
-        const sortedRegisteredEvents = result.events.sort((a, b) => {
+        const sortedUpcomingEvents = result.events.sort((a, b) => {
           // Get start dates of each event
           const eventA = a.startdate.toLowerCase();
           const eventB = b.startdate.toLowerCase();
@@ -175,13 +199,13 @@ const UserPage = () => {
           return 0; // Same event dates
         });
 
-        setRegisteredEvents(sortedRegisteredEvents);
+        setUpcomingEvents(sortedUpcomingEvents);
       } catch (e) {
         setError(e.message);
       }
     };
 
-    fetchRegisteredEvents();
+    fetchUpcomingEvents();
   }, [searchQuery, selectedTab, buttonSwitch]); // Call this useEffect each time one of these states change.
 
   // Query users invited events
@@ -377,7 +401,7 @@ const UserPage = () => {
         />
       </Box>
 
-      {/* Tabs for switching between Hosted, Registered, and Invited Events */}
+      {/* Tabs for switching between Hosted and Upcoming Events */}
       <Tabs
         value={selectedTab}
         onChange={handleTabChange}
@@ -385,7 +409,7 @@ const UserPage = () => {
         sx={{ marginBottom: "2em" }}
       >
         <Tab label="Hosted Events" />
-        <Tab label="Registered Events" />
+        <Tab label="Upcoming Events" />
         <Tab label="Invitations" />
       </Tabs>
 
@@ -402,9 +426,53 @@ const UserPage = () => {
                   key={event.id}
                   event={event}
                   variant="hosted"
-                  onRemoveButton={handleRemoveButton}
-                />
+                  onRemoveButton={() => handleOpenRemoveConfirmation(event)} // Show confirmation popup
+              />
               ))}
+              {showRemoveConfirmation && (
+              <Box
+                sx={{
+                  position: "fixed",
+                  top: "50%",
+                  left: "50%",
+                  transform: "translate(-50%, -50%)",
+                  backgroundColor: "white",
+                  padding: 4,
+                  borderRadius: 2,
+                  boxShadow: 3,
+                  zIndex: 1000,
+                }}
+              >
+                <Typography variant="h6" sx={{ mb: 2 }}>
+                  Are you sure you want to delete this event?
+                </Typography>
+                <Stack direction="row" spacing={2}>
+                  <Button variant="contained" color="error" onClick={handleConfirmRemove}>
+                    Yes
+                  </Button>
+                  <Button variant="outlined" onClick={handleCloseRemoveConfirmation}>
+                    No
+                  </Button>
+                </Stack>
+              </Box>
+            )}
+
+            {/* Background overlay */}
+            {showRemoveConfirmation && (
+              <Box
+                sx={{
+                  position: "fixed",
+                  top: 0,
+                  left: 0,
+                  width: "100vw",
+                  height: "100vh",
+                  backgroundColor: "rgba(0, 0, 0, 0.5)",
+                  zIndex: 999,
+                }}
+                onClick={handleCloseRemoveConfirmation}
+              ></Box>
+            )}
+
             </>
           ) : (
             <NoCreatedEvents />
@@ -418,9 +486,9 @@ const UserPage = () => {
           <Typography variant="h5" sx={{ fontWeight: "bold", mb: 2 }}>
             Your Registered Events
           </Typography>
-          {searchedRegisteredEvents.length !== 0 ? (
+          {searchedUpcomingEvents.length !== 0 ? (
             <>
-              {searchedRegisteredEvents.map((event) => (
+              {searchedUpcomingEvents.map((event) => (
                 <EventCard
                   key={event.id}
                   event={event}
