@@ -21,15 +21,15 @@ import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import { useParams, useNavigate } from "react-router-dom";
 import SearchIcon from "@mui/icons-material/Search";
 import { useLocation } from "react-router-dom";
+import SearchBar from "../SearchBar";
 
 export default function DesktopAddGuestsPage({ invitedGuests, setInvitedGuests, detailsCompleted }) {
   const location = useLocation();
   const onEditPage = location.pathname.includes("edit");
   const { id } = useParams();
   const navigate = useNavigate();
-
+  const [searchQuery, setSearchQuery] = useState("");
   const isMobile = useMediaQuery("(max-width:600px)");
-
 
   useEffect(() => {
     if (!detailsCompleted && !onEditPage) {
@@ -204,6 +204,18 @@ export default function DesktopAddGuestsPage({ invitedGuests, setInvitedGuests, 
     return false; // user can be invited
   };
 
+  const [searchedFriends, setSearchedFriends] = useState(friendsList);
+
+  const handleSearchChange = (query) => {
+    setSearchQuery(query); // Update search query
+  };
+
+  useEffect(() => {
+    const filteredFriends = friendsList.filter((friend) =>
+      friend.username.toLowerCase().includes(searchQuery.toLowerCase())
+    );
+    setSearchedFriends(filteredFriends);
+  }, [searchQuery, friendsList]);
 
 
 
@@ -293,38 +305,13 @@ export default function DesktopAddGuestsPage({ invitedGuests, setInvitedGuests, 
             <Box sx={{ flexGrow: 1, overflow: 'auto' }}>
               <div className="mobile-container">
                 {/* ---------- Search Bar ---------- */}
-                <TextField
-                  variant="outlined"
-                  placeholder="Search friends..."
-                  size="small"
-                  sx={{
-                    flexGrow: 1, // Ensures the search bar takes available space
-                    marginLeft: 0,
-                    marginRight: 0,
-                    minWidth: "150px",
-                    width: "100%",
-                    backgroundColor: "white",
-                    borderRadius: "24px",
-                    "& .MuiOutlinedInput-root": {
-                      borderRadius: "24px",
-                      "&:hover": {
-                        borderColor: "black",
-                      },
-                      "&.Mui-focused fieldset": {
-                        borderColor: "black",
-                      },
-                    },
-                  }}
-                  slotProps={{
-                    input: {
-                      startAdornment: (
-                        <InputAdornment position="start">
-                          <SearchIcon />
-                        </InputAdornment>
-                      ),
-                    },
-                  }}
-                />
+                <Box sx={{ display: "flex"}}>
+                  <SearchBar
+                    onSearchChange={handleSearchChange}
+                    noMargin={true}
+                    placeholder="Search for events..."
+                  />
+                </Box>
                 {/* ---------- Check if have friends ---------- */}
                 {friendsList.length === 0 ?
                   (<Box sx={{ pt: 2, display: "flex", justifyContent: "center", flexDirection: "column" }}>
@@ -363,7 +350,7 @@ export default function DesktopAddGuestsPage({ invitedGuests, setInvitedGuests, 
                   ) : (
                     // ---------- friends list -----------
                     <ul className="mobile-contactList">
-                      {friendsList.map((contact) => (
+                      {searchedFriends.map((contact) => (
                         <li
                           key={contact.id}
                           className="mobile-contactItem"
@@ -448,39 +435,18 @@ export default function DesktopAddGuestsPage({ invitedGuests, setInvitedGuests, 
       <div className="desktop-container">
         <div className="desktop-content">
           <div className="desktop-search-and-add">
-            <TextField
-              variant="outlined"
-              placeholder="Search friends..."
-              size="small"
-              //onChange={(event) => onSearchChange(event.target.value)}
-              sx={{
-                flexGrow: 1, // Ensures the search bar takes available space
-                marginLeft: 0,
-                marginRight: 0,
-                minWidth: "150px",
-                width: "100%",
-                backgroundColor: "white",
-                borderRadius: "24px",
-                "& .MuiOutlinedInput-root": {
-                  borderRadius: "24px",
-                  "&:hover": {
-                    borderColor: "black",
-                  },
-                  "&.Mui-focused fieldset": {
-                    borderColor: "black",
-                  },
-                },
+            <Box 
+              sx={{ 
+                display: "flex", 
+                width: "73%",
               }}
-              slotProps={{
-                input: {
-                  startAdornment: (
-                    <InputAdornment position="start">
-                      <SearchIcon />
-                    </InputAdornment>
-                  ),
-                },
-              }}
-            />
+            >
+              <SearchBar
+                onSearchChange={handleSearchChange}
+                noMargin={true}
+                placeholder="Search for events..."
+              />
+            </Box>
           </div>
 
           <h2 className="your-friends-text">Your Friends</h2>
@@ -525,7 +491,7 @@ export default function DesktopAddGuestsPage({ invitedGuests, setInvitedGuests, 
             </Box>
             ) : (
               <div className="desktop-contactGrid">
-                {friendsList.map((contact) => (
+                {searchedFriends.map((contact) => (
                   <div
                     key={contact.id}
                     className="desktop-contactCard"
@@ -568,7 +534,7 @@ export default function DesktopAddGuestsPage({ invitedGuests, setInvitedGuests, 
               display: "flex", // enables flexbox for centering
               justifyContent: "center", // horizontally centers the button
               alignItems: "center", // vertically centers the button
-              pl: 10, // optional padding on the left, remove or adjust as needed
+
               pt: 20,
             }}
           >
