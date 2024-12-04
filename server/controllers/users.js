@@ -150,6 +150,31 @@ userRouter.get(
   }
 );
 
+// Get a user's currently invited events
+// Requires a token to be provided representing the user which has been invited for these events
+userRouter.get(
+  "/invitedEvents",
+  userConfirmation,
+  async (request, response, next) => {
+    try {
+      const userId = request.userId;
+
+      // Select parameters needed for event cards
+      const result = await client.query(
+        `SELECT e.title, e.id, e.address, e.starttime, e.startdate, e.eventimage FROM events e JOIN event_invites ec ON e.id = ec.event_id WHERE ec.user_id = $1`,
+        [userId]
+      );
+
+      // Return the events
+      response.status(200).json({
+        events: result.rows,
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
+);
+
 // Get users, has optional search query to filter by search
 // Optional queries:
 // search = <search Term>
@@ -409,5 +434,76 @@ userRouter.delete(
     }
   }
 );
+
+// Accept an invite
+// Url: (id in url should be the id of the event to delete)
+// Requires a token to be provided representing the user who wants to accept an invite
+userRouter.delete(
+  "/invite/:id",
+  userConfirmation,
+  async (request, response, next) => {
+    const userId = request.userId;
+    const eventToDeleteId = request.params.id;
+
+    try {
+      // Check if the event exists
+      const eventResult = await client.query(
+        "SELECT 1 FROM events WHERE id = $1",
+        [eventToDeleteId]
+      );
+
+      if (eventResult.rows.length === 0) {
+        return response.status(404).json({
+          error: `Event with ID ${eventToDeleteId} not found`,
+        });
+      }
+
+      // Check if they are currently invited
+      const result = await client.query(
+        `SELECT * FROM event_invites WHERE (event_id = $1 AND user_id = $2)`,
+        [eventToDeleteId, userId]
+      );
+
+      if (result.rowCount === 0) {
+        return response
+          .status(400)
+          .json({ message: "You are not currently invited to that event" });
+      }
+
+      // Delete the event invite
+      await client.query(
+        `DELETE FROM event_invites WHERE (event_id = $1 AND user_id = $2)`,
+        [eventToDeleteId, userId]
+      );
+
+      // Return no content on successful delete
+      response.status(204).send();
+    } catch (error) {
+      next(error);
+    }
+  }
+);
+
+// Get current user
+// Requires token
+userRouter.get("/me", userConfirmation, async (request, response, next) => {
+  const userId = request.userId;
+  try {
+    // Fetch details of user
+    const result = await client.query(
+      `SELECT u.id, u.username, u.firstname, u.lastname FROM users u WHERE u.id = $1`,
+      [userId]
+    );
+
+    // No user found
+    if (result.rowCount === 0) {
+      return response.status(404).json({ error: "User not found" });
+    }
+
+    response.status(200).json(result.rows[0]);
+  } catch (error) {
+    next(error);
+  }
+});
 
 export default userRouter;

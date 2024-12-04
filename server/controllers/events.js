@@ -168,8 +168,17 @@ eventRouter.get("/:id", async (request, response, next) => {
         [eventId, userId]
       );
 
+      const participantResult = await client.query(
+        `SELECT 1 FROM event_participants WHERE event_id = $1 AND user_id = $2`,
+        [eventId, userId]
+      );
+
       // User is not invited to this event
-      if (privateResult.rowCount === 0 && creatorResult.rowCount === 0) {
+      if (
+        privateResult.rowCount === 0 &&
+        creatorResult.rowCount === 0 &&
+        participantResult.rowCount === 0
+      ) {
         return response.status(401).json({
           error: "You have not been invited to this private event",
         });
@@ -302,7 +311,7 @@ eventRouter.post(
 
     try {
       const eventExistsResult = await client.query(
-        `SELECT e.visibility FROM events e WHERE e.id = $1`,
+        `SELECT e.startdate, e.enddate, e.visibility FROM events e WHERE e.id = $1`,
         [eventId]
       );
 
@@ -312,6 +321,24 @@ eventRouter.post(
       }
 
       const event = eventExistsResult.rows[0];
+      const today = new Date();
+
+      // Convert dates to Date objects for comparison
+      const eventStartDate = new Date(event.startdate);
+      const eventEndDate = event.enddate ? new Date(event.enddate) : null;
+
+      // Check if the event has already passed
+      if (eventEndDate) {
+        if (today > eventEndDate) {
+          return response.status(400).json({
+            error: "This event has already passed",
+          });
+        }
+      } else if (today > eventStartDate) {
+        return response.status(400).json({
+          error: "This event has already passed",
+        });
+      }
 
       // Additional checks for private events
       if (!event.visibility) {
