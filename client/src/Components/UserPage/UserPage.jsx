@@ -20,7 +20,7 @@ import MenuIcon from "@mui/icons-material/Menu";
 
 const UserPage = () => {
   const [hostedEvents, setHostedEvents] = useState([]);
-  const [upcomingEvents, setUpcomingEvents] = useState([]);
+  const [registeredEvents, setRegisteredEvents] = useState([]);
   const [invitedEvents, setInvitedEvents] = useState([]);
   const [selectedTab, setSelectedTab] = useState(0); // State to manage selected tab
   const [searchQuery, setSearchQuery] = useState("");
@@ -64,7 +64,7 @@ const UserPage = () => {
     event.title.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
-  const searchedUpcomingEvents = upcomingEvents.filter((event) =>
+  const searchedRegisteredEvents = registeredEvents.filter((event) =>
     event.title.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
@@ -157,7 +157,7 @@ const UserPage = () => {
   }, [searchQuery, selectedTab, buttonSwitch]); // Call this useEffect each time one of these states change.
 
   // Query users hosted events
-  async function queryUpcomingEvents() {
+  async function queryRegisteredEvents() {
     // Generate API Url
     const APIUrl = `http://localhost:3001/api/users/registeredEvents`;
     try {
@@ -183,13 +183,13 @@ const UserPage = () => {
 
   // Fetch hosted events on startup, then update hosted events on state change
   useEffect(() => {
-    const fetchUpcomingEvents = async () => {
+    const fetchRegisteredEvents = async () => {
       try {
         setError(null);
 
-        const result = await queryUpcomingEvents();
+        const result = await queryRegisteredEvents();
 
-        const sortedUpcomingEvents = result.events.sort((a, b) => {
+        const sortedRegisteredEvents = result.events.sort((a, b) => {
           // Get start dates of each event
           const eventA = a.startdate.toLowerCase();
           const eventB = b.startdate.toLowerCase();
@@ -199,13 +199,13 @@ const UserPage = () => {
           return 0; // Same event dates
         });
 
-        setUpcomingEvents(sortedUpcomingEvents);
+        setRegisteredEvents(sortedRegisteredEvents);
       } catch (e) {
         setError(e.message);
       }
     };
 
-    fetchUpcomingEvents();
+    fetchRegisteredEvents();
   }, [searchQuery, selectedTab, buttonSwitch]); // Call this useEffect each time one of these states change.
 
   // Query users invited events
@@ -401,7 +401,7 @@ const UserPage = () => {
         />
       </Box>
 
-      {/* Tabs for switching between Hosted and Upcoming Events */}
+      {/* Tabs for switching between Hosted and Registered Events */}
       <Tabs
         value={selectedTab}
         onChange={handleTabChange}
@@ -410,7 +410,7 @@ const UserPage = () => {
         sx={{ marginBottom: "2em" }}
       >
         <Tab label="Hosted Events" />
-        <Tab label="Upcoming Events" />
+        <Tab label="Registered Events" />
         <Tab label="Invitations" />
       </Tabs>
 
@@ -487,9 +487,9 @@ const UserPage = () => {
           <Typography variant="h5" sx={{ fontWeight: "bold", mb: 2 }}>
             Your Registered Events
           </Typography>
-          {searchedUpcomingEvents.length !== 0 ? (
+          {searchedRegisteredEvents.length !== 0 ? (
             <>
-              {searchedUpcomingEvents.map((event) => (
+              {searchedRegisteredEvents.map((event) => (
                 <EventCard
                   key={event.id}
                   event={event}
