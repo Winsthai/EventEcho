@@ -168,8 +168,17 @@ eventRouter.get("/:id", async (request, response, next) => {
         [eventId, userId]
       );
 
+      const participantResult = await client.query(
+        `SELECT 1 FROM event_participants WHERE event_id = $1 AND user_id = $2`,
+        [eventId, userId]
+      );
+
       // User is not invited to this event
-      if (privateResult.rowCount === 0 && creatorResult.rowCount === 0) {
+      if (
+        privateResult.rowCount === 0 &&
+        creatorResult.rowCount === 0 &&
+        participantResult.rowCount === 0
+      ) {
         return response.status(401).json({
           error: "You have not been invited to this private event",
         });
