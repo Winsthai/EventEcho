@@ -421,7 +421,6 @@ useEffect(() => {
             }}
             onClick={() => handleRegisterButton(event.id)}
           >
-            {isEventPassed ? "Event Passed" : "Register"}
             Register
           </Button>
           {showPopup && (
