@@ -17,6 +17,7 @@ import LocalDiningIcon from "@mui/icons-material/LocalDining";
 import ColorLensIcon from "@mui/icons-material/ColorLens";
 import GroupsIcon from "@mui/icons-material/Groups";
 import SportsEsportsIcon from "@mui/icons-material/SportsEsports";
+import PeopleAltIcon from '@mui/icons-material/PeopleAlt';
 
 import "./EventPage.css";
 
@@ -26,7 +27,10 @@ const EventPage = () => {
   const [event, setEvent] = useState(null); // []
   const [error, setError] = useState("");
   const [showPopup, setShowPopup] = useState(false); // Popup state
+  const [popupMessage, setPopupMessage] = useState(""); // Message for the popup
   const [userRegistered, setUserRegistered] = useState(false);
+  const [isEventPassed, setIsEventPassed] = useState(false); // To track if the event has passed
+  const [registeredCount, setRegisteredCount] = useState(0);
 
   const authToken = localStorage.getItem("authToken");
 
@@ -35,9 +39,25 @@ const EventPage = () => {
   };
 
   const handleRegisterButton = async (eventId) => {
+    if (isEventPassed) {
+      // Display message if the event has passed
+      setPopupMessage("This event has already passed.");
+      setShowPopup(true);
+      return;
+    }
+
+    if (userRegistered) {
+      // Display message if the event has passed
+      setPopupMessage("You are already registered for this event!");
+      setShowPopup(true);
+      return;
+    }
+
     try {
       await registerEvent(eventId);
       setUserRegistered(true);
+      setPopupMessage("Successfully registered for event!");
+      setShowPopup(true);
     } catch (e) {
       setError(e.message);
     }
@@ -47,12 +67,29 @@ const EventPage = () => {
   const isMobile = useMediaQuery("(max-width:600px)");
   const onEditPage = location.pathname.includes("edit");
 
-  useEffect(() => {
-    // Check if eventRegistered flag is present in state
-    if (userRegistered) {
-      setShowPopup(true);
+  const isEventDatePassed = (event) => {
+    const today = new Date();
+    const startDate = new Date(event.startdate);
+    const endDate = event.enddate ? new Date(event.enddate) : null;
 
-      // Hide popup after 3 seconds
+    if (endDate) {
+      return today > endDate;
+    } else {
+      return today > startDate;
+    }
+  };
+
+  useEffect(() => {
+    // Check if the event has passed
+    if (event) {
+      const hasPassed = isEventDatePassed(event);
+      setIsEventPassed(hasPassed);
+    }
+  }, [event]);
+
+  useEffect(() => {
+    // Hide popup after 3 seconds
+    if (showPopup) {
       const timer = setTimeout(() => {
         setShowPopup(false);
       }, 3000);
@@ -60,8 +97,73 @@ const EventPage = () => {
       // Cleanup timeout on unmount
       return () => clearTimeout(timer);
     }
-  }, [userRegistered]);
+  }, [showPopup]);
 
+ async function numberOfRegistered(eventId) {
+  const APIUrl = `http://localhost:3001/api/events/${eventId}/numberOfUsers`;
+  try {
+    // Fetch and store results from API URL
+    const response = await fetch(APIUrl, {
+      method: "GET",
+      headers: {
+        Authorization: `Bearer ${authToken}`,
+      },
+    });
+    const data = await response.json();
+
+    // Error message
+    if (!response.ok) {
+      throw new Error(data.error || "An unexpected error occurred");
+    }
+    return data;
+  } catch (e) {
+    setError(e.message);
+  }
+}
+
+ // Query users hosted events
+ async function queryUpcomingEvents() {
+  // Generate API Url
+  const APIUrl = `http://localhost:3001/api/users/registeredEvents`;
+  try {
+    // Fetch and store results from API URL
+    const response = await fetch(APIUrl, {
+      method: "GET",
+      headers: {
+        Authorization: `Bearer ${authToken}`,
+      },
+    });
+    const data = await response.json();
+
+    // Error message
+    if (!response.ok) {
+      throw new Error(data.error || "An unexpected error occurred");
+    }
+    return data;
+  } catch (e) {
+    setError(e.message);
+  }
+}
+
+useEffect(() => {
+  const fetchUpcomingEvents = async () => {
+    try {
+      setError(null);
+
+      const result = await queryUpcomingEvents();
+      if (result?.events?.some(event => event.id === id)) {
+        setUserRegistered(true); // Set to true if a match is found
+      }
+      const registeredCount = await numberOfRegistered(id);
+      console.log(registeredCount.count);
+      setRegisteredCount(registeredCount.count);
+    } catch (e) {
+      setError(e.message);
+    }
+  };
+
+  fetchUpcomingEvents();
+}, [id]); // Call this useEffect each time one of these states change.
   // Query event from the API
   async function fetchEvent(eventId) {
     // Generate API Url
@@ -283,6 +385,15 @@ const EventPage = () => {
               <LocationOnIcon />
               <p id="EventPageP">{event.address}</p>
             </Stack>
+            <Stack
+              direction="row"
+              alignItems="flex-start"
+              spacing={1}
+              color="text.secondary"
+            >
+              <PeopleAltIcon />
+              <p id="EventPageP">{registeredCount}</p>
+            </Stack>
           </Stack>
 
           {/* Event type */}
@@ -336,11 +447,12 @@ const EventPage = () => {
           <Button
             variant="contained"
             sx={{
-              backgroundColor: "#F68F8D",
+              backgroundColor: isEventPassed || userRegistered ? "gray" : "#F68F8D",
               borderRadius: "20px",
-              marginBottom: "80px", // so button doesn't overlap with mobile interface at the bottom.
+              marginBottom: "80px",
+              cursor: "pointer",
               "&:hover": {
-                backgroundColor: "#A50B07",
+                backgroundColor: isEventPassed || userRegistered ? "gray" : "#A50B07",
               },
             }}
             onClick={() => handleRegisterButton(event.id)}
@@ -354,7 +466,7 @@ const EventPage = () => {
                 top: "5%",
                 left: "50%",
                 transform: "translateX(-50%)",
-                backgroundColor: "#5cb85c",
+                backgroundColor: isEventPassed ? "darkred" : "#5cb85c",
                 color: "white",
                 padding: "10px 20px",
                 borderRadius: "8px",
@@ -365,7 +477,7 @@ const EventPage = () => {
                 minWidth: "250px", // Ensures it’s not too narrow
               }}
             >
-              Successfully registered for event!
+              {popupMessage}
             </Box>
           )}
         </Box>
@@ -491,6 +603,15 @@ const EventPage = () => {
                   <LocationOnIcon id="EventPageIconsDesktop" />
                   <p id="EventPagePDesktop">{event.address}</p>
                 </Stack>
+                <Stack
+                  direction="row"
+                  alignItems="center"
+                  spacing={1.2}
+                  color="text.secondary"
+                >
+                  <PeopleAltIcon id="EventPageIconsDesktop" />
+                  <p id="EventPagePDesktop">{registeredCount}</p>
+                </Stack>
               </Stack>
             </Box>
 
@@ -537,12 +658,12 @@ const EventPage = () => {
                 variant="contained"
                 sx={{
                   marginBottom: "1.5rem",
-                  backgroundColor: "#F68F8D",
+                  backgroundColor: isEventPassed || userRegistered ? "gray" : "#F68F8D",
                   borderRadius: "30px", // This is different compared to the 20px in mobile version
                   fontSize: "20px",
                   //fontFamily: "Poppins", // this does nothing?
                   "&:hover": {
-                    backgroundColor: "#A50B07",
+                    backgroundColor: isEventPassed || userRegistered ? "gray" : "#A50B07",
                   },
                 }}
                 onClick={() => handleRegisterButton(event.id)}
@@ -556,7 +677,7 @@ const EventPage = () => {
                     top: "10%",
                     left: "50%",
                     transform: "translateX(-50%)",
-                    backgroundColor: "#5cb85c",
+                    backgroundColor: isEventPassed ? "darkred" : "#5cb85c",
                     color: "white",
                     padding: "10px 20px",
                     borderRadius: "8px",
@@ -564,7 +685,7 @@ const EventPage = () => {
                     boxShadow: "0px 4px 6px rgba(0, 0, 0, 0.1)",
                   }}
                 >
-                  Successfully registered for event!
+                  {popupMessage}
                 </Box>
               )}
             </Box>
