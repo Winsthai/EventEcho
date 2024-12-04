@@ -7,6 +7,7 @@ import {
   Button,
   Menu,
   MenuItem,
+  Stack,
 } from "@mui/material";
 import { useEffect, useState } from "react";
 import NoCreatedEvents from "./Components/NoCreatedEvents";
@@ -25,12 +26,35 @@ const UserPage = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [buttonSwitch, setButtonSwitch] = useState(0);
   const [error, setError] = useState("");
+  const [showRemoveConfirmation, setShowRemoveConfirmation] = useState(false);
+  const [selectedEventToRemove, setSelectedEventToRemove] = useState(null);
+
 
   const isMobile = useMediaQuery("(max-width:600px)");
   const navigate = useNavigate();
 
   const authToken = localStorage.getItem("authToken");
   const username = localStorage.getItem("username");
+
+  // Open confirmation popup
+  const handleOpenRemoveConfirmation = (event) => {
+    setSelectedEventToRemove(event);
+    setShowRemoveConfirmation(true);
+  };
+
+  // Close confirmation popup
+  const handleCloseRemoveConfirmation = () => {
+    setSelectedEventToRemove(null);
+    setShowRemoveConfirmation(false);
+  };
+
+  // Confirm removal
+  const handleConfirmRemove = async () => {
+    if (selectedEventToRemove) {
+      await handleRemoveButton(selectedEventToRemove.id); // Call the original remove logic
+    }
+    handleCloseRemoveConfirmation();
+  };
 
   const handleSearchChange = (query) => {
     setSearchQuery(query); // Update search query
@@ -132,7 +156,7 @@ const UserPage = () => {
     fetchHostedEvents();
   }, [searchQuery, selectedTab, buttonSwitch]); // Call this useEffect each time one of these states change.
 
-  // Query users hosted events
+  // Query users registered events
   async function queryRegisteredEvents() {
     // Generate API Url
     const APIUrl = `http://localhost:3001/api/users/registeredEvents`;
@@ -157,7 +181,7 @@ const UserPage = () => {
     }
   }
 
-  // Fetch hosted events on startup, then update hosted events on state change
+  // Fetch registered events on startup, then update registered events on state change
   useEffect(() => {
     const fetchRegisteredEvents = async () => {
       try {
@@ -377,11 +401,12 @@ const UserPage = () => {
         />
       </Box>
 
-      {/* Tabs for switching between Hosted, Registered, and Invited Events */}
+      {/* Tabs for switching between Hosted and Registered Events */}
       <Tabs
         value={selectedTab}
         onChange={handleTabChange}
         aria-label="Event Tabs"
+        variant="scrollable"
         sx={{ marginBottom: "2em" }}
       >
         <Tab label="Hosted Events" />
@@ -402,9 +427,53 @@ const UserPage = () => {
                   key={event.id}
                   event={event}
                   variant="hosted"
-                  onRemoveButton={handleRemoveButton}
-                />
+                  onRemoveButton={() => handleOpenRemoveConfirmation(event)} // Show confirmation popup
+              />
               ))}
+              {showRemoveConfirmation && (
+              <Box
+                sx={{
+                  position: "fixed",
+                  top: "50%",
+                  left: "50%",
+                  transform: "translate(-50%, -50%)",
+                  backgroundColor: "white",
+                  padding: 4,
+                  borderRadius: 2,
+                  boxShadow: 3,
+                  zIndex: 1000,
+                }}
+              >
+                <Typography variant="h6" sx={{ mb: 2 }}>
+                  Are you sure you want to delete this event?
+                </Typography>
+                <Stack direction="row" spacing={2}>
+                  <Button variant="contained" color="error" onClick={handleConfirmRemove}>
+                    Yes
+                  </Button>
+                  <Button variant="outlined" onClick={handleCloseRemoveConfirmation}>
+                    No
+                  </Button>
+                </Stack>
+              </Box>
+            )}
+
+            {/* Background overlay */}
+            {showRemoveConfirmation && (
+              <Box
+                sx={{
+                  position: "fixed",
+                  top: 0,
+                  left: 0,
+                  width: "100vw",
+                  height: "100vh",
+                  backgroundColor: "rgba(0, 0, 0, 0.5)",
+                  zIndex: 999,
+                }}
+                onClick={handleCloseRemoveConfirmation}
+              ></Box>
+            )}
+
             </>
           ) : (
             <NoCreatedEvents />

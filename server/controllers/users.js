@@ -9,15 +9,16 @@ import {
 const userRouter = express.Router();
 const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\W).{8,}$/;
 const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-const phoneRegex = /^\+\d{1,3}\d{10}$/;
+const phoneRegex = /^\d{3}-?\d{3}-?\d{4}$/;
 
 // Create a new user
 userRouter.post("/", async (request, response, next) => {
-  const { username, firstname, lastname, email, phonenum, password, status } =
+  const { username, firstname, lastname, email, password, status } =
     request.body;
+  let phonenum = request.body.phonenum;
 
   // Validate required fields
-  if (!username || !phonenum || !password) {
+  if (!username || !password || !firstname || !lastname) {
     return response.status(400).json({ error: "Missing required fields" });
   }
 
@@ -41,16 +42,15 @@ userRouter.post("/", async (request, response, next) => {
     return response.status(400).json({ error: "Invalid email format." });
   }
 
-  // Validate phone number
-  if (!phonenum) {
-    return response.status(400).json({ error: "Phone number is required." });
-  }
-  if (!phoneRegex.test(phonenum)) {
+  if (phonenum && !phoneRegex.test(phonenum)) {
     return response.status(400).json({
-      error: "Phone number must be in the format +<country code><10 digits>.",
+      error: "Phone number must be in the format 1234567890 or 123-456-7890.",
     });
   }
 
+  // Normalize phone number to 123-456-7890 format
+  phonenum = phonenum.replace(/-/g, "").replace(/(\d{3})(\d{3})(\d{4})/, "$1-$2-$3");
+  
   // Validate first name
   if (firstname.length > 16) {
     return response
@@ -90,10 +90,10 @@ userRouter.post("/", async (request, response, next) => {
     response.status(201).json({ user: result.rows[0] });
   } catch (error) {
     if (error.code === "23505") {
-      // Handle unique constraint violations (e.g., duplicate username or phone number)
+      // Handle unique constraint violations (e.g., duplicate username)
       response
         .status(409)
-        .json({ error: "Username or phone number already exists" });
+        .json({ error: "Username already exists" });
     } else {
       next(error); // Pass other errors to the error handler
     }

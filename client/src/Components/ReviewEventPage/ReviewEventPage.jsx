@@ -225,7 +225,7 @@ const ReviewEventPage = ({
   const handlePostEvent = async (url) => {
     // upload to cloud
     let uploadedImageURL = null;
-    let addConfirmation;
+    let confirmation;
     if (eventDetails.imageform !== null) {
       // CREATE / EDIT upload new image
       if (typeof (eventDetails.imageform) !== "string") {
@@ -241,12 +241,12 @@ const ReviewEventPage = ({
         console.log("cloud link", uploadedImageURL.url);
 
         if (onEditPage) {
-          const editConfirmation = await editEventdb(uploadedImageURL.url);
-          console.log("edit confirmation: ", editConfirmation);
+          const confirmation = await editEventdb(uploadedImageURL.url);
+          console.log("edit confirmation: ", confirmation);
         }
         else {
-          addConfirmation = await addEventTodb(uploadedImageURL.url);
-          console.log("add confirmation: ", addConfirmation);
+          confirmation = await addEventTodb(uploadedImageURL.url);
+          console.log("add confirmation: ", confirmation);
         }
 
       }
@@ -256,8 +256,8 @@ const ReviewEventPage = ({
 
         uploadedImageURL = eventDetails.eventimage;
         console.log("uploadedImageURL: ", uploadedImageURL);
-        const editConfirmation = await editEventdb(uploadedImageURL);
-        console.log("edit confirmation: ", editConfirmation);
+        const confirmation = await editEventdb(uploadedImageURL);
+        console.log("edit confirmation: ", confirmation);
       }
 
     }
@@ -265,18 +265,24 @@ const ReviewEventPage = ({
     else {
       console.log("no image so just add event");
       if (onEditPage) {
-        const editConfirmation = await editEventdb(null);
-        console.log("edit confirmation: ", editConfirmation);
+        const confirmation = await editEventdb(null);
+        console.log("edit confirmation: ", confirmation);
       }
       else {
-        addConfirmation = await addEventTodb(null);
-        console.log("add confirmation: ", addConfirmation);
+        confirmation = await addEventTodb(null);
+        console.log("add confirmation: ", confirmation);
       }
     }
 
     // call function to add guests to event invites
     if (invitedGuests.length !== 0) {
-      await eventInvitesdb(addConfirmation.event.id);
+      if (!onEditPage) {
+        await eventInvitesdb(confirmation.event.id);
+      }
+      else {
+        await eventInvitesdb(id);
+      }
+
     }
 
 
