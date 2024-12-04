@@ -412,11 +412,11 @@ const UserPage = () => {
         </>
       )}
 
-      {/* Upcoming Events Section */}
+      {/* Registered Events Section */}
       {selectedTab === 1 && (
         <>
           <Typography variant="h5" sx={{ fontWeight: "bold", mb: 2 }}>
-            Your Upcoming Events
+            Your Registered Events
           </Typography>
           {searchedUpcomingEvents.length !== 0 ? (
             <>
