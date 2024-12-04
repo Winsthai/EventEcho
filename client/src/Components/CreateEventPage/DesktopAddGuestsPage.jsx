@@ -266,154 +266,164 @@ export default function DesktopAddGuestsPage({ invitedGuests, setInvitedGuests, 
           flexDirection: 'column',
           width: "90%",
           height: "100%",
-          pt: 12,
+          pt: 8,
           pb: 8
         }}
       >
-        {/* <Stack
+        <Stack
           direction="column"
-          spacing={4}
+          spacing={2}
           sx={{ height: "100%", padding: 2 }}
-        > */}
+        >
 
-        <Box sx={{ flexGrow: 1, overflow: 'auto' }}>
-          <div className="mobile-container">
-            {/* ---------- Search Bar ---------- */}
-            <TextField
-              variant="outlined"
-              placeholder="Search friends..."
-              size="small"
-              sx={{
-                flexGrow: 1, // Ensures the search bar takes available space
-                marginLeft: 0,
-                marginRight: 0,
-                minWidth: "150px",
-                width: "100%",
-                backgroundColor: "white",
-                borderRadius: "24px",
-                "& .MuiOutlinedInput-root": {
+          <Box sx={{ flexGrow: 1, overflow: 'auto' }}>
+            <div className="mobile-container">
+              {/* ---------- Search Bar ---------- */}
+              <TextField
+                variant="outlined"
+                placeholder="Search friends..."
+                size="small"
+                sx={{
+                  flexGrow: 1, // Ensures the search bar takes available space
+                  marginLeft: 0,
+                  marginRight: 0,
+                  minWidth: "150px",
+                  width: "100%",
+                  backgroundColor: "white",
                   borderRadius: "24px",
-                  "&:hover": {
-                    borderColor: "black",
+                  "& .MuiOutlinedInput-root": {
+                    borderRadius: "24px",
+                    "&:hover": {
+                      borderColor: "black",
+                    },
+                    "&.Mui-focused fieldset": {
+                      borderColor: "black",
+                    },
                   },
-                  "&.Mui-focused fieldset": {
-                    borderColor: "black",
+                }}
+                slotProps={{
+                  input: {
+                    startAdornment: (
+                      <InputAdornment position="start">
+                        <SearchIcon />
+                      </InputAdornment>
+                    ),
                   },
-                },
-              }}
-              slotProps={{
-                input: {
-                  startAdornment: (
-                    <InputAdornment position="start">
-                      <SearchIcon />
-                    </InputAdornment>
-                  ),
-                },
-              }}
-            />
-            {/* ---------- Check if have friends ---------- */}
-            {friendsList.length === 0 ?
-              (<Box sx={{ pt: 2, display: "flex", justifyContent: "center", flexDirection: "column" }}>
-                {/* ---------- No Friends Card ---------- */}
-                <Card
-                  sx={{
-                    backgroundColor: "#ffecec",
-                    borderRadius: 2,
-                    mt: 2,
-                    mb: 4,
-                    padding: 0,
-                  }}
-                >
-                  <CardContent>
-                    <Typography variant="body1" color="text.primary" sx={{ mb: 4 }}>
-                      Go add some friends to invite to your event!
-                    </Typography>
-                    <Button
-                      variant="contained"
-                      color="darkSecondary"
-                      onClick={() => navigate("/user/friends")}
-                      sx={{
-                        borderRadius: 3,
-                        padding: "8px 16px",
-                        textTransform: "none",
-                        width: "50vw",
-                        maxWidth: "220px",
-                        fontSize: "inherit",
-                      }}
-                    >
-                      Find Friends
-                    </Button>
-                  </CardContent>
-                </Card>
-              </Box>
-              ) : (
-                // ---------- friends list -----------
-                <ul className="mobile-contactList">
-                  {friendsList.map((contact) => (
-                    <li
-                      key={contact.id}
-                      className="mobile-contactItem"
-                      onClick={() => handleSelect(contact.id)}
-                    >
-                      {/* -------- Mobile Avatar -------- */}
-                      <div className="mobile-contactInfo">
-                        <div className="mobile-avatar">
-                          {contact.firstname[0].toUpperCase()}
-                          {contact.lastname[0].toUpperCase()}
+                }}
+              />
+              {/* ---------- Check if have friends ---------- */}
+              {friendsList.length === 0 ?
+                (<Box sx={{ pt: 2, display: "flex", justifyContent: "center", flexDirection: "column" }}>
+                  {/* ---------- No Friends Card ---------- */}
+                  <Card
+                    sx={{
+                      backgroundColor: "#ffecec",
+                      borderRadius: 2,
+                      mt: 2,
+                      mb: 4,
+                      padding: 0,
+                    }}
+                  >
+                    <CardContent>
+                      <Typography variant="body1" color="text.primary" sx={{ mb: 4 }}>
+                        Go add some friends to invite to your event!
+                      </Typography>
+                      <Button
+                        variant="contained"
+                        color="darkSecondary"
+                        onClick={() => navigate("/user/friends")}
+                        sx={{
+                          borderRadius: 3,
+                          padding: "8px 16px",
+                          textTransform: "none",
+                          width: "50vw",
+                          maxWidth: "220px",
+                          fontSize: "inherit",
+                        }}
+                      >
+                        Find Friends
+                      </Button>
+                    </CardContent>
+                  </Card>
+                </Box>
+                ) : (
+                  // ---------- friends list -----------
+                  <ul className="mobile-contactList">
+                    {friendsList.map((contact) => (
+                      <li
+                        key={contact.id}
+                        className="mobile-contactItem"
+                        onClick={() => handleSelect(contact.id)}
+                      >
+                        {/* -------- Mobile Avatar -------- */}
+                        <div className="mobile-contactInfo">
+                          <div className="mobile-avatar">
+                            {contact.firstname[0].toUpperCase()}
+                            {contact.lastname[0].toUpperCase()}
+                          </div>
+                          {/* -------- Name and Email -------- */}
+                          <div>
+                            <p className="mobile-name">{contact.firstname.concat(" ", contact.lastname)}</p>
+                            <p className="mobile-phone">{contact.email}</p>
+                          </div>
                         </div>
-                        {/* -------- Name and Email -------- */}
-                        <div>
-                          <p className="mobile-name">{contact.firstname.concat(" ", contact.lastname)}</p>
-                          <p className="mobile-phone">{contact.email}</p>
-                        </div>
-                      </div>
-                      {displayUsers(contact.id) ?
-                        (
-                          // -------- Users already checked off --------
+                        {displayUsers(contact.id) ?
+                          (
+                            // -------- Users already checked off --------
+                            <Checkbox
+                              checked={displayUsers(contact.id)}
+                              disabled={true}
+                              inputProps={{ "aria-label": `Select ${contact.firstname}` }}
+                              icon={<RadioButtonUncheckedIcon />} // Circular unchecked icon
+                              checkedIcon={<CheckCircleIcon />} // Circular checked icon
+                            />
+                          ) :
+                          // -------- Can check users off --------
                           <Checkbox
-                            checked={displayUsers(contact.id)}
-                            disabled={true}
+                            checked={invitedGuests.includes(contact.id)}
                             inputProps={{ "aria-label": `Select ${contact.firstname}` }}
                             icon={<RadioButtonUncheckedIcon />} // Circular unchecked icon
                             checkedIcon={<CheckCircleIcon />} // Circular checked icon
-                          />
-                        ) :
-                        // -------- Can check users off --------
-                        <Checkbox
-                          checked={invitedGuests.includes(contact.id)}
-                          inputProps={{ "aria-label": `Select ${contact.firstname}` }}
-                          icon={<RadioButtonUncheckedIcon />} // Circular unchecked icon
-                          checkedIcon={<CheckCircleIcon />} // Circular checked icon
-                        />}
-                    </li>
-                  ))}
-                </ul>
-              )
-            }
-          </div>
-        </Box>
+                          />}
+                      </li>
+                    ))}
+                  </ul>
+                )
+              }
+            </div>
+          </Box>
 
-        <Box sx={{ mt: 'auto', padding: 2 }}>
-          <Button
-            fullWidth
-            variant="contained"
-            onClick={
-              onEditPage
-                ? () => navigate(`/editEvent/${id}/reviewEvent`)
-                : () => navigate("/createEvent/reviewEvent")
-            }
+          <Box
             sx={{
-              borderRadius: "10px",
-              backgroundColor: "#F68F8D",
-              "&:hover": {
-                backgroundColor: "#A50B07",
-              },
-            }}
-          >
-            Review Event Details
-          </Button>
-        </Box>
-        {/* </Stack> */}
+              mt: 'auto',
+              padding: 2,
+              width: "80%",
+              position: "fixed",
+              bottom: "10%",
+              left: "50%",
+              transform: `translateX(-50%)`
+            }}>
+
+            <Button
+              fullWidth
+              variant="contained"
+              onClick={
+                onEditPage
+                  ? () => navigate(`/editEvent/${id}/reviewEvent`)
+                  : () => navigate("/createEvent/reviewEvent")
+              }
+              sx={{
+                borderRadius: "10px",
+                backgroundColor: "#F68F8D",
+                "&:hover": {
+                  backgroundColor: "#A50B07",
+                },
+              }}
+            >
+              Review Event Details
+            </Button>
+          </Box>
+        </Stack>
       </Container>
     </Box>
   );
@@ -459,44 +469,84 @@ export default function DesktopAddGuestsPage({ invitedGuests, setInvitedGuests, 
         </div>
 
         <h2 className="your-friends-text">Your Friends</h2>
-        {/* {message && <p>{message}</p>} */}
 
-        <div className="desktop-contactGrid">
-          {friendsList.map((contact) => (
-            <div
-              key={contact.id}
-              className="desktop-contactCard"
-              onClick={() => handleSelect(contact.id)}
+        {/* ---------- Check if have friends ---------- */}
+        {friendsList.length === 0 ?
+          (<Box sx={{ pt: 2, display: "flex", justifyContent: "center", flexDirection: "column" }}>
+            {/* ---------- No Friends Card ---------- */}
+            <Card
+              sx={{
+                backgroundColor: "#ffecec",
+                borderRadius: 2,
+                mb: 4,
+                ml: 16,
+                padding: 0,
+                maxWidth: "60%",
+                alignSelf: "flex-start"
+              }}
             >
-              {displayUsers(contact.id) ?
-                (
-                  // -------- Users already checked off --------
-                  <Checkbox
-                    checked={displayUsers(contact.id)}
-                    disabled={true}
-                    inputProps={{ "aria-label": `Select ${contact.firstname}` }}
-                    icon={<RadioButtonUncheckedIcon />} // Circular unchecked icon
-                    checkedIcon={<CheckCircleIcon />} // Circular checked icon
-                  />
-                ) :
-                // -------- Can check users off --------
-                <Checkbox
-                  checked={invitedGuests.includes(contact.id)}
-                  inputProps={{ "aria-label": `Select ${contact.firstname}` }}
-                  icon={<RadioButtonUncheckedIcon />} // Circular unchecked icon
-                  checkedIcon={<CheckCircleIcon />} // Circular checked icon
-                />}
-              <div className="desktop-avatar">
-                {contact.firstname[0].toUpperCase()}
-                {contact.lastname[0].toUpperCase()}
-              </div>
-              <div>
-                <p className="desktop-name">{contact.firstname.concat(" ", contact.lastname)}</p>
-                <p className="desktop-phone">{contact.email}</p>
-              </div>
+              <CardContent>
+                <Typography variant="body1" color="text.primary" sx={{ mb: 4 }}>
+                  Go add some friends to invite to your event!
+                </Typography>
+                <Button
+                  variant="contained"
+                  color="darkSecondary"
+                  onClick={() => navigate("/user/friends")}
+                  sx={{
+                    borderRadius: 3,
+                    padding: "8px 16px",
+                    textTransform: "none",
+                    width: "50vw",
+                    maxWidth: "220px",
+                    fontSize: "inherit",
+                    alignSelf: "center"
+                  }}
+                >
+                  Find Friends
+                </Button>
+              </CardContent>
+            </Card>
+          </Box>
+          ) : (
+            <div className="desktop-contactGrid">
+              {friendsList.map((contact) => (
+                <div
+                  key={contact.id}
+                  className="desktop-contactCard"
+                  onClick={() => handleSelect(contact.id)}
+                >
+                  {displayUsers(contact.id) ?
+                    (
+                      // -------- Users already checked off --------
+                      <Checkbox
+                        checked={displayUsers(contact.id)}
+                        disabled={true}
+                        inputProps={{ "aria-label": `Select ${contact.firstname}` }}
+                        icon={<RadioButtonUncheckedIcon />} // Circular unchecked icon
+                        checkedIcon={<CheckCircleIcon />} // Circular checked icon
+                      />
+                    ) :
+                    // -------- Can check users off --------
+                    <Checkbox
+                      checked={invitedGuests.includes(contact.id)}
+                      inputProps={{ "aria-label": `Select ${contact.firstname}` }}
+                      icon={<RadioButtonUncheckedIcon />} // Circular unchecked icon
+                      checkedIcon={<CheckCircleIcon />} // Circular checked icon
+                    />}
+                  <div className="desktop-avatar">
+                    {contact.firstname[0].toUpperCase()}
+                    {contact.lastname[0].toUpperCase()}
+                  </div>
+                  <div>
+                    <p className="desktop-name">{contact.firstname.concat(" ", contact.lastname)}</p>
+                    <p className="desktop-phone">{contact.email}</p>
+                  </div>
+                </div>
+              ))}
             </div>
-          ))}
-        </div>
+          )
+        }
 
         <Box
           sx={{
