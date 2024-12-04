@@ -4,7 +4,6 @@ import DesktopAddGuestsPage from "./Components/CreateEventPage/DesktopAddGuestsP
 import CreateEventPage from "./Components/CreateEventPage/CreateEventPage";
 import ReviewEventPage from "./Components/ReviewEventPage/ReviewEventPage";
 import { useMediaQuery } from "@mui/material";
-import AddGuestsNewPage from "./Components/CreateEventPage/AddNewGuestPage";
 import { useState } from "react";
 
 function CreatePagesRoutes() {
@@ -51,9 +50,8 @@ function CreatePagesRoutes() {
         <Route path="/addGuests" element={<DesktopAddGuestsPage
           invitedGuests={invitedGuests}
           setInvitedGuests={setInvitedGuests}
+          detailsCompleted={detailsCompleted}
         ></DesktopAddGuestsPage>}></Route>
-
-        <Route path="/newGuests" element={<AddGuestsNewPage></AddGuestsNewPage>}></Route>
 
         <Route path="/reviewEvent" element={<ReviewEventPage
           eventDetails={eventDetails}
