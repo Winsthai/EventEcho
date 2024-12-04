@@ -113,9 +113,9 @@ const ReviewEventPage = ({
   }
 
   // add newly invited users to the event (need to check beforehand if users are previously invited or already registered)
-  async function eventInvitesdb() {
+  async function eventInvitesdb(eventId) {
     try {
-      const response = await fetch(`http://localhost:3001/api/events/${id}/invitedUsers`, {
+      const response = await fetch(`http://localhost:3001/api/events/${eventId}/invitedUsers`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -225,6 +225,7 @@ const ReviewEventPage = ({
   const handlePostEvent = async (url) => {
     // upload to cloud
     let uploadedImageURL = null;
+    let addConfirmation;
     if (eventDetails.imageform !== null) {
       // CREATE / EDIT upload new image
       if (typeof (eventDetails.imageform) !== "string") {
@@ -244,7 +245,7 @@ const ReviewEventPage = ({
           console.log("edit confirmation: ", editConfirmation);
         }
         else {
-          const addConfirmation = await addEventTodb(uploadedImageURL.url);
+          addConfirmation = await addEventTodb(uploadedImageURL.url);
           console.log("add confirmation: ", addConfirmation);
         }
 
@@ -268,14 +269,14 @@ const ReviewEventPage = ({
         console.log("edit confirmation: ", editConfirmation);
       }
       else {
-        const addConfirmation = await addEventTodb(null);
+        addConfirmation = await addEventTodb(null);
         console.log("add confirmation: ", addConfirmation);
       }
     }
 
     // call function to add guests to event invites
     if (invitedGuests.length !== 0) {
-      await eventInvitesdb();
+      await eventInvitesdb(addConfirmation.event.id);
     }
 
 
