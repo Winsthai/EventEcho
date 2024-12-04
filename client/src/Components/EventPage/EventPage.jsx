@@ -17,7 +17,7 @@ import LocalDiningIcon from "@mui/icons-material/LocalDining";
 import ColorLensIcon from "@mui/icons-material/ColorLens";
 import GroupsIcon from "@mui/icons-material/Groups";
 import SportsEsportsIcon from "@mui/icons-material/SportsEsports";
-import PeopleAltIcon from '@mui/icons-material/PeopleAlt';
+import PeopleAltIcon from "@mui/icons-material/PeopleAlt";
 
 import "./EventPage.css";
 
@@ -100,71 +100,71 @@ const EventPage = () => {
     }
   }, [showPopup]);
 
- async function numberOfRegistered(eventId) {
-  const APIUrl = `http://localhost:3001/api/events/${eventId}/numberOfUsers`;
-  try {
-    // Fetch and store results from API URL
-    const response = await fetch(APIUrl, {
-      method: "GET",
-      headers: {
-        Authorization: `Bearer ${authToken}`,
-      },
-    });
-    const data = await response.json();
-
-    // Error message
-    if (!response.ok) {
-      throw new Error(data.error || "An unexpected error occurred");
-    }
-    return data;
-  } catch (e) {
-    setError(e.message);
-  }
-}
-
- // Query users hosted events
- async function queryUpcomingEvents() {
-  // Generate API Url
-  const APIUrl = `http://localhost:3001/api/users/registeredEvents`;
-  try {
-    // Fetch and store results from API URL
-    const response = await fetch(APIUrl, {
-      method: "GET",
-      headers: {
-        Authorization: `Bearer ${authToken}`,
-      },
-    });
-    const data = await response.json();
-
-    // Error message
-    if (!response.ok) {
-      throw new Error(data.error || "An unexpected error occurred");
-    }
-    return data;
-  } catch (e) {
-    setError(e.message);
-  }
-}
-
-useEffect(() => {
-  const fetchUpcomingEvents = async () => {
+  async function numberOfRegistered(eventId) {
+    const APIUrl = `http://localhost:3001/api/events/${eventId}/numberOfUsers`;
     try {
-      setError(null);
+      // Fetch and store results from API URL
+      const response = await fetch(APIUrl, {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${authToken}`,
+        },
+      });
+      const data = await response.json();
 
-      const result = await queryUpcomingEvents();
-      if (result?.events?.some(event => event.id === id)) {
-        setUserRegistered(true); // Set to true if a match is found
+      // Error message
+      if (!response.ok) {
+        throw new Error(data.error || "An unexpected error occurred");
       }
-      const registeredCount = await numberOfRegistered(id);
-      console.log(registeredCount.count);
-      setRegisteredCount(registeredCount.count);
+      return data;
     } catch (e) {
       setError(e.message);
     }
-  };
+  }
 
-  fetchUpcomingEvents();
-}, [id]); // Call this useEffect each time one of these states change.
+  // Query users hosted events
+  async function queryRegisteredEvents() {
+    // Generate API Url
+    const APIUrl = `http://localhost:3001/api/users/registeredEvents`;
+    try {
+      // Fetch and store results from API URL
+      const response = await fetch(APIUrl, {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${authToken}`,
+        },
+      });
+      const data = await response.json();
+
+      // Error message
+      if (!response.ok) {
+        throw new Error(data.error || "An unexpected error occurred");
+      }
+      return data;
+    } catch (e) {
+      // setError(e.message);
+    }
+  }
+
+  useEffect(() => {
+    const fetchRegisteredEvents = async () => {
+      try {
+        setError(null);
+
+        const result = await queryRegisteredEvents();
+        if (result?.events?.some((event) => event.id === id)) {
+          setUserRegistered(true); // Set to true if a match is found
+        }
+        const registeredCount = await numberOfRegistered(id);
+        console.log(registeredCount.count);
+        setRegisteredCount(registeredCount.count);
+      } catch (e) {
+        setError(e.message);
+      }
+    };
+
+    fetchRegisteredEvents();
+  }, [id]); // Call this useEffect each time one of these states change.
   // Query event from the API
   async function fetchEvent(eventId) {
     // Generate API Url
@@ -230,7 +230,6 @@ useEffect(() => {
           Authorization: `Bearer ${authToken}`,
         },
       });
-
     } catch (e) {
       setError(e.message);
     }
@@ -455,49 +454,55 @@ useEffect(() => {
           </Box>
         </Box>
         {/* Register button */}
-        <Box
-          sx={{
-            display: "flex",
-            justifyContent: "center",
-          }}
-        >
-          <Button
-            variant="contained"
+        {authToken ? (
+          <Box
             sx={{
-              backgroundColor: isEventPassed || userRegistered ? "gray" : "#F68F8D",
-              borderRadius: "20px",
-              marginBottom: "80px",
-              cursor: "pointer",
-              "&:hover": {
-                backgroundColor: isEventPassed || userRegistered ? "gray" : "#A50B07",
-              },
+              display: "flex",
+              justifyContent: "center",
             }}
-            onClick={() => handleRegisterButton(event.id)}
           >
-            Register
-          </Button>
-          {showPopup && (
-            <Box
+            <Button
+              variant="contained"
               sx={{
-                position: "fixed",
-                top: "5%",
-                left: "50%",
-                transform: "translateX(-50%)",
-                backgroundColor: isEventPassed ? "darkred" : "#5cb85c",
-                color: "white",
-                padding: "10px 20px",
-                borderRadius: "8px",
-                zIndex: 1000,
-                boxShadow: "0px 4px 6px rgba(0, 0, 0, 0.1)",
-                width: "80%", // Makes it responsive on mobile
-                maxWidth: "400px", // Ensures it doesn’t get too wide on large screens
-                minWidth: "250px", // Ensures it’s not too narrow
+                backgroundColor:
+                  isEventPassed || userRegistered ? "gray" : "#F68F8D",
+                borderRadius: "20px",
+                marginBottom: "80px",
+                cursor: "pointer",
+                "&:hover": {
+                  backgroundColor:
+                    isEventPassed || userRegistered ? "gray" : "#A50B07",
+                },
               }}
+              onClick={() => handleRegisterButton(event.id)}
             >
-              {popupMessage}
-            </Box>
-          )}
-        </Box>
+              Register
+            </Button>
+            {showPopup && (
+              <Box
+                sx={{
+                  position: "fixed",
+                  top: "5%",
+                  left: "50%",
+                  transform: "translateX(-50%)",
+                  backgroundColor: isEventPassed ? "darkred" : "#5cb85c",
+                  color: "white",
+                  padding: "10px 20px",
+                  borderRadius: "8px",
+                  zIndex: 1000,
+                  boxShadow: "0px 4px 6px rgba(0, 0, 0, 0.1)",
+                  width: "80%", // Makes it responsive on mobile
+                  maxWidth: "400px", // Ensures it doesn’t get too wide on large screens
+                  minWidth: "250px", // Ensures it’s not too narrow
+                }}
+              >
+                {popupMessage}
+              </Box>
+            )}
+          </Box>
+        ) : (
+          <></>
+        )}
       </Box>
     );
   } else {
@@ -671,22 +676,29 @@ useEffect(() => {
               <h1 id="EventPageEDDesktop">Event Description</h1>
               <p id="EventPagePDesktop">{event.description}</p>
               {/* Register button */}
-              <Button
-                variant="contained"
-                sx={{
-                  marginBottom: "1.5rem",
-                  backgroundColor: isEventPassed || userRegistered ? "gray" : "#F68F8D",
-                  borderRadius: "30px", // This is different compared to the 20px in mobile version
-                  fontSize: "20px",
-                  //fontFamily: "Poppins", // this does nothing?
-                  "&:hover": {
-                    backgroundColor: isEventPassed || userRegistered ? "gray" : "#A50B07",
-                  },
-                }}
-                onClick={() => handleRegisterButton(event.id)}
-              >
-                Register
-              </Button>
+              {authToken ? (
+                <Button
+                  variant="contained"
+                  sx={{
+                    marginBottom: "1.5rem",
+                    backgroundColor:
+                      isEventPassed || userRegistered ? "gray" : "#F68F8D",
+                    borderRadius: "30px", // This is different compared to the 20px in mobile version
+                    fontSize: "20px",
+                    //fontFamily: "Poppins", // this does nothing?
+                    "&:hover": {
+                      backgroundColor:
+                        isEventPassed || userRegistered ? "gray" : "#A50B07",
+                    },
+                  }}
+                  onClick={() => handleRegisterButton(event.id)}
+                >
+                  Register
+                </Button>
+              ) : (
+                <></>
+              )}
+
               {showPopup && (
                 <Box
                   sx={{
