@@ -37,6 +37,22 @@ const FriendsPage = () => {
     setSelectedTab(newValue); // Update the selected tab
   };
 
+  const handleSearchChange = (query) => {
+    setSearchQuery(query); // Update search query
+  };
+
+  const searchedFriends = friends.filter((friend) =>
+    friend.username.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
+  const searchedAddableUsers = addableUsers.filter((addableUser) =>
+    addableUser.username.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
+  const searchedIncomingRequests = incomingRequests.filter((incomingRequest) =>
+    incomingRequest.username.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
   async function queryFriends() {
     const APIUrl = `http://localhost:3001/api/users/friends`;
     try {
@@ -312,9 +328,11 @@ const FriendsPage = () => {
       </Box>
 
       {/* Search bar */}
-      {(friends.length !== 0 && selectedTab == 0) || selectedTab == 1 ? (
+      {(friends.length > 0 && selectedTab == 0) || 
+      (addableUsers > 0 && selectedTab == 1) || 
+      (incomingRequests > 0 && selectedTab == 2) ? (
         <Box sx={{ display: "flex", paddingBottom: "2vh" }}>
-          <SearchBar noMargin={true} placeholder="Search for friends..." />
+          <SearchBar noMargin={true} onSearchChange={handleSearchChange} placeholder="Search for friends..." />
         </Box>
       ) : (
         // Display nothing otherwise
@@ -339,13 +357,13 @@ const FriendsPage = () => {
           {/* Mobile view */}
           {isMobile ? (
             <>
-              {friends.length !== 0 ? (
+              {searchedFriends.length > 0 ? (
                 <>
                   <Typography variant="h5" sx={{ fontWeight: "bold", mb: 2 }}>
                     Your Friends List
                   </Typography>
 
-                  {friends.map((friend) => {
+                  {searchedFriends.map((friend) => {
                     return (
                       <UserCard
                         key={friend.id}
@@ -363,7 +381,7 @@ const FriendsPage = () => {
           ) : (
             // Desktop layout, wrap in box so we can put user cards side by side
             <>
-              {friends.length !== 0 ? (
+              {searchedFriends.length > 0 ? (
                 <>
                   <Typography variant="h5" sx={{ fontWeight: "bold", mb: 2 }}>
                     Your Friends List
@@ -376,7 +394,7 @@ const FriendsPage = () => {
                       gap: 2, // Add spacing between cards
                     }}
                   >
-                    {friends.map((friend) => {
+                    {searchedFriends.map((friend) => {
                       return (
                         <UserCard
                           key={friend.id}
@@ -404,9 +422,9 @@ const FriendsPage = () => {
               <Typography variant="h5" sx={{ fontWeight: "bold", mb: 2 }}>
                 Add Other Users
               </Typography>
-              {addableUsers.length !== 0 ? (
+              {searchedAddableUsers.length > 0 ? (
                 <>
-                  {addableUsers.map((addableUser) => (
+                  {searchedAddableUsers.map((addableUser) => (
                     <UserCard
                       key={addableUser.id}
                       user={addableUser}
@@ -426,7 +444,7 @@ const FriendsPage = () => {
               <Typography variant="h5" sx={{ fontWeight: "bold", mb: 2 }}>
                 Add Other Users
               </Typography>
-              {addableUsers.length !== 0 ? (
+              {searchedAddableUsers.length > 0 ? (
                 <Box
                   sx={{
                     display: "flex",
@@ -435,7 +453,7 @@ const FriendsPage = () => {
                     gap: 2,
                   }}
                 >
-                  {addableUsers.map((addableUser) => (
+                  {searchedAddableUsers.map((addableUser) => (
                     <UserCard
                       key={addableUser.id}
                       user={addableUser}
@@ -459,12 +477,12 @@ const FriendsPage = () => {
         <>
           {isMobile ? (
             <>
-              {incomingRequests.length !== 0 ? (
+              {searchedIncomingRequests.length > 0 ? (
                 <>
                   <Typography variant="h5" sx={{ fontWeight: "bold", mb: 2 }}>
                     Current Requests
                   </Typography>
-                  {incomingRequests.map((acceptableFriend) => {
+                  {searchedIncomingRequests.map((acceptableFriend) => {
                     return (
                       <UserCard
                         key={acceptableFriend.id}
@@ -483,7 +501,7 @@ const FriendsPage = () => {
             </>
           ) : (
             <>
-              {incomingRequests.length !== 0 ? (
+              {searchedIncomingRequests.length > 0 ? (
                 <>
                   <Typography variant="h5" sx={{ fontWeight: "bold", mb: 2 }}>
                     Current Requests
@@ -496,7 +514,7 @@ const FriendsPage = () => {
                       gap: 2,
                     }}
                   >
-                    {incomingRequests.map((acceptableFriend) => {
+                    {searchedIncomingRequests.map((acceptableFriend) => {
                       return (
                         <UserCard
                           key={acceptableFriend.id}
