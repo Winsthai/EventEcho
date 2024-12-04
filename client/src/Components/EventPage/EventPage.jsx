@@ -17,6 +17,7 @@ import LocalDiningIcon from "@mui/icons-material/LocalDining";
 import ColorLensIcon from "@mui/icons-material/ColorLens";
 import GroupsIcon from "@mui/icons-material/Groups";
 import SportsEsportsIcon from "@mui/icons-material/SportsEsports";
+import PeopleAltIcon from '@mui/icons-material/PeopleAlt';
 
 import "./EventPage.css";
 
@@ -29,6 +30,7 @@ const EventPage = () => {
   const [popupMessage, setPopupMessage] = useState(""); // Message for the popup
   const [userRegistered, setUserRegistered] = useState(false);
   const [isEventPassed, setIsEventPassed] = useState(false); // To track if the event has passed
+  const [registeredCount, setRegisteredCount] = useState(0);
 
   const authToken = localStorage.getItem("authToken");
 
@@ -97,6 +99,28 @@ const EventPage = () => {
     }
   }, [showPopup]);
 
+ async function numberOfRegistered(eventId) {
+  const APIUrl = `http://localhost:3001/api/events/${eventId}/numberOfUsers`;
+  try {
+    // Fetch and store results from API URL
+    const response = await fetch(APIUrl, {
+      method: "GET",
+      headers: {
+        Authorization: `Bearer ${authToken}`,
+      },
+    });
+    const data = await response.json();
+
+    // Error message
+    if (!response.ok) {
+      throw new Error(data.error || "An unexpected error occurred");
+    }
+    return data;
+  } catch (e) {
+    setError(e.message);
+  }
+}
+
  // Query users hosted events
  async function queryUpcomingEvents() {
   // Generate API Url
@@ -130,6 +154,9 @@ useEffect(() => {
       if (result?.events?.some(event => event.id === id)) {
         setUserRegistered(true); // Set to true if a match is found
       }
+      const registeredCount = await numberOfRegistered(id);
+      console.log(registeredCount.count);
+      setRegisteredCount(registeredCount.count);
     } catch (e) {
       setError(e.message);
     }
@@ -358,6 +385,15 @@ useEffect(() => {
               <LocationOnIcon />
               <p id="EventPageP">{event.address}</p>
             </Stack>
+            <Stack
+              direction="row"
+              alignItems="flex-start"
+              spacing={1}
+              color="text.secondary"
+            >
+              <PeopleAltIcon />
+              <p id="EventPageP">{registeredCount}</p>
+            </Stack>
           </Stack>
 
           {/* Event type */}
@@ -566,6 +602,15 @@ useEffect(() => {
                 >
                   <LocationOnIcon id="EventPageIconsDesktop" />
                   <p id="EventPagePDesktop">{event.address}</p>
+                </Stack>
+                <Stack
+                  direction="row"
+                  alignItems="center"
+                  spacing={1.2}
+                  color="text.secondary"
+                >
+                  <PeopleAltIcon id="EventPageIconsDesktop" />
+                  <p id="EventPagePDesktop">{registeredCount}</p>
                 </Stack>
               </Stack>
             </Box>
