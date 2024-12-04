@@ -44,6 +44,13 @@ const EventPage = () => {
       return;
     }
 
+    if (userRegistered) {
+      // Display message if the event has passed
+      setPopupMessage("You are already registered for this event!");
+      setShowPopup(true);
+      return;
+    }
+
     try {
       await registerEvent(eventId);
       setUserRegistered(true);
@@ -90,6 +97,46 @@ const EventPage = () => {
     }
   }, [showPopup]);
 
+ // Query users hosted events
+ async function queryUpcomingEvents() {
+  // Generate API Url
+  const APIUrl = `http://localhost:3001/api/users/registeredEvents`;
+  try {
+    // Fetch and store results from API URL
+    const response = await fetch(APIUrl, {
+      method: "GET",
+      headers: {
+        Authorization: `Bearer ${authToken}`,
+      },
+    });
+    const data = await response.json();
+
+    // Error message
+    if (!response.ok) {
+      throw new Error(data.error || "An unexpected error occurred");
+    }
+    return data;
+  } catch (e) {
+    setError(e.message);
+  }
+}
+
+useEffect(() => {
+  const fetchUpcomingEvents = async () => {
+    try {
+      setError(null);
+
+      const result = await queryUpcomingEvents();
+      if (result?.events?.some(event => event.id === id)) {
+        setUserRegistered(true); // Set to true if a match is found
+      }
+    } catch (e) {
+      setError(e.message);
+    }
+  };
+
+  fetchUpcomingEvents();
+}, [id]); // Call this useEffect each time one of these states change.
   // Query event from the API
   async function fetchEvent(eventId) {
     // Generate API Url
@@ -364,12 +411,12 @@ const EventPage = () => {
           <Button
             variant="contained"
             sx={{
-              backgroundColor: isEventPassed ? "gray" : "#F68F8D",
+              backgroundColor: isEventPassed || userRegistered ? "gray" : "#F68F8D",
               borderRadius: "20px",
               marginBottom: "80px",
               cursor: "pointer",
               "&:hover": {
-                backgroundColor: isEventPassed ? "gray" : "#A50B07",
+                backgroundColor: isEventPassed || userRegistered ? "gray" : "#A50B07",
               },
             }}
             onClick={() => handleRegisterButton(event.id)}
@@ -567,12 +614,12 @@ const EventPage = () => {
                 variant="contained"
                 sx={{
                   marginBottom: "1.5rem",
-                  backgroundColor: isEventPassed ? "gray" : "#F68F8D",
+                  backgroundColor: isEventPassed || userRegistered ? "gray" : "#F68F8D",
                   borderRadius: "30px", // This is different compared to the 20px in mobile version
                   fontSize: "20px",
                   //fontFamily: "Poppins", // this does nothing?
                   "&:hover": {
-                    backgroundColor: isEventPassed ? "gray" : "#A50B07",
+                    backgroundColor: isEventPassed || userRegistered ? "gray" : "#A50B07",
                   },
                 }}
                 onClick={() => handleRegisterButton(event.id)}
