@@ -10,13 +10,10 @@ import {
   Button,
   useMediaQuery,
   Checkbox,
-  Icon,
   Card, CardContent, Container
 } from "@mui/material";
-import { BottomNavigationAction } from "@mui/material";
 import "./DesktopInviteGuests.css";
 import "./MobileInviteGuests.css";
-import PersonAddIcon from "@mui/icons-material/PersonAdd";
 import { useState, useEffect } from "react";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import RadioButtonUncheckedIcon from "@mui/icons-material/RadioButtonUnchecked";
@@ -25,15 +22,24 @@ import { useParams, useNavigate } from "react-router-dom";
 import SearchIcon from "@mui/icons-material/Search";
 import { useLocation } from "react-router-dom";
 
-export default function DesktopAddGuestsPage({ invitedGuests, setInvitedGuests, nonUserGuests }) {
+export default function DesktopAddGuestsPage({ invitedGuests, setInvitedGuests, detailsCompleted }) {
   const location = useLocation();
   const onEditPage = location.pathname.includes("edit");
   const { id } = useParams();
   const navigate = useNavigate();
 
-  console.log(nonUserGuests);
-
   const isMobile = useMediaQuery("(max-width:600px)");
+
+
+  useEffect(() => {
+    if (!detailsCompleted && !onEditPage) {
+      navigate("/createEvent");
+    }
+    else if (!detailsCompleted && onEditPage) {
+      navigate(`/editEvent/${id}`);
+    }
+  }, []);
+
 
   const handleSelect = (id) => {
     if (onEditPage) {
