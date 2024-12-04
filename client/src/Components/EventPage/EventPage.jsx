@@ -55,6 +55,7 @@ const EventPage = () => {
 
     try {
       await registerEvent(eventId);
+      await acceptEvent(eventId);
       setUserRegistered(true);
       setPopupMessage("Successfully registered for event!");
       setShowPopup(true);
@@ -213,6 +214,26 @@ useEffect(() => {
       // Error message
       if (!response.ok) {
         throw new Error(data.error || "An unexpected error occurred");
+      }
+    } catch (e) {
+      setError(e.message);
+    }
+  }
+
+  async function acceptEvent(eventId) {
+    const APIUrl = `http://localhost:3001/api/users/invite/${eventId}`;
+    try {
+      // Fetch and store results from API URL
+      const response = await fetch(APIUrl, {
+        method: "DELETE",
+        headers: {
+          Authorization: `Bearer ${authToken}`,
+        },
+      });
+
+      // Error message
+      if (!response.ok) {
+        throw new Error("An unexpected error occurred");
       }
     } catch (e) {
       setError(e.message);
