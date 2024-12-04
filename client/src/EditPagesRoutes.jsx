@@ -31,6 +31,8 @@ function EditPagesRoutes() {
     imageform: null
   });
 
+  const [nonUserGuests, setNonUserGuests] = useState([]);
+
   const [detailsCompleted, setDetailsCompleted] = useState(false);
 
   const [detailsChanged, setDetailsChanged] = useState(false);
@@ -52,9 +54,13 @@ function EditPagesRoutes() {
         <Route path="/changeGuests" element={<DesktopAddGuestsPage
           invitedGuests={invitedGuests}
           setInvitedGuests={setInvitedGuests}
+          nonUserGuests={nonUserGuests}
         ></DesktopAddGuestsPage>}></Route>
 
-        <Route path="/newGuests" element={<AddGuestsNewPage></AddGuestsNewPage>}></Route>
+        <Route path="/newGuests" element={<AddGuestsNewPage
+          nonUserGuests={nonUserGuests}
+          setNonUserGuests={setNonUserGuests}
+        ></AddGuestsNewPage>}></Route>
 
         <Route path="/reviewEvent" element={<ReviewEventPage
           eventDetails={eventDetails}
