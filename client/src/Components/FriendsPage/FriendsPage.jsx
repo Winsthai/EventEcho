@@ -16,7 +16,7 @@ import { useNavigate } from "react-router-dom";
 import "./FriendsPage.css";
 
 const FriendsPage = () => {
-  const { id } = useParams();
+  const [currentUser, setCurrentUser] = useState([]);
   const [friends, setFriends] = useState([]);
   const [incomingRequests, setIncomingRequests] = useState([]);
   const [outgoingRequests, setOutgoingRequests] = useState([]);
@@ -31,7 +31,6 @@ const FriendsPage = () => {
 
   // Get session token from local storage, might need to change?
   const authToken = localStorage.getItem("authToken");
-  const username = localStorage.getItem("username");
 
   const handleTabChange = (event, newValue) => {
     setSelectedTab(newValue); // Update the selected tab
@@ -52,6 +51,29 @@ const FriendsPage = () => {
   const searchedIncomingRequests = incomingRequests.filter((incomingRequest) =>
     incomingRequest.username.toLowerCase().includes(searchQuery.toLowerCase())
   );
+
+  async function queryCurrentUser() {
+    const APIUrl = `http://localhost:3001/api/users/me`;
+    try {
+      // Fetch and store results from API URL
+      const response = await fetch(APIUrl, {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${authToken}`,
+        },
+      });
+      const data = await response.json();
+
+      // Error message
+      if (!response.ok) {
+        throw new Error(data.error || "An unexpected error occurred");
+      }
+
+      return data;
+    }catch (e) {
+      setError(e.message);
+    }
+  }
 
   async function queryFriends() {
     const APIUrl = `http://localhost:3001/api/users/friends`;
@@ -162,22 +184,24 @@ const FriendsPage = () => {
         try {
           setError(null);
   
-          const [fetchedFriends, fetchedIncomingRequests, fetchedOutgoingRequests, fetchedAllUsers] =
+          const [fetchedFriends, fetchedIncomingRequests, fetchedOutgoingRequests, fetchedAllUsers, fetchedCurrentUser] =
           await Promise.all([
             queryFriends(),
             queryIncomingRequests(),
             queryOutgoingRequests(),
             queryAllUsers(),
+            queryCurrentUser(),
           ]);
 
           setFriends(fetchedFriends);
           setIncomingRequests(fetchedIncomingRequests);
           setOutgoingRequests(fetchedOutgoingRequests);
           setAllUsers(fetchedAllUsers); // used for the get user function
+          setCurrentUser(fetchedCurrentUser);
 
           const addable = fetchedAllUsers.filter(
             (user) =>
-              user.id !== localStorage.getItem("id") &&
+              user.id !== currentUser.id &&
               !fetchedFriends.find((friend) => friend.id === user.id) &&
               !fetchedIncomingRequests.find((req) => req.id === user.id) &&
               !fetchedOutgoingRequests.find((req) => req.id === user.id)
@@ -199,7 +223,6 @@ const FriendsPage = () => {
 
   // Remove Friend
   const handleRemoveFriend = async (friendId) => {
-    const authToken = localStorage.getItem("authToken");
     const APIUrl = `http://localhost:3001/api/users/friend/${friendId}`;
     try {
       const response = await fetch(APIUrl, {
@@ -225,10 +248,8 @@ const FriendsPage = () => {
   // Send a friend request
   const handleSendRequest = async (recipientId) => {
     // recipientId is the person who is receiving the friend request from us
-    const authToken = localStorage.getItem("authToken");
-    const senderId = localStorage.getItem("id"); // us
+    const senderId = currentUser.id // us
     const APIUrl = `http://localhost:3001/api/users/outgoingFriendRequests/${senderId}`; // url contains the ID of the person SENDING, which is us
-    
     try {
       const response = await fetch(APIUrl, {
         method: "POST",
@@ -255,8 +276,7 @@ const FriendsPage = () => {
 
   // Accept a friend request
   const handleAcceptRequest = async (senderID) => {
-    const authToken = localStorage.getItem("authToken");
-    const recipientId = localStorage.getItem("id"); // us, the user, are receiving the friend requests
+    const recipientId = currentUser.id // us, the user, are receiving the friend requests
     const APIUrl = `http://localhost:3001/api/users/incomingFriendRequests/${recipientId}`; // we go to recipientId, because that is us
     try {
       const response = await fetch(APIUrl, {
@@ -309,7 +329,7 @@ const FriendsPage = () => {
         }}
       >
         <Typography variant="h4" sx={{ fontWeight: "bold" }}>
-          Hello {username}!
+          Hello {currentUser.username}!
         </Typography>
         <Button
           id="FriendsPageButton"

@@ -410,4 +410,31 @@ userRouter.delete(
   }
 );
 
+// Get current user
+// Requires token
+userRouter.get(
+  "/me",
+  userConfirmation,
+  async (request, response, next) => {
+    const userId = request.userId;
+    try {
+
+      // Fetch details of user
+      const result = await client.query(
+        `SELECT u.id, u.username, u.firstname, u.lastname FROM users u WHERE u.id = $1`, 
+        [userId]
+      );
+
+      // No user found
+      if (result.rowCount === 0) {
+        return response.status(404).json({ error: "User not found"});
+      }
+
+      response.status(200).json(result.rows[0]);
+    } catch (error) {
+      next(error);
+    }
+  }
+);
+
 export default userRouter;
