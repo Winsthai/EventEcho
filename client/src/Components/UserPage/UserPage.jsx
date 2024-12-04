@@ -406,6 +406,7 @@ const UserPage = () => {
         value={selectedTab}
         onChange={handleTabChange}
         aria-label="Event Tabs"
+        variant="scrollable"
         sx={{ marginBottom: "2em" }}
       >
         <Tab label="Hosted Events" />

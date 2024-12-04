@@ -364,6 +364,7 @@ const FriendsPage = () => {
         value={selectedTab}
         onChange={handleTabChange}
         aria-label="Friends Tabs"
+        variant="scrollable"
         sx={{ marginBottom: "2em" }}
       >
         <Tab label="Friends List" />
