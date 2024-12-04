@@ -262,6 +262,7 @@ const EventCard = ({
                 }}
                 onClick={(e) => {
                   e.stopPropagation();
+                  onRemoveButton(event.id);
                 }}
               >
                 Delete

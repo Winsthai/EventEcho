@@ -7,6 +7,7 @@ import {
   Button,
   Menu,
   MenuItem,
+  Stack,
 } from "@mui/material";
 import { useEffect, useState } from "react";
 import NoCreatedEvents from "./Components/NoCreatedEvents";
@@ -25,12 +26,35 @@ const UserPage = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [buttonSwitch, setButtonSwitch] = useState(0);
   const [error, setError] = useState("");
+  const [showRemoveConfirmation, setShowRemoveConfirmation] = useState(false);
+  const [selectedEventToRemove, setSelectedEventToRemove] = useState(null);
+
 
   const isMobile = useMediaQuery("(max-width:600px)");
   const navigate = useNavigate();
 
   const authToken = localStorage.getItem("authToken");
   const username = localStorage.getItem("username");
+
+  // Open confirmation popup
+  const handleOpenRemoveConfirmation = (event) => {
+    setSelectedEventToRemove(event);
+    setShowRemoveConfirmation(true);
+  };
+
+  // Close confirmation popup
+  const handleCloseRemoveConfirmation = () => {
+    setSelectedEventToRemove(null);
+    setShowRemoveConfirmation(false);
+  };
+
+  // Confirm removal
+  const handleConfirmRemove = async () => {
+    if (selectedEventToRemove) {
+      await handleRemoveButton(selectedEventToRemove.id); // Call the original remove logic
+    }
+    handleCloseRemoveConfirmation();
+  };
 
   const handleSearchChange = (query) => {
     setSearchQuery(query); // Update search query
@@ -402,9 +426,53 @@ const UserPage = () => {
                   key={event.id}
                   event={event}
                   variant="hosted"
-                  onRemoveButton={handleRemoveButton}
-                />
+                  onRemoveButton={() => handleOpenRemoveConfirmation(event)} // Show confirmation popup
+              />
               ))}
+              {showRemoveConfirmation && (
+              <Box
+                sx={{
+                  position: "fixed",
+                  top: "50%",
+                  left: "50%",
+                  transform: "translate(-50%, -50%)",
+                  backgroundColor: "white",
+                  padding: 4,
+                  borderRadius: 2,
+                  boxShadow: 3,
+                  zIndex: 1000,
+                }}
+              >
+                <Typography variant="h6" sx={{ mb: 2 }}>
+                  Are you sure you want to delete this event?
+                </Typography>
+                <Stack direction="row" spacing={2}>
+                  <Button variant="contained" color="error" onClick={handleConfirmRemove}>
+                    Yes
+                  </Button>
+                  <Button variant="outlined" onClick={handleCloseRemoveConfirmation}>
+                    No
+                  </Button>
+                </Stack>
+              </Box>
+            )}
+
+            {/* Background overlay */}
+            {showRemoveConfirmation && (
+              <Box
+                sx={{
+                  position: "fixed",
+                  top: 0,
+                  left: 0,
+                  width: "100vw",
+                  height: "100vh",
+                  backgroundColor: "rgba(0, 0, 0, 0.5)",
+                  zIndex: 999,
+                }}
+                onClick={handleCloseRemoveConfirmation}
+              ></Box>
+            )}
+
             </>
           ) : (
             <NoCreatedEvents />
@@ -412,11 +480,11 @@ const UserPage = () => {
         </>
       )}
 
-      {/* Upcoming Events Section */}
+      {/* Registered Events Section */}
       {selectedTab === 1 && (
         <>
           <Typography variant="h5" sx={{ fontWeight: "bold", mb: 2 }}>
-            Your Upcoming Events
+            Your Registered Events
           </Typography>
           {searchedUpcomingEvents.length !== 0 ? (
             <>
