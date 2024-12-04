@@ -4,7 +4,7 @@ CREATE TABLE IF not EXISTS users (
     firstname VARCHAR(255) NOT NULL,
     lastname VARCHAR(255) NOT NULL,
     email VARCHAR(255),
-    phonenum VARCHAR(255) NOT NULL UNIQUE,
+    phonenum VARCHAR(255),
     password VARCHAR(255) NOT NULL,
     status INT DEFAULT 1
 );
