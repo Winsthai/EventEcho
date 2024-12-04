@@ -377,7 +377,7 @@ const UserPage = () => {
         />
       </Box>
 
-      {/* Tabs for switching between Hosted and Upcoming Events */}
+      {/* Tabs for switching between Hosted, Registered, and Invited Events */}
       <Tabs
         value={selectedTab}
         onChange={handleTabChange}
@@ -385,7 +385,7 @@ const UserPage = () => {
         sx={{ marginBottom: "2em" }}
       >
         <Tab label="Hosted Events" />
-        <Tab label="Upcoming Events" />
+        <Tab label="Registered Events" />
         <Tab label="Invitations" />
       </Tabs>
 
