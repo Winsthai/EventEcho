@@ -58,7 +58,7 @@ const SignUpPage = () => {
     };
 
     const handleCreateAccount = async () => {
-        if (!username || !phonenum || !password || !confirmPassword || !firstname || !lastname) {
+        if (!username || !password || !confirmPassword || !firstname || !lastname) {
           console.log(`username: ${username}, password: ${password}, phonenum: ${phonenum}, confirm: ${confirmPassword}`);
           setFormError("Please fill out all required fields.");
           return;
@@ -151,7 +151,7 @@ const SignUpPage = () => {
                         onChange={(e) => setEmail(e.target.value)}
                         />
                         <TextField
-                        label="Phone Number*"
+                        label="Phone Number"
                         variant="standard"
                         value={phonenum}
                         onChange={(e) => setPhonenum(e.target.value)}
@@ -224,7 +224,7 @@ const SignUpPage = () => {
                         onChange={(e) => setEmail(e.target.value)}
                         />
                         <TextField
-                        label="Phone Number*"
+                        label="Phone Number"
                         variant="standard"
                         value={phonenum}
                         onChange={(e) => setPhonenum(e.target.value)}

@@ -18,7 +18,7 @@ userRouter.post("/", async (request, response, next) => {
   let phonenum = request.body.phonenum;
 
   // Validate required fields
-  if (!username || !phonenum || !password) {
+  if (!username || !password || !firstname || !lastname) {
     return response.status(400).json({ error: "Missing required fields" });
   }
 
@@ -42,12 +42,7 @@ userRouter.post("/", async (request, response, next) => {
     return response.status(400).json({ error: "Invalid email format." });
   }
 
-  // Validate phone number
-  if (!phonenum) {
-    return response.status(400).json({ error: "Phone number is required." });
-  }
-
-  if (!phoneRegex.test(phonenum)) {
+  if (phonenum && !phoneRegex.test(phonenum)) {
     return response.status(400).json({
       error: "Phone number must be in the format 1234567890 or 123-456-7890.",
     });
@@ -95,10 +90,10 @@ userRouter.post("/", async (request, response, next) => {
     response.status(201).json({ user: result.rows[0] });
   } catch (error) {
     if (error.code === "23505") {
-      // Handle unique constraint violations (e.g., duplicate username or phone number)
+      // Handle unique constraint violations (e.g., duplicate username)
       response
         .status(409)
-        .json({ error: "Username or phone number already exists" });
+        .json({ error: "Username already exists" });
     } else {
       next(error); // Pass other errors to the error handler
     }
