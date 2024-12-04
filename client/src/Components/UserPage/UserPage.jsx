@@ -156,7 +156,7 @@ const UserPage = () => {
     fetchHostedEvents();
   }, [searchQuery, selectedTab, buttonSwitch]); // Call this useEffect each time one of these states change.
 
-  // Query users hosted events
+  // Query users registered events
   async function queryRegisteredEvents() {
     // Generate API Url
     const APIUrl = `http://localhost:3001/api/users/registeredEvents`;
@@ -181,7 +181,7 @@ const UserPage = () => {
     }
   }
 
-  // Fetch hosted events on startup, then update hosted events on state change
+  // Fetch registered events on startup, then update registered events on state change
   useEffect(() => {
     const fetchRegisteredEvents = async () => {
       try {
