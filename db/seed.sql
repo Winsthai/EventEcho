@@ -46,7 +46,7 @@ INSERT INTO event_participants (event_id, user_id) VALUES
 (3, 4),
 (4, 1),
 (4, 5),
-(5, 3),
+(5, 3);
 
 INSERT INTO event_invites (event_id, user_id) VALUES
 (1, 3),
