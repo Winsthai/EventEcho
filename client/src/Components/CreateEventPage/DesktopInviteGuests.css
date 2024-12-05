@@ -98,6 +98,7 @@
   padding: 16px;
   border: solid #595959 1px;
   cursor: pointer;
+  width: 350px;
 }
 
 .desktop-contactCard:hover {

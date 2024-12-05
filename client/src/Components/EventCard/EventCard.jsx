@@ -63,6 +63,7 @@ const EventCard = ({
               sx={{ fontSize: "1rem" }}
             />
             {startDateTime.toLocaleTimeString("en-US", {
+              timeZone: 'MST',
               hour: "numeric",
               minute: "numeric",
               hour12: true,
@@ -102,7 +103,7 @@ const EventCard = ({
               </Button>
             </Box>
           ) : variant === "hosted" ? (
-            <Stack direction="row" sx={{justifyContent: "space-between"}}>
+            <Stack direction="row" sx={{ justifyContent: "space-between" }}>
               {/* Edit button */}
               <Button
                 variant="contained"
@@ -199,6 +200,7 @@ const EventCard = ({
               sx={{ fontSize: "1em" }}
             />
             {startDateTime.toLocaleTimeString("en-US", {
+              timeZone: 'MST',
               hour: "numeric",
               minute: "numeric",
               hour12: true,

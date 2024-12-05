@@ -29,6 +29,7 @@ const EventPage = () => {
   const [showPopup, setShowPopup] = useState(false); // Popup state
   const [popupMessage, setPopupMessage] = useState(""); // Message for the popup
   const [userRegistered, setUserRegistered] = useState(false);
+  const [isCreator, setIsCreator] = useState(false);
   const [isEventPassed, setIsEventPassed] = useState(false); // To track if the event has passed
   const [registeredCount, setRegisteredCount] = useState(0);
 
@@ -49,6 +50,13 @@ const EventPage = () => {
     if (userRegistered) {
       // Display message if the event has passed
       setPopupMessage("You are already registered for this event!");
+      setShowPopup(true);
+      return;
+    }
+
+    if (isCreator) {
+      // Display message if the event has passed
+      setPopupMessage("You cannot register for your own event!");
       setShowPopup(true);
       return;
     }
@@ -122,7 +130,7 @@ const EventPage = () => {
     }
   }
 
-  // Query users hosted events
+  // Query users registered events
   async function queryRegisteredEvents() {
     // Generate API Url
     const APIUrl = `http://localhost:3001/api/users/registeredEvents`;
@@ -146,6 +154,7 @@ const EventPage = () => {
     }
   }
 
+  // Fetch user's registered events
   useEffect(() => {
     const fetchRegisteredEvents = async () => {
       try {
@@ -165,6 +174,50 @@ const EventPage = () => {
 
     fetchRegisteredEvents();
   }, [id]); // Call this useEffect each time one of these states change.
+
+  // Query users hosted events
+  async function queryHostedEvents() {
+    // Generate API Url
+    const APIUrl = `http://localhost:3001/api/users/createdEvents`;
+    try {
+      // Fetch and store results from API URL
+      const response = await fetch(APIUrl, {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${authToken}`,
+        },
+      });
+      const data = await response.json();
+
+      // Error message
+      if (!response.ok) {
+        throw new Error(data.error || "An unexpected error occurred");
+      }
+
+      return data;
+    } catch (e) {
+      setError(e.message);
+    }
+  }
+
+  // Fetch users hosted events
+  useEffect(() => {
+    const fetchHostedEvents = async () => {
+      try {
+        setError(null);
+
+        const result = await queryHostedEvents();
+        if (result?.events?.some((event) => event.id === id)) {
+          setIsCreator(true); // Set to true if a match is found
+        }
+      } catch (e) {
+        setError(e.message);
+      }
+    };
+
+    fetchHostedEvents();
+  }, [id]); // Call this useEffect each time one of these states change.
+
   // Query event from the API
   async function fetchEvent(eventId) {
     // Generate API Url
@@ -465,13 +518,13 @@ const EventPage = () => {
               variant="contained"
               sx={{
                 backgroundColor:
-                  isEventPassed || userRegistered ? "gray" : "#F68F8D",
+                  isEventPassed || userRegistered || isCreator ? "gray" : "#F68F8D",
                 borderRadius: "20px",
                 marginBottom: "80px",
                 cursor: "pointer",
                 "&:hover": {
                   backgroundColor:
-                    isEventPassed || userRegistered ? "gray" : "#A50B07",
+                    isEventPassed || userRegistered || isCreator ? "gray" : "#A50B07",
                 },
               }}
               onClick={() => handleRegisterButton(event.id)}
@@ -682,13 +735,13 @@ const EventPage = () => {
                   sx={{
                     marginBottom: "1.5rem",
                     backgroundColor:
-                      isEventPassed || userRegistered ? "gray" : "#F68F8D",
+                      isEventPassed || userRegistered || isCreator ? "gray" : "#F68F8D",
                     borderRadius: "30px", // This is different compared to the 20px in mobile version
                     fontSize: "20px",
                     //fontFamily: "Poppins", // this does nothing?
                     "&:hover": {
                       backgroundColor:
-                        isEventPassed || userRegistered ? "gray" : "#A50B07",
+                        isEventPassed || userRegistered || isCreator ? "gray" : "#A50B07",
                     },
                   }}
                   onClick={() => handleRegisterButton(event.id)}

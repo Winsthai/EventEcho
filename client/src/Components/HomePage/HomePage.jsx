@@ -43,6 +43,19 @@ const HomePage = () => {
 
   const authToken = localStorage.getItem("authToken");
 
+  // Check if event date has passed
+  const isEventDatePassed = (event) => {
+    const today = new Date();
+    const startDate = new Date(event.startdate);
+    const endDate = event.enddate ? new Date(event.enddate) : null;
+
+    if (endDate) {
+      return today > endDate;
+    } else {
+      return today > startDate;
+    }
+  };
+
   // Update search query state
   const handleSearchChange = (query) => {
     setSearchQuery(query); // Update search query
@@ -121,10 +134,10 @@ const HomePage = () => {
           // Get start dates of each event
           const eventA = a.startdate.toLowerCase();
           const eventB = b.startdate.toLowerCase();
-        
+
           if (eventA < eventB) return -1; // If event a comes before event b
-          if (eventA > eventB) return 1;  // If event a comes after event b
-          return 0;                      // Same event dates
+          if (eventA > eventB) return 1; // If event a comes after event b
+          return 0; // Same event dates
         });
 
         setEvents(sortedEvents);
@@ -334,9 +347,11 @@ const HomePage = () => {
 
           {events.length !== 0 ? (
             <>
-              {events.map((event) => (
-                <EventCard key={event.id} event={event} variant="" />
-              ))}
+              {events
+                .filter((event) => !isEventDatePassed(event))
+                .map((event) => (
+                  <EventCard key={event.id} event={event} variant="" />
+                ))}
             </>
           ) : (
             <NoUpcomingEvents />
@@ -520,9 +535,11 @@ const HomePage = () => {
 
         {events.length !== 0 ? (
           <>
-            {events.map((event) => (
-              <EventCard key={event.id} event={event} variant="" />
-            ))}
+            {events
+              .filter((event) => !isEventDatePassed(event))
+              .map((event) => (
+                <EventCard key={event.id} event={event} variant="" />
+              ))}
           </>
         ) : (
           <NoUpcomingEvents />
