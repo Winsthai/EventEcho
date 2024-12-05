@@ -304,7 +304,8 @@ export default function CreateEventPage({
         });
       }
       // if event is in the past (usually when editing events? like the football game)
-      else if (currentdate.isAfter(startdateraw_conv) || currentdate.isAfter(enddateraw_conv)) {
+      else if ((currentdate.startOf('day')).isAfter(startdateraw_conv, 'day') ||
+        (currentdate.startOf('day')).isAfter(enddateraw_conv, 'day')) {
         console.log("this event has already passed");
         goodTimings = false;
         setEventDetails({
