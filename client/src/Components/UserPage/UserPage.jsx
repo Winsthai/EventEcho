@@ -313,6 +313,7 @@ const UserPage = () => {
         paddingLeft: "5vw",
         paddingRight: "5vw",
         textAlign: "left",
+        mb: "35px",
       }}
     >
       {/* Header with button */}
