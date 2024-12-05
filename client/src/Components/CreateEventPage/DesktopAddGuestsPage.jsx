@@ -3,9 +3,7 @@ import {
   Toolbar,
   IconButton,
   Typography,
-  InputAdornment,
   Box,
-  TextField,
   Stack,
   Button,
   useMediaQuery,
@@ -19,9 +17,9 @@ import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import RadioButtonUncheckedIcon from "@mui/icons-material/RadioButtonUnchecked";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import { useParams, useNavigate } from "react-router-dom";
-import SearchIcon from "@mui/icons-material/Search";
 import { useLocation } from "react-router-dom";
 import SearchBar from "../SearchBar";
+import Grid from '@mui/material/Grid2';
 
 export default function DesktopAddGuestsPage({ invitedGuests, setInvitedGuests, detailsCompleted }) {
   const location = useLocation();
@@ -219,12 +217,8 @@ export default function DesktopAddGuestsPage({ invitedGuests, setInvitedGuests, 
 
 
 
-
-  // Mobile Layout
+  // ------------------ Mobile Layout ------------------------
   if (isMobile) {
-
-
-
     return (
       // Page Container
       <Box
@@ -305,7 +299,7 @@ export default function DesktopAddGuestsPage({ invitedGuests, setInvitedGuests, 
             <Box sx={{ flexGrow: 1, overflow: 'auto' }}>
               <div className="mobile-container">
                 {/* ---------- Search Bar ---------- */}
-                <Box sx={{ display: "flex"}}>
+                <Box sx={{ display: "flex" }}>
                   <SearchBar
                     onSearchChange={handleSearchChange}
                     noMargin={true}
@@ -372,7 +366,7 @@ export default function DesktopAddGuestsPage({ invitedGuests, setInvitedGuests, 
                             (
                               // -------- Users already checked off --------
                               <Checkbox
-                                checked={displayUsers(contact.id)}
+                                checked={displayUsers(contact.id) || invitedGuests.includes(contact.id)}
                                 disabled={true}
                                 inputProps={{ "aria-label": `Select ${contact.firstname}` }}
                                 icon={<RadioButtonUncheckedIcon />} // Circular unchecked icon
@@ -430,14 +424,14 @@ export default function DesktopAddGuestsPage({ invitedGuests, setInvitedGuests, 
     );
   }
   else {
-    // Desktop Layout
+    // -------------------- Desktop Layout --------------------------
     return (
       <div className="desktop-container">
         <div className="desktop-content">
           <div className="desktop-search-and-add">
-            <Box 
-              sx={{ 
-                display: "flex", 
+            <Box
+              sx={{
+                display: "flex",
                 width: "73%",
               }}
             >
@@ -490,42 +484,43 @@ export default function DesktopAddGuestsPage({ invitedGuests, setInvitedGuests, 
               </Card>
             </Box>
             ) : (
-              <div className="desktop-contactGrid">
-                {searchedFriends.map((contact) => (
-                  <div
+              <Grid container spacing={2} sx={{ display: 'flex', justifyContent: 'center' }}>
+                {searchedFriends.map((contact, index) => (
+                  <Grid item xs={6}
                     key={contact.id}
-                    className="desktop-contactCard"
                     onClick={() => handleSelect(contact.id)}
                   >
-                    {displayUsers(contact.id) ?
-                      (
+                    <div className="desktop-contactCard">
+                      {displayUsers(contact.id) ? (
                         // -------- Users already checked off --------
                         <Checkbox
                           checked={displayUsers(contact.id)}
-                          disabled={true}
-                          inputProps={{ "aria-label": `Select ${contact.firstname}` }}
+                          disabled
+                          inputProps={{ 'aria-label': `Select ${contact.firstname}` }}
                           icon={<RadioButtonUncheckedIcon />} // Circular unchecked icon
                           checkedIcon={<CheckCircleIcon />} // Circular checked icon
                         />
-                      ) :
-                      // -------- Can check users off --------
-                      <Checkbox
-                        checked={invitedGuests.includes(contact.id)}
-                        inputProps={{ "aria-label": `Select ${contact.firstname}` }}
-                        icon={<RadioButtonUncheckedIcon />} // Circular unchecked icon
-                        checkedIcon={<CheckCircleIcon />} // Circular checked icon
-                      />}
-                    <div className="desktop-avatar">
-                      {contact.firstname[0].toUpperCase()}
-                      {contact.lastname[0].toUpperCase()}
+                      ) : (
+                        // -------- Can check users off --------
+                        <Checkbox
+                          checked={invitedGuests.includes(contact.id)}
+                          inputProps={{ 'aria-label': `Select ${contact.firstname}` }}
+                          icon={<RadioButtonUncheckedIcon />} // Circular unchecked icon
+                          checkedIcon={<CheckCircleIcon />} // Circular checked icon
+                        />
+                      )}
+                      <div className="desktop-avatar">
+                        {contact.firstname[0].toUpperCase()}
+                        {contact.lastname[0].toUpperCase()}
+                      </div>
+                      <div>
+                        <p className="desktop-name">{contact.firstname.concat(" ", contact.lastname)}</p>
+                        <p className="desktop-phone">{contact.email}</p>
+                      </div>
                     </div>
-                    <div>
-                      <p className="desktop-name">{contact.firstname.concat(" ", contact.lastname)}</p>
-                      <p className="desktop-phone">{contact.email}</p>
-                    </div>
-                  </div>
+                  </Grid>
                 ))}
-              </div>
+              </Grid>
             )
           }
 
@@ -562,9 +557,49 @@ export default function DesktopAddGuestsPage({ invitedGuests, setInvitedGuests, 
       </div>
     );
   }
-
-
-
-  //return isMobile ? <MobileLayout /> : <DesktopLayout />;
-
 }
+
+// import React from 'react';
+// import { Grid } from '@mui/material';
+// import Checkbox from '@mui/material/Checkbox';
+// import RadioButtonUncheckedIcon from '@mui/icons-material/RadioButtonUnchecked';
+// import CheckCircleIcon from '@mui/icons-material/CheckCircle';
+
+// const ContactGrid = ({ searchedFriends, handleSelect, displayUsers, invitedGuests }) => (
+//   <Grid container spacing={2} className="desktop-contactGrid">
+//     {searchedFriends.map((contact) => (
+//       <Grid item xs={12} sm={6} md={4} key={contact.id} onClick={() => handleSelect(contact.id)}>
+//         <div className="desktop-contactCard">
+//           {displayUsers(contact.id) ? (
+//             // -------- Users already checked off --------
+//             <Checkbox
+//               checked={displayUsers(contact.id)}
+//               disabled
+//               inputProps={{ 'aria-label': `Select ${contact.firstname}` }}
+//               icon={<RadioButtonUncheckedIcon />} // Circular unchecked icon
+//               checkedIcon={<CheckCircleIcon />} // Circular checked icon
+//             />
+//           ) : (
+//             // -------- Can check users off --------
+//             <Checkbox
+//               checked={invitedGuests.includes(contact.id)}
+//               inputProps={{ 'aria-label': `Select ${contact.firstname}` }}
+//               icon={<RadioButtonUncheckedIcon />} // Circular unchecked icon
+//               checkedIcon={<CheckCircleIcon />} // Circular checked icon
+//             />
+//           )}
+//           <div className="desktop-avatar">
+//             {contact.firstname[0].toUpperCase()}
+//             {contact.lastname[0].toUpperCase()}
+//           </div>
+//           <div>
+//             <p className="desktop-name">{contact.firstname.concat(" ", contact.lastname)}</p>
+//             <p className="desktop-phone">{contact.email}</p>
+//           </div>
+//         </div>
+//       </Grid>
+//     ))}
+//   </Grid>
+// );
+
+// export default ContactGrid;

@@ -244,11 +244,15 @@ export default function CreateEventPage({
     const enddateraw_conv = dayjs(JSON.parse(eventDetails.enddateraw));
     const endtimeraw_conv = dayjs(JSON.parse(eventDetails.endtimeraw));
 
-    console.log("current time only: ", currentdate.format('HH:mm:ss'));
-    console.log("today: ", currentdate);
-    console.log("start date: ", startdateraw_conv);
+    // console.log("current time only: ", currentdate.format('HH:mm:ss'));
+    // console.log("today: ", currentdate);
     console.log("today = start date? : ", (dayjs().startOf('day')).isSame(startdateraw_conv, 'day'));
     console.log("current time > start time? ", dayjs(currentdate.format('HH:mm:ss'), 'HH:mm:ss').isAfter(starttimeraw_conv));
+    console.log("start date: ", startdateraw_conv);
+    console.log("start time: ", starttimeraw_conv);
+    console.log("end date: ", enddateraw_conv);
+    console.log("end time: ", endtimeraw_conv);
+
 
     // both start date and time missing
     if (eventDetails.startdate === null && eventDetails.starttime === null) {
@@ -280,7 +284,8 @@ export default function CreateEventPage({
         setEventDetails({ ...eventDetails, enddate: null, enddateraw: JSON.stringify('') });
       }
       // same day but start time is after end time
-      else if (startdateraw_conv.isSame(enddateraw_conv) && starttimeraw_conv.isAfter(endtimeraw_conv)) {
+      else if (startdateraw_conv.isSame(enddateraw_conv) &&
+        dayjs(starttimeraw_conv.format('HH:mm:ss'), 'HH:mm:ss').isAfter(dayjs(endtimeraw_conv.format('HH:mm:ss'), 'HH:mm:ss'))) {
         console.log("same day but can't end before it starts");
         goodTimings = false;
         setEventDetails({ ...eventDetails, endtime: null, endtimeraw: JSON.stringify('') });
