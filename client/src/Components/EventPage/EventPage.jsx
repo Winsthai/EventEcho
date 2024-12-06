@@ -196,7 +196,7 @@ const EventPage = () => {
 
       return data;
     } catch (e) {
-      setError(e.message);
+      //setError(e.message);
     }
   }
 
@@ -518,13 +518,17 @@ const EventPage = () => {
               variant="contained"
               sx={{
                 backgroundColor:
-                  isEventPassed || userRegistered || isCreator ? "gray" : "#F68F8D",
+                  isEventPassed || userRegistered || isCreator
+                    ? "gray"
+                    : "#F68F8D",
                 borderRadius: "20px",
                 marginBottom: "80px",
                 cursor: "pointer",
                 "&:hover": {
                   backgroundColor:
-                    isEventPassed || userRegistered || isCreator ? "gray" : "#A50B07",
+                    isEventPassed || userRegistered || isCreator
+                      ? "gray"
+                      : "#A50B07",
                 },
               }}
               onClick={() => handleRegisterButton(event.id)}
@@ -735,13 +739,17 @@ const EventPage = () => {
                   sx={{
                     marginBottom: "1.5rem",
                     backgroundColor:
-                      isEventPassed || userRegistered || isCreator ? "gray" : "#F68F8D",
+                      isEventPassed || userRegistered || isCreator
+                        ? "gray"
+                        : "#F68F8D",
                     borderRadius: "30px", // This is different compared to the 20px in mobile version
                     fontSize: "20px",
                     //fontFamily: "Poppins", // this does nothing?
                     "&:hover": {
                       backgroundColor:
-                        isEventPassed || userRegistered || isCreator ? "gray" : "#A50B07",
+                        isEventPassed || userRegistered || isCreator
+                          ? "gray"
+                          : "#A50B07",
                     },
                   }}
                   onClick={() => handleRegisterButton(event.id)}
