@@ -188,6 +188,7 @@ const SignUpPage = () => {
                     justifyContent: "center",
                     alignItems: "center",
                     textAlign: "center",
+                    paddingBottom: "5vh"
                 }}
             >
                 <Box sx={{ width: "50%" }}>

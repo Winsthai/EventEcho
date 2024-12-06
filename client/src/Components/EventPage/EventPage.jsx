@@ -349,7 +349,7 @@ const EventPage = () => {
   if (isMobile) {
     // Mobile component
     return (
-      <Box>
+      <Box sx={{ paddingBottom: "70px" }}>
         {/* Header Box */}
         {/* Top App Bar */}
         <Box

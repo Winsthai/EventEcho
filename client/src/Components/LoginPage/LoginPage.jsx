@@ -79,6 +79,7 @@ const LoginPage = () => {
           justifyContent: "center",
           alignItems: "center",
           textAlign: "center",
+          paddingBottom: "70px",
         }}
       >
         {showPopup && (

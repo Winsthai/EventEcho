@@ -303,7 +303,7 @@ export default function DesktopAddGuestsPage({ invitedGuests, setInvitedGuests, 
                   <SearchBar
                     onSearchChange={handleSearchChange}
                     noMargin={true}
-                    placeholder="Search for events..."
+                    placeholder="Search for guests..."
                   />
                 </Box>
                 {/* ---------- Check if have friends ---------- */}
